@@ -297,21 +297,23 @@ int ConfigData::writeBinaryConfig2(string fconfigname){
 	int nindex=nsite*matrixdim*matrixdim*DIM;
 
        	pFile = fopen(fconfigname.c_str(), "wb");
-	
-       	elems += fwrite(&leng1, sizeof(int), 1, pFile);
-       	elems += fwrite(&leng2, sizeof(int), 1, pFile);
-       	elems += fwrite(&leng3, sizeof(int), 1, pFile);
-       	elems += fwrite(&leng4, sizeof(int), 1, pFile);
-	
-	poll=calcPoll();
-        plaq=calcPlaq();
+   	if (pFile == NULL) perror ("Error opening file");
+	else{
+		elems += fwrite(&leng1, sizeof(int), 1, pFile);
+		elems += fwrite(&leng2, sizeof(int), 1, pFile);
+		elems += fwrite(&leng3, sizeof(int), 1, pFile);
+		elems += fwrite(&leng4, sizeof(int), 1, pFile);
+		
+		poll=calcPoll();
+		plaq=calcPlaq();
 
-	elems += fwrite(&poll, sizeof(std::complex<double>),1, pFile);
-       	elems += fwrite(&plaq, sizeof(std::complex<double>),1, pFile);
+		elems += fwrite(&poll, sizeof(std::complex<double>),1, pFile);
+		elems += fwrite(&plaq, sizeof(std::complex<double>),1, pFile);
 
-       	elems += fwrite(&(*A)(0,0,0,0), sizeof(std::complex<double>), nindex, pFile);
+		elems += fwrite(&(*A)(0,0,0,0), sizeof(std::complex<double>), nindex, pFile);
 
-       	fclose(pFile);
+		fclose(pFile);
+	}
         return nindex + 6 - elems;
 }
 
@@ -326,37 +328,39 @@ int ConfigData::readBinaryConfig2(string fconfigname){
         
 	FILE* pFile;
         pFile = fopen(fconfigname.c_str(), "rb");
-       	
-	elems += fread(&cleng1, sizeof(int), 1, pFile);
-       	elems += fread(&cleng2, sizeof(int), 1, pFile);
-       	elems += fread(&cleng3, sizeof(int), 1, pFile);
-       	elems += fread(&cleng4, sizeof(int), 1, pFile);
-	
-	// Check lattice dimensions
-	if(leng1!=cleng1 || leng2!=cleng2 || leng3!=cleng3 || leng4!=cleng4){
-		cout << "ERROR: lattice dimensions are different in config file and settings !" << endl;
-		return 1;
+   	if (pFile == NULL) perror ("Error opening file");
+	else{
+		elems += fread(&cleng1, sizeof(int), 1, pFile);
+		elems += fread(&cleng2, sizeof(int), 1, pFile);
+		elems += fread(&cleng3, sizeof(int), 1, pFile);
+		elems += fread(&cleng4, sizeof(int), 1, pFile);
+		
+		// Check lattice dimensions
+		if(leng1!=cleng1 || leng2!=cleng2 || leng3!=cleng3 || leng4!=cleng4){
+			cout << "ERROR: lattice dimensions are different in config file and settings !" << endl;
+			return 1;
+		}
+		
+		elems += fread(&pollref, sizeof(std::complex<double>),1, pFile);
+		elems += fread(&plaqref, sizeof(std::complex<double>),1, pFile);
+
+		elems += fread(&(*A)(0,0,0,0), sizeof(std::complex<double>), nindex, pFile);
+		
+		fclose(pFile);
+		
+		poll=calcPoll();
+		plaq=calcPlaq();
+
+		if(verbose){
+		cout << "Configfile " << fconfigname << " read." << endl << endl;
+		cout << "Checks:" << endl;
+		cout << "Polyakov loop: file=" << pollref << " calculated=" << poll << " diff(abs)=" << abs(pollref-poll) << endl;
+		cout << "Plaquettes: file=" << plaqref << " calculated=" << plaq << " diff(abs)=" << abs(plaqref-plaq) << endl << endl;
+		}
+
+		if(abs(pollref-poll)>maxError || abs(plaqref-plaq)>maxError)
+			cout << "WARNING: Calculated values for Polyakov loop and/or Plaquettes differ!" << endl << endl;
 	}
-        
-	elems += fread(&pollref, sizeof(std::complex<double>),1, pFile);
-       	elems += fread(&plaqref, sizeof(std::complex<double>),1, pFile);
-
-       	elems += fread(&(*A)(0,0,0,0), sizeof(std::complex<double>), nindex, pFile);
-	
-        fclose(pFile);
-	
-	poll=calcPoll();
-	plaq=calcPlaq();
-
-	if(verbose){
-	cout << "Configfile " << fconfigname << " read." << endl << endl;
-	cout << "Checks:" << endl;
-	cout << "Polyakov loop: file=" << pollref << " calculated=" << poll << " diff(abs)=" << abs(pollref-poll) << endl;
-	cout << "Plaquettes: file=" << plaqref << " calculated=" << plaq << " diff(abs)=" << abs(plaqref-plaq) << endl << endl;
-	}
-
-	if(abs(pollref-poll)>maxError || abs(plaqref-plaq)>maxError)
-		cout << "WARNING: Calculated values for Polyakov loop and/or Plaquettes differ!" << endl << endl;
 
         return nindex + 6 - elems;
 }
