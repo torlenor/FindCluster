@@ -38,6 +38,8 @@ class ConfigData{
 		int writeConfig(string fconfigname); // Reads a config from file
 		int writeBinaryConfig(string fconfigname);
 		int writeBinaryConfig2(string fconfigname);
+		
+		int writeBinaryLPoll(string fconfigname); // Writes local Polyakov loops in binary
 
 		int latmap(int i1, int i2, int i3, int i4);
 		int neib(int site, int mu);
@@ -50,6 +52,8 @@ class ConfigData{
 		
 		complex<double> calcPoll();
 		complex<double> calcPlaq();
+		
+		void calcLocalPoll(complex<double> *lpoll, int i1, int i2, int i3, complex<double> &sum);
 
 		// Function tests
 		void runTests();
@@ -365,7 +369,6 @@ int ConfigData::readBinaryConfig2(string fconfigname){
         return nindex + 6 - elems;
 }
 
-
 int ConfigData::readConfig(string fconfigname){
         // Reades the current lattice configuration into file with name
         // fconfigname
@@ -613,6 +616,45 @@ int ConfigData::MILCreadConfig(string fconfigname){
         return 0;
 }
 
+// Local Polyakov loop write
+int ConfigData::writeBinaryLPoll(string fconfigname){
+	int elems=0;
+	complex<double> plaq, poll;
+       	FILE* pFile;
+
+	int nindex=leng1*leng2*leng3*matrixdim*matrixdim;
+
+	complex<double> lpoll[matrixdim*matrixdim];
+
+       	pFile = fopen(fconfigname.c_str(), "wb");
+   	if (pFile == NULL) perror ("Error opening file");
+	else{
+		elems += fwrite(&leng1, sizeof(int), 1, pFile);
+		elems += fwrite(&leng2, sizeof(int), 1, pFile);
+		elems += fwrite(&leng3, sizeof(int), 1, pFile);
+		elems += fwrite(&leng4, sizeof(int), 1, pFile);
+		
+		poll=calcPoll();
+		plaq=calcPlaq();
+
+		elems += fwrite(&poll, sizeof(std::complex<double>),1, pFile);
+		elems += fwrite(&plaq, sizeof(std::complex<double>),1, pFile);
+
+		complex<double> sum(0,0);
+
+		for(int i1=0;i1<leng1;i1++)
+		for(int i2=0;i2<leng2;i2++)
+		for(int i3=0;i3<leng3;i3++){
+			calcLocalPoll(lpoll, i1, i2, i3, sum);
+			elems += fwrite(&lpoll[0], sizeof(std::complex<double>), matrixdim*matrixdim, pFile);
+		}
+
+		fclose(pFile);
+	}
+	
+        return nindex + 6 - elems;
+}
+
 int **ConfigData::Create2D(int row, int col)
 {
         int **p = new int* [row];
@@ -743,6 +785,30 @@ complex<double> ConfigData::calcPlaq(){
         sumplaqs=sumplaqs/((double)6*matrixdim*(double)nsite); // factor because sum over N lattice       points and md from trace
 
         return sumplaqs;
+}
+
+void ConfigData::calcLocalPoll(complex<double> *lpoll, int i1, int i2, int i3, complex<double> &sum){
+        complex<double> up[matrixdim][matrixdim], uu[matrixdim][matrixdim], upaux[matrixdim][matrixdim];
+
+	int i4=0, is0=0;
+        is0 = i1 + i2*leng1 + i3*leng1*leng2 + i4*leng1*leng2*leng3;
+
+        extract(*up,3,is0);
+
+        for(i4=1;i4<leng4-1;i4++){
+                is0 = i1 + i2*leng1 + i3*leng1*leng2 + i4*leng1*leng2*leng3;
+                extract(*uu,3,is0);
+                axb(*upaux,*up,*uu);
+                aeb(*up,*upaux);
+	}    
+
+        i4 = leng4-1;
+        is0 = i1 + i2*leng1 + i3*leng1*leng2 + i4*leng1*leng2*leng3;
+
+        extract(*uu,3,is0);
+	axb(lpoll,*up,*uu);
+	
+	sum += lpoll[0*3 + 0] + lpoll[1*3 + 1] + lpoll[2*3 + 2];
 }
 
 void ConfigData::z3rot(){
