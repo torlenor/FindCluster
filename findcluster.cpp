@@ -11,6 +11,7 @@
 #include <vector>
 #include <cstdlib>
 #include <string>
+#include <algorithm>
 
 using namespace std;
 
@@ -67,6 +68,8 @@ void calcObservables(Observablestruct &lobs, Clusterstruct &lclusterdata);
 
 void writeOneConfigResultsstdout(Observablestruct &lobs, Clusterstruct &lclusterdata);
 
+void writeClusterList(Clusterstruct &lclusterdata);
+
 void calcExp();
 
 int latmap(int i1, int i2, int i3);
@@ -109,10 +112,29 @@ int main(int argc, char *argv[]){
 
 	calcExp();
 
+	cout << endl; 
+	writeClusterList(clusterdata[0]);
+
 	delete [] clusterdata; clusterdata=0;
 	delete [] obs; obs=0;
 	
 	return 0;
+}
+
+void writeClusterList(Clusterstruct &lclusterdata){
+	vector<int> csize;
+	for(unsigned c=0; c<lclusterdata.clustermembers.size(); c++){
+		csize.push_back(lclusterdata.clustermembers[c].size());
+	}
+
+	sort(csize.begin(), csize.end());
+
+	cout << "Cluster sizes" << endl;
+	for(unsigned c=0; c<lclusterdata.clustermembers.size(); c++){
+		cout << csize[c] << endl;
+	}
+
+	cout << "Total number of clusters = " << lclusterdata.clustermembers.size() << endl;
 }
 
 void calcExp(){
@@ -139,8 +161,6 @@ void calcExp(){
 	maxclustersizeerr=sqrt(maxclustersizeerr)/(double)nmeas;
 	avgclustersizeerr=sqrt(avgclustersizeerr)/(double)nmeas;
 	cuterr=sqrt(cuterr)/(double)nmeas;
-
-
 
 	cout << "Expectation values: " << endl;
 	cout << "Average cluster size = " << avgclustersize << ", Maximum cluster size = " << maxclustersize << endl;
@@ -214,7 +234,7 @@ void fillSectors(Clusterstruct &lclusterdata, double delta){
 	for(int is=0;is<Nspace;is++){
 		tracephase = arg(pollev[is][0] + pollev[is][1] + pollev[is][2]);
 		
-		if(abs(tracephase - 2.0*M_PI/3.0) < delta){
+		if(abs(tracephase - 2.0*M_PI/3.0) <= delta){
 			lclusterdata.isinsector[is]=1;
 			csectp1++;
 		}
@@ -224,15 +244,15 @@ void fillSectors(Clusterstruct &lclusterdata, double delta){
 			csect0++;
 		}
 		
-		if(abs(tracephase + 2.0*M_PI/3.0) < delta){
+		if(abs(tracephase + 2.0*M_PI/3.0) <= delta){
 			lclusterdata.isinsector[is]=-1;
 			csectm1++;
 		}
 	}
 	
-	#ifdef DEBUG
+//	#ifdef DEBUG
 	cout << "Sector 1 # : " << csectp1 << " , Sector 0 # : " << csect0 << " , Sector -1 # : " << csectm1 << endl;
-	#endif
+//	#endif
 	
 	cout << "done!" << endl;
 }
