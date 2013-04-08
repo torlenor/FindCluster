@@ -5,14 +5,16 @@
 #include <cstdio>
 #include <string.h>
 
-char texthelp[]="Usage: findcluster.x [OPTION] ... [CONFIGURATION]\n"
+char texthelp[]="Usage: findcluster.x [OPTION] ... [POLLEVCONFIG/POLLEVCONFIGLIST]\n"
 		"Finds cluster and performs calculations with it.\n" 
-		"Uses Polyakov loop eigenvalues from file POLLEVCONFIG as input\n"
+		"Uses Polyakov loop eigenvalues from file POLLEVCONFIG as input.\n"
+		"If -n/--nmeas > 1, the input file is interpreted as a list of input files!\n"
 		"\n"
 		"Mandatory arguments to long options are mandatory for short options too.\n"
 		"  -s, --Ns SSIZE             spatial lattice extent (default = 4)\n"
 		"  -t, --Nt TSIZE             temporal lattice extent (default = 4)\n"
-		"  -f, --fraction factor      fraction (default = 1.0)\n"
+		"  -f, --fraction FRACTION    fraction (default = 1.0)\n"
+		"  -n, --nmeas NMEAS          number of configurations (default = 1)\n"
 		"\n"  
 		"  -h  --help                 display this help and exit\n"
 		"  -v  --version              output version information and exit\n"
@@ -49,6 +51,7 @@ int init(int &argc, char *argv[]){
 			{"Ns", required_argument, 0, 's'},
 			{"Nt", required_argument, 0, 't'},
 			{"fraction", required_argument, 0, 'f'},
+			{"nmeas", required_argument, 0, 'n'},
 			/* These options set a flag. */
 			// {"free", no_argument, 0, 'f'},
 			// {"u0", required_argument, 0, 0},
@@ -60,7 +63,7 @@ int init(int &argc, char *argv[]){
 		/* getopt_long stores the option index here. */
 		int option_index = 0;
 
-		c = getopt_long (argc, argv, "s:t:f:hv",
+		c = getopt_long (argc, argv, "s:t:f:n:hv",
 		long_options, &option_index);
 
 		/* Detect the end of the options. */
@@ -93,6 +96,10 @@ int init(int &argc, char *argv[]){
 				fraction = atof(optarg);
 				break;
 
+			case 'n':
+				nmeas = atoi(optarg);
+				break;
+
 			case 'v':
 				cout << endl << "findcluster.x version " << MAJOR_VERSION << "." << MINOR_VERSION << "." << REVISION_VERSION << endl;
 				abort();
@@ -107,12 +114,43 @@ int init(int &argc, char *argv[]){
 		}
 	}
 
+	string finname;
 	/* Print any remaining command line arguments (not options). */
 	if (optind < argc)
 	{
-		fevname = argv[optind];
+		finname = argv[optind];
 	}else{
 		cout << "ERROR: No configuration file specified!" << endl;
+	}
+	
+	delta0 = M_PI/3.0;
+	delta = delta0*fraction;
+
+	// Prepare for nmeas measurements
+	clusterdata = new Clusterstruct[nmeas];
+	obs = new Observablestruct[nmeas];
+	fevname.resize(nmeas);
+
+	if(nmeas>1){
+		// Read finname file and fill fevname
+		ifstream fin;
+		fin.open(finname.c_str());
+		if(fin.is_open()!=true){
+                	cout  << "ERROR: File " << finname <<  " to read configuration filename list could not be opened!" << endl;
+			throw 1;
+        	}
+        	
+        	string strtmp;
+        	int n=0;
+        	while(n<nmeas && getline(fin, fevname.at(n)) ){
+			n++;
+		}
+		if(n<nmeas){
+			cout << "ERROR: Only found " << n << " names in " << finname << " !" << endl;
+			return 1;
+		}
+	}else{
+		fevname[0] = finname;
 	}
 
 	leng1=Ns; leng2=Ns; leng3=Ns; leng4=Nt;
@@ -132,10 +170,12 @@ int init(int &argc, char *argv[]){
 	cout << "done!" << endl;
 	
 	cout << "Creating cluster data arrays..." << flush;
-	(&clusterdata[0])->isinsector.resize(Nspace);
-	// (&clusterdata[0])->clustersector will not be allocated here, but on the fly with push_back
-	(&clusterdata[0])->isincluster.resize(Nspace);
-	// (&clusterdata[0])->clustermembers will not be allocated here, but on the fly with push_back
+	for(int n=0;n<nmeas;n++){
+		(&clusterdata[n])->isinsector.resize(Nspace);
+		// (&clusterdata[0])->clustersector will not be allocated here, but on the fly with push_back
+		(&clusterdata[n])->isincluster.resize(Nspace);
+		// (&clusterdata[0])->clustermembers will not be allocated here, but on the fly with push_back
+	}
 	cout << "done!" << endl;
 	
 	return 0;

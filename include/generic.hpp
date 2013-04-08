@@ -64,6 +64,8 @@ int readPollEv(int leng1, int leng2, int leng3, int leng4, int matrixdim, vector
 }
 
 int readPollEvBinary(int leng1, int leng2, int leng3, int leng4, int matrixdim, vector<vector<complex<double> > > &pollev, string fevname){
+	cout << "Reading 3d lattice with Polyakov loop evs... " << flush;
+	
 	int elems=0;
        	FILE* pFile;
        	
@@ -75,7 +77,7 @@ int readPollEvBinary(int leng1, int leng2, int leng3, int leng4, int matrixdim, 
 
 	if( nindex != pollev.size() * pollev[pollev.size()-1].size() ){
 		cout << "ERROR: Something wrong in readPollEvBinary!" << endl;
-		cout << "Want to write nindex = " << nindex << " entries, but there are only " << pollev.size() * pollev[pollev.size()-1].size() << " !" << endl;
+		cout << "Want to read nindex = " << nindex << " entries, but has space for only " << pollev.size() * pollev[pollev.size()-1].size() << " entries!" << endl;
 
 	}
 	
@@ -102,6 +104,8 @@ int readPollEvBinary(int leng1, int leng2, int leng3, int leng4, int matrixdim, 
 
 		fclose(pFile);
 	}
+	
+	cout << "done!" << endl;
 	
         return nindex + 4 - elems;
 }
