@@ -49,6 +49,8 @@ struct Observablestruct{
 	int maxclusterid;
 	
 	double avgclustersize;
+
+	double cut;
 };
 
 Observablestruct *obs;
@@ -63,7 +65,9 @@ void checkClusters(Clusterstruct &lclusterdata);
 void findPercolatingCluster(Clusterstruct &lclusterdata);
 void calcObservables(Observablestruct &lobs, Clusterstruct &lclusterdata);
 
-void writeResultsstdout(Observablestruct &lobs, Clusterstruct &lclusterdata);
+void writeOneConfigResultsstdout(Observablestruct &lobs, Clusterstruct &lclusterdata);
+
+void calcExp();
 
 int latmap(int i1, int i2, int i3);
 
@@ -100,13 +104,49 @@ int main(int argc, char *argv[]){
 		findPercolatingCluster(clusterdata[n]); // Find percolating clusters
 	
 		calcObservables(obs[n], clusterdata[n]);
-		writeResultsstdout(obs[n], clusterdata[n]);
+		// writeOneConfigResultsstdout(obs[n], clusterdata[n]);
 	}
-	
+
+	calcExp();
+
 	delete [] clusterdata; clusterdata=0;
 	delete [] obs; obs=0;
 	
 	return 0;
+}
+
+void calcExp(){
+	double maxclustersize=0, maxclustersizeerr=0;
+	double avgclustersize=0, avgclustersizeerr=0;
+	double cut=0, cuterr=0;
+	// Plain mean value
+	for(int n=0; n<nmeas; n++){
+		maxclustersize += (&obs[n])->maxclustersize;
+		avgclustersize += (&obs[n])->avgclustersize;
+		cut += (&obs[n])->cut;
+	}
+
+	maxclustersize = maxclustersize/(double)nmeas;
+	avgclustersize = avgclustersize/(double)nmeas;
+	cut = cut/(double)nmeas;
+
+	// Plain standard deviation
+	for(int n=0;n<nmeas;n++){
+		maxclustersizeerr=pow((&obs[n])->maxclustersize-maxclustersize,2);
+		avgclustersizeerr=pow((&obs[n])->avgclustersize-avgclustersize,2);
+		cuterr=pow((&obs[n])->cut-cut,2);
+	}
+	maxclustersizeerr=sqrt(maxclustersizeerr)/(double)nmeas;
+	avgclustersizeerr=sqrt(avgclustersizeerr)/(double)nmeas;
+	cuterr=sqrt(cuterr)/(double)nmeas;
+
+
+
+	cout << "Expectation values: " << endl;
+	cout << "Average cluster size = " << avgclustersize << ", Maximum cluster size = " << maxclustersize << endl;
+	cout << "Average cluster err  = " << avgclustersizeerr << ", Maximum cluster err  = " << maxclustersizeerr << endl;
+	cout << "Cut = " << cut << " Cut err = " << cuterr << endl;
+
 }
 
 void calcObservables(Observablestruct &lobs, Clusterstruct &lclusterdata){
@@ -131,10 +171,19 @@ void calcObservables(Observablestruct &lobs, Clusterstruct &lclusterdata){
 	
 	lobs.avgclustersize = avgclustersize/(double)lclusterdata.clustermembers.size();
 
+	// Calculate cut
+	double cut=0;
+	for(unsigned int is=0; is<lclusterdata.isinsector.size(); is++){
+		if(lclusterdata.isinsector[is] == 2)
+			cut = cut + 1;
+	}
+
+	lobs.cut = cut/(double)Nspace;
+
 	cout << "done!" << endl;
 }
 
-void writeResultsstdout(Observablestruct &lobs, Clusterstruct &lclusterdata){
+void writeOneConfigResultsstdout(Observablestruct &lobs, Clusterstruct &lclusterdata){
 	cout << endl << lclusterdata.percolatingclusters.size() << " of " << lclusterdata.clustermembers.size() << " clusters are percolating!" << endl;
 	for(unsigned int c=0;c<lclusterdata.percolatingclusters.size();c++){
 		cout << "Cluster " << lclusterdata.percolatingclusters[c] << " is percolating!" << endl;
