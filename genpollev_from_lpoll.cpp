@@ -34,7 +34,7 @@ int Nt=0;
 
 vector<vector<complex<double> > > pollev;
 
-complex<double> localPollEv(vector<vector<complex<double> > > &lpollarray, complex<double> *polleval, int i1, int i2, int i3);
+void localPollEv(vector<vector<complex<double> > > &lpollarray, complex<double> *polleval, int i1, int i2, int i3);
 void fillPollEv(vector<vector<complex<double> > > &lpollarray);
 
 int matrixdim=3, leng1=0, leng2=0, leng3=0, leng4=0;
@@ -167,7 +167,7 @@ void fillPollEv(vector<vector<complex<double> > > &lpollarray){
 	}
 }
 
-complex<double> localPollEv(vector<vector<complex<double> > > &lpollarray, complex<double> *polleval, int i1, int i2, int i3){
+void localPollEv(vector<vector<complex<double> > > &lpollarray, complex<double> *polleval, int i1, int i2, int i3){
 	complex<double> poll[3*3];
 
 	int is=0;

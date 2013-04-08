@@ -35,7 +35,7 @@ int Nt=0;
 ConfigData *config;
 vector<vector<complex<double> > > pollev;
 
-complex<double> localPollEv(complex<double> *polleval, int i1, int i2, int i3);
+void localPollEv(complex<double> *polleval, int i1, int i2, int i3);
 complex<double> totalPollTr();
 void fillPollEv();
 
@@ -171,7 +171,7 @@ void fillPollEv(){
 	}
 }
 
-complex<double> localPollEv(complex<double> *polleval, int i1, int i2, int i3){
+void localPollEv(complex<double> *polleval, int i1, int i2, int i3){
 	complex<double> poll[3][3];
 
 	complex<double> up[3][3], uu[3][3], upaux[3][3];
