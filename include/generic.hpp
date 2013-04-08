@@ -12,7 +12,7 @@ int writePollEvBinary(string fevname);
 void checkPollEv();
 
 void checkPollEv(int leng1, int leng2, int leng3, int leng4, int matrixdim, vector<vector<complex<double> > > &pollev){
-	cout << "Performing some checks on the ev's... " << flush;
+	cout << "Performing some checks on the evs... " << flush;
 
 	complex<double> sum;
 	double eps=1E-12;
