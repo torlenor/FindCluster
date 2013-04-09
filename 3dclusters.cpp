@@ -13,9 +13,14 @@
 
 using namespace std;
 
-#include "3dclusters_init.hpp"
-
 int Ns=40, Nt=8;
+
+int leng1=Ns, leng2=Ns, leng3=Ns, leng4=Nt, nclusters=0;
+int nconfig=0, selconfig=0;
+
+string f3dlistname;
+
+#include "3dclusters_init.hpp"
 
 // angle for rotation for the camerca direction
 float anglex = 0.0f;float angley = 0.0f;
@@ -57,7 +62,7 @@ double minx=-Ns - 0.5, maxx=Ns + 0.5,
 
 int mainWindow;
 
-int nconfig=0, selconfig=0;
+
 vector<string> filenames;
 
 vector<vector<vector<int > > > lpoints;
@@ -67,8 +72,6 @@ vector<vector<vector<int > > > pointsdisabled;
 vector<double> red, sred;
 vector<double> green, sgreen;
 vector<double> blue, sblue;
-
-int leng1=Ns, leng2=Ns, leng3=Ns, leng4=Nt, nclusters=0;
 
 int cnt=-1;
 
@@ -560,7 +563,6 @@ int init(){;
 	
 	nconfig=10; selconfig=0;
 	filenames.resize(nconfig);
-	string f3dlistname("cluster.list");
 	getFilelist(f3dlistname);
 	cluster3input(selconfig);
 	
@@ -577,7 +579,10 @@ int main(int argc, char **argv){
 	glutInitWindowSize(640,640);
 	mainWindow = glutCreateWindow("3d clusters");
 	
-	parameterInit(argc, argv);
+	if(parameterInit(argc, argv)!=0){
+		cout << "Error in parameterInit()!" << endl;
+		return 1;
+	}
 	init();
 
 	// Enter GLUT event processing cycle

@@ -31,7 +31,7 @@ char texthelp[]="Usage: 3dclusters.x [OPTION] ... [CLUSTERCONFIGLIST]\n"
 int parameterInit(int &argc, char *argv[]){
 	cout << endl;
 	cout << "3dclusters.x" << endl
-		<< "Visualization of clusters." << endl
+		<< "Visualization of clusters." << endl;
 
 	cout << "Initializing... " << endl;
 
@@ -91,7 +91,7 @@ int parameterInit(int &argc, char *argv[]){
 				break;
 
 			case 'n':
-				nconfigs = atoi(optarg);
+				nconfig = atoi(optarg);
 				break;
 
 			case 'v':
@@ -112,9 +112,10 @@ int parameterInit(int &argc, char *argv[]){
 	/* Print any remaining command line arguments (not options). */
 	if (optind < argc)
 	{
-		finname = argv[optind];
+		f3dlistname = argv[optind];
 	}else{
 		cout << "ERROR: No configuration file specified!" << endl;
+		return 1;
 	}
 
 	leng1=Ns; leng2=Ns; leng3=Ns; leng4=Nt;
