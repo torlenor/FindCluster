@@ -12,6 +12,7 @@
 #include <cstdlib>
 #include <string>
 #include <algorithm>
+#include <iomanip>
 
 using namespace std;
 
@@ -110,7 +111,20 @@ int main(int argc, char *argv[]){
 	
 		calcObservables(obs[n], clusterdata[n]);
 		// writeOneConfigResultsstdout(obs[n], clusterdata[n]);
+		
+		stringstream f3dclustername;
+		f3dclustername << "3dcluster_" << leng1 << "x" << leng4 << "_m" << setprecision(0) << fixed << n << ".data";
+		cluster3doutput(clusterdata[n], f3dclustername.str());
 	}
+	
+	ofstream f3dclusterlist;
+	f3dclusterlist.open("3dcluster.list");
+	for(int n=0;n<nmeas;n++){
+		stringstream f3dclustername;
+		f3dclustername << "3dcluster_" << leng1 << "x" << leng4 << "_m" << setprecision(0) << fixed << n << ".data";
+		f3dclusterlist << f3dclustername.str() << endl;
+	}
+	f3dclusterlist.close();
 
 	calcExp();
 
