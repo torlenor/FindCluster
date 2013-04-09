@@ -72,6 +72,8 @@ void writeClusterList(Clusterstruct &lclusterdata);
 
 void calcExp();
 
+void cluster3doutput(Clusterstruct &clusterdata, string f3dname);
+
 int latmap(int i1, int i2, int i3);
 
 double fraction = 1.0;
@@ -115,6 +117,9 @@ int main(int argc, char *argv[]){
 	cout << endl; 
 	writeClusterList(clusterdata[0]);
 
+	string f3dname("clusters.data");
+	cluster3doutput(clusterdata[0], f3dname);
+
 	delete [] clusterdata; clusterdata=0;
 	delete [] obs; obs=0;
 	
@@ -135,6 +140,26 @@ void writeClusterList(Clusterstruct &lclusterdata){
 	}
 
 	cout << "Total number of clusters = " << lclusterdata.clustermembers.size() << endl;
+}
+
+void cluster3doutput(Clusterstruct &lclusterdata, string f3dname){
+	ofstream f3d;
+	int is;
+	f3d.open(f3dname.c_str());
+	if(f3d.is_open()){
+		f3d << leng1 << " " << leng2 << " " << leng3 << " " << leng4 << endl;
+		f3d << lclusterdata.clustermembers.size() << endl;
+		for(int i1=0;i1<leng1;i1++)
+		for(int i2=0;i2<leng2;i2++)
+		for(int i3=0;i3<leng3;i3++){
+			is = i1 + i2*leng1 + i3*leng1*leng2;
+
+			f3d << i1 << " " << i2 << " " << i3 << " " << lclusterdata.isincluster[is] << endl;
+		}
+		f3d.close();
+	}else{
+		cout << "WARNING: Could not open 3dcluster file!" << endl;
+	}
 }
 
 void calcExp(){
