@@ -55,17 +55,16 @@ double pointsize=10; // Sphere radius
 
 double alpha=1;
 
-
 double minx=-Ns - 0.5, maxx=Ns + 0.5,
       	miny=-Ns - 0.5,maxy=Ns + 0.5,
 	minz=-Ns - 0.5,maxz=Ns + 0.5;
 
 int mainWindow;
 
-
 vector<string> filenames;
 
 vector<vector<vector<int > > > lpoints;
+vector<int> isinsector;
 
 vector<vector<vector<int > > > pointsdisabled;
 
@@ -74,6 +73,12 @@ vector<double> green, sgreen;
 vector<double> blue, sblue;
 
 int cnt=-1;
+
+void cluster3input(int config);
+
+int onecluster=0;
+
+#include "3dclusters_keys.hpp"
 
 void calcSphereColor(double &red, double &green, double &blue, int cluster);
 
@@ -88,12 +93,14 @@ void cluster3input(int config){
 		if(cleng1 != leng1 || cleng2 != leng2 || cleng3 != leng3 || cleng4 != leng4)
 			cout << "WARNING: Lattice size missmatch!" << endl;
 		
-		int ii1, ii2, ii3, cluster;
+		int ii1, ii2, ii3, cluster, sector, is;
 		for(int i1=0;i1<leng1;i1++)
 		for(int i2=0;i2<leng2;i2++)
 		for(int i3=0;i3<leng3;i3++){
-			f3d >> ii1 >> ii2 >> ii3 >> cluster;
+			f3d >> ii1 >> ii2 >> ii3 >> cluster >> sector;
 			lpoints.at(ii1).at(ii2).at(ii3) = cluster;
+			is = i1 + i2*leng1 + i3*leng1*leng2;
+			isinsector.at(is) = sector;
 		}
 		f3d.close();
 	}else{
@@ -111,7 +118,23 @@ void cluster3input(int config){
 	sgreen=green;
 	sblue=blue;
 	
-	cnt=-1;
+	if(cnt>-1 && cnt<nclusters){
+		if(onecluster==1){
+			for(int i=0;i<nclusters;i++){
+				red[i]=0;
+				green[i]=0;
+				blue[i]=0;
+			}
+			red[cnt]=1; green[cnt]=1; blue[cnt]=1;		
+		}else{
+			red=sred;
+			green=sgreen;
+			blue=sblue;
+			red[cnt]=1; green[cnt]=1; blue[cnt]=1;
+		}
+	}else{
+		cnt=-1;	
+	}
 }
 
 void mouseMove(int x, int y) {
@@ -146,114 +169,6 @@ void mouseButton(int button, int state, int x, int y) {
                         yOrigin = y;
                 }
         }
-}
-
-
-void processNormalKeys(unsigned char key, int x, int y){
-	if(key == 27){
-		exit(0);
-	}else if(key == '+'){
-		int mod = glutGetModifiers();
-		if (mod == GLUT_ACTIVE_ALT){
-			 alpha += 0.1;
-			 if(alpha > 1.0)
-			 	alpha=1.0;
-		}
-		else{
-			sphereradius += 0.1;
-			pointsize += 1.0;
-			if(sphereradius > 1.0)
-				sphereradius = 1.0;
-		}
-		cout << "Radius = " << pointsize << " Alpha = "  << alpha << endl;
-	}else if(key == '-'){
-		int mod = glutGetModifiers();
-		if (mod == GLUT_ACTIVE_ALT){
-			 alpha -= 0.1;
-			 if(alpha < 0.0)
-			 	alpha=0;
-		}
-		else{
-			sphereradius -= 0.1;
-			pointsize -= 1.0;
-			if(pointsize < 0.0)
-				pointsize = 1.0;
-			if(sphereradius < 0.0)
-				sphereradius = 0.0;
-		}
-		cout << "Radius = " << pointsize << " Alpha = "  << alpha << endl;
-	}else if(key == 'c' || key == 'C' ){
-		int mod = glutGetModifiers();
-		if (mod == GLUT_ACTIVE_SHIFT){
-			cnt--;
-			
-			if(cnt < 0)
-				cnt = nclusters-1;
-			red=sred;
-			green=sgreen;
-			blue=sblue;
-			red[cnt]=1; green[cnt]=1; blue[cnt]=1;
-			cout << "Cluster " << cnt << " selected!" << endl;
-		}else{
-			cnt++;
-			
-			if(cnt > nclusters-1)
-				cnt = 0;
-			red=sred;
-			green=sgreen;
-			blue=sblue;
-			red[cnt]=1; green[cnt]=1; blue[cnt]=1;
-			cout << "Cluster " << cnt << " selected!" << endl;
-		}
-	}else if(key == 's' || key == 'S' ){
-		int mod = glutGetModifiers();
-		if (mod == GLUT_ACTIVE_SHIFT){
-			cnt--;
-			
-			if(cnt < 0)
-				cnt = nclusters-1;
-			for(int i=0;i<nclusters;i++){
-				red[i]=0;
-				green[i]=0;
-				blue[i]=0;
-			}
-			red[cnt]=1; green[cnt]=1; blue[cnt]=1;
-			cout << "Cluster " << cnt << " selected!" << endl;
-		}else{
-			cnt++;
-			
-			if(cnt > nclusters-1)
-				cnt = 0;
-			for(int i=0;i<nclusters;i++){
-				red[i]=0;
-				green[i]=0;
-				blue[i]=0;
-			}
-			red[cnt]=1; green[cnt]=1; blue[cnt]=1;
-			cout << "Cluster " << cnt << " selected!" << endl;
-		}	
-	}else if(key == 'r'){
-		cnt=-1;
-		red=sred;
-		green=sgreen;
-		blue=sblue;
-		cout << "No Cluster selected!" << endl;
-	}else if(key == 'n' || key == 'N' ){
-		int mod = glutGetModifiers();
-		if (mod == GLUT_ACTIVE_SHIFT){
-			selconfig--;
-			if(selconfig==-1)
-				selconfig=nconfig-1;
-			cout << "Loading configuration " << selconfig << " ..." << endl;
-			cluster3input(selconfig);
-		}else{
-			selconfig++;
-			if(selconfig==nconfig)
-				selconfig=0;
-			cout << "Loading configuration " << selconfig << " ..." << endl;
-			cluster3input(selconfig);
-		}
-	}	
 }
 
 void pressKey(int key, int x, int y){
@@ -386,6 +301,7 @@ void drawBouncingPoint() {
        		}
        		int is = i1 + i2*leng1 + i3*leng1*leng2;
        		if(red[lpoints[i1][i2][i3]]>0 || green[lpoints[i1][i2][i3]]>0 || blue[lpoints[i1][i2][i3]]>0){
+       		if(isinsector[is]<2){
        			if(red[lpoints[i1][i2][i3]]==1 && green[lpoints[i1][i2][i3]]==1 && blue[lpoints[i1][i2][i3]]==1){
        				glDepthMask(GL_TRUE);
 				//glEnable( GL_BLEND );
@@ -399,6 +315,7 @@ void drawBouncingPoint() {
 			}
 			// drawSphere(i1,i2,i3);
 			glVertex3f(i1-(double)Ns/2.0+0.5, i2-(double)Ns/2.0+0.5, i3-(double)Ns/2.0+0.5);
+		}
 		}
 	}
 	glEnd();
@@ -559,9 +476,10 @@ int init(){;
 			lpoints[i1][i2].resize(leng3);
 		}
 	}
+	isinsector.resize(leng1*leng2*leng3);
 	
 	
-	nconfig=10; selconfig=0;
+	selconfig=0;
 	filenames.resize(nconfig);
 	getFilelist(f3dlistname);
 	cluster3input(selconfig);

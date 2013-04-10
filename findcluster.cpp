@@ -42,6 +42,9 @@ struct Clusterstruct{
 
 	vector<int> percolatingclusters; // Percolating clusters
 	vector<int> percclusterdirection;
+	
+	vector<int> sortedcluster;
+	vector<int> isinsortedcluster;
 };
 
 Clusterstruct *clusterdata;
@@ -70,6 +73,8 @@ void calcObservables(Observablestruct &lobs, Clusterstruct &lclusterdata);
 void writeOneConfigResultsstdout(Observablestruct &lobs, Clusterstruct &lclusterdata);
 
 void writeClusterList(Clusterstruct &lclusterdata);
+
+void sortClusterSize(Clusterstruct &lclusterdata);
 
 void calcExp();
 
@@ -112,6 +117,8 @@ int main(int argc, char *argv[]){
 		calcObservables(obs[n], clusterdata[n]);
 		// writeOneConfigResultsstdout(obs[n], clusterdata[n]);
 		
+		sortClusterSize(clusterdata[n]);
+		
 		stringstream f3dclustername;
 		f3dclustername << "3dcluster_" << leng1 << "x" << leng4 << "_m" << setprecision(0) << fixed << n << ".data";
 		cluster3doutput(clusterdata[n], f3dclustername.str());
@@ -129,7 +136,8 @@ int main(int argc, char *argv[]){
 	calcExp();
 
 	cout << endl; 
-	writeClusterList(clusterdata[0]);
+	// writeClusterList(clusterdata[0]);
+	cout << "Total number of clusters = " << clusterdata[0].clustermembers.size() << endl;
 
 	string f3dname("clusters.data");
 	cluster3doutput(clusterdata[0], f3dname);
@@ -138,6 +146,37 @@ int main(int argc, char *argv[]){
 	delete [] obs; obs=0;
 	
 	return 0;
+}
+
+void sortClusterSize(Clusterstruct &lclusterdata){
+	lclusterdata.sortedcluster.resize(lclusterdata.clustermembers.size());
+	lclusterdata.isinsortedcluster.resize(Nspace);
+	
+	for(unsigned int c=0; c<lclusterdata.clustermembers.size(); c++){
+		lclusterdata.sortedcluster[c]=c;
+	}
+	
+	int tmp1;
+	bool notsorted=true;
+	while(notsorted){
+		notsorted=false;
+		for(unsigned int c=0;c<lclusterdata.sortedcluster.size()-1;c++){
+			if(lclusterdata.clustermembers[lclusterdata.sortedcluster[c+1]].size()<lclusterdata.clustermembers[lclusterdata.sortedcluster[c]].size()){
+				tmp1=lclusterdata.sortedcluster[c+1];
+				lclusterdata.sortedcluster[c+1]=lclusterdata.sortedcluster[c];
+				lclusterdata.sortedcluster[c]=tmp1;
+				notsorted=true;
+			}
+		}
+	}
+	
+	reverse(lclusterdata.sortedcluster.begin(),lclusterdata.sortedcluster.end());
+	
+	for(unsigned c=0; c<lclusterdata.sortedcluster.size(); c++){
+		for(unsigned member=0; member < lclusterdata.clustermembers[lclusterdata.sortedcluster[c]].size(); member++){
+			lclusterdata.isinsortedcluster[lclusterdata.clustermembers[lclusterdata.sortedcluster[c]][member]] = c;
+		}
+	}
 }
 
 void writeClusterList(Clusterstruct &lclusterdata){
@@ -152,8 +191,6 @@ void writeClusterList(Clusterstruct &lclusterdata){
 	for(unsigned c=0; c<lclusterdata.clustermembers.size(); c++){
 		cout << csize[c] << endl;
 	}
-
-	cout << "Total number of clusters = " << lclusterdata.clustermembers.size() << endl;
 }
 
 void cluster3doutput(Clusterstruct &lclusterdata, string f3dname){
@@ -168,7 +205,8 @@ void cluster3doutput(Clusterstruct &lclusterdata, string f3dname){
 		for(int i3=0;i3<leng3;i3++){
 			is = i1 + i2*leng1 + i3*leng1*leng2;
 
-			f3d << i1 << " " << i2 << " " << i3 << " " << lclusterdata.isincluster[is] << endl;
+			// f3d << i1 << " " << i2 << " " << i3 << " " << lclusterdata.isincluster[is] << " " << lclusterdata.isinsector[is] << endl;
+			f3d << i1 << " " << i2 << " " << i3 << " " << lclusterdata.isinsortedcluster[is] << " " << lclusterdata.isinsector[is] << endl;
 		}
 		f3d.close();
 	}else{
