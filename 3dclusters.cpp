@@ -99,7 +99,7 @@ void cluster3input(int config){
 		for(int i3=0;i3<leng3;i3++){
 			f3d >> ii1 >> ii2 >> ii3 >> cluster >> sector;
 			lpoints.at(ii1).at(ii2).at(ii3) = cluster;
-			is = i1 + i2*leng1 + i3*leng1*leng2;
+			is = ii1 + ii2*leng1 + ii3*leng1*leng2;
 			isinsector.at(is) = sector;
 		}
 		f3d.close();
@@ -274,7 +274,7 @@ void drawBouncingPoint() {
 
 	//glPointSize(sphereradius);
 	//glEnable(GL_POINT_SMOOTH);
-	
+
 	glPointSize(pointsize);
 
 	if(alpha<1.0){
@@ -319,7 +319,7 @@ void drawBouncingPoint() {
 		}
 	}
 	glEnd();
-	
+
 	glDepthMask(GL_TRUE);
 }
 
@@ -440,7 +440,7 @@ int getFilelist(string f3dlistname){
 	}
 }
 
-int init(){;
+int openglInit(){
 	// OpenGL stuff
 	glEnable(GL_DEPTH_TEST);
 	glDepthMask(GL_TRUE);
@@ -467,7 +467,9 @@ int init(){;
         glutSpecialUpFunc(releaseKey);
 	glutMouseFunc(mouseButton);
 	glutMotionFunc(mouseMove);
-	
+}
+
+int init(){;
 	// Data
 	lpoints.resize(leng1);
 	for(int i1=0;i1<leng1;i1++){
@@ -501,6 +503,8 @@ int main(int argc, char **argv){
 		cout << "Error in parameterInit()!" << endl;
 		return 1;
 	}
+	
+	openglInit();
 	init();
 
 	// Enter GLUT event processing cycle

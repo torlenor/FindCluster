@@ -1,6 +1,22 @@
 #ifndef THREEDCLUSTERS_KEYS_HPP
 #define THREEDCLUSTERS_KEYS_HPP
 
+void setHightlightCluster(int cnt){
+	red=sred;
+	green=sgreen;
+	blue=sblue;
+	red[cnt]=1; green[cnt]=1; blue[cnt]=1;
+}
+
+void setOnlyCluster(int cnt){
+	for(int i=0;i<nclusters;i++){
+		red[i]=0;
+		green[i]=0;
+		blue[i]=0;
+	}
+	red[cnt]=1; green[cnt]=1; blue[cnt]=1;
+}
+
 void processNormalKeys(unsigned char key, int x, int y){
 	if(key == 27){
 		exit(0);
@@ -41,20 +57,14 @@ void processNormalKeys(unsigned char key, int x, int y){
 			cnt--;
 			if(cnt < 0)
 				cnt = nclusters-1;
-			red=sred;
-			green=sgreen;
-			blue=sblue;
-			red[cnt]=1; green[cnt]=1; blue[cnt]=1;
+			setHightlightCluster(cnt);
 			cout << "Cluster " << cnt << " selected!" << endl;
 		}else{
 			onecluster=0;
 			cnt++;
 			if(cnt > nclusters-1)
 				cnt = 0;
-			red=sred;
-			green=sgreen;
-			blue=sblue;
-			red[cnt]=1; green[cnt]=1; blue[cnt]=1;
+			setHightlightCluster(cnt);
 			cout << "Cluster " << cnt << " selected!" << endl;
 		}
 	}else if(key == 's' || key == 'S' ){
@@ -65,24 +75,14 @@ void processNormalKeys(unsigned char key, int x, int y){
 			cnt--;
 			if(cnt < 0)
 				cnt = nclusters-1;
-			for(int i=0;i<nclusters;i++){
-				red[i]=0;
-				green[i]=0;
-				blue[i]=0;
-			}
-			red[cnt]=1; green[cnt]=1; blue[cnt]=1;
+			setOnlyCluster(cnt);
 			cout << "Cluster " << cnt << " selected!" << endl;
 		}else{
 			onecluster=1;
 			cnt++;
 			if(cnt > nclusters-1)
 				cnt = 0;
-			for(int i=0;i<nclusters;i++){
-				red[i]=0;
-				green[i]=0;
-				blue[i]=0;
-			}
-			red[cnt]=1; green[cnt]=1; blue[cnt]=1;
+			setOnlyCluster(cnt);
 			cout << "Cluster " << cnt << " selected!" << endl;
 		}	
 	}else if(key == 'r'){
