@@ -173,8 +173,8 @@ void mouseButton(int button, int state, int x, int y) {
 
 void pressKey(int key, int x, int y){
         switch (key) {
-                case GLUT_KEY_UP : deltaMove = 1.5f; break;
-                case GLUT_KEY_DOWN : deltaMove = -1.5f; break;
+                case GLUT_KEY_UP : deltaMove = 5.0f; break;
+                case GLUT_KEY_DOWN : deltaMove = -5.0f; break;
                 case GLUT_KEY_LEFT : deltaAngley = 1.5f; break;
                 case GLUT_KEY_RIGHT : deltaAngley = -1.5f; break;                
         }   
@@ -202,7 +202,7 @@ void computePos(float deltaMove) {
 	        if(anglex<0) anglex+=360;
 	        if(angley<0) angley+=360;
 	        
-	        cout << "anglex = " << anglex << " angley = " << angley << endl;
+//	        cout << "anglex = " << anglex << " angley = " << angley << endl;
 }
 
 void calcSphereColor(double &red, double &green, double &blue, int cluster){
@@ -414,7 +414,7 @@ void changeSize(int w, int h){
 	// Set the correct perspective
 	// gluPerspective(field of view angle in yz plane, 
 	// 			ratio, near, far clipping planes)
-	gluPerspective(60,ratio,1,100);
+	gluPerspective(60,ratio,1,200);
 
 	// Get back to the Modelview matrix
 	glMatrixMode(GL_MODELVIEW);
