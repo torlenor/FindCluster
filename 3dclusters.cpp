@@ -107,12 +107,16 @@ void cluster3input(int config){
 		cout << "WARNING: Could not open 3dcluster file!" << endl;
 	}
 	
-	red.resize(nclusters);
-	green.resize(nclusters);
-	blue.resize(nclusters);	
+	red.resize(leng1*leng2*leng3);
+	green.resize(leng1*leng2*leng3);
+	blue.resize(leng1*leng2*leng3);	
 	
-	for(int c=0;c<nclusters;c++)
-		calcSphereColor(red[c], green[c], blue[c], c);
+	for(int i1=0;i1<leng1;i1++)
+	for(int i2=0;i2<leng2;i2++)
+	for(int i3=0;i3<leng3;i3++){
+		int is = i1 + i2*leng1 + i3*leng1*leng2;
+		calcSphereColor(red[is], green[is], blue[is], lpoints.at(i1).at(i2).at(i3));
+	}
 		
 	sred=red;
 	sgreen=green;
@@ -120,17 +124,9 @@ void cluster3input(int config){
 	
 	if(cnt>-1 && cnt<nclusters){
 		if(onecluster==1){
-			for(int i=0;i<nclusters;i++){
-				red[i]=0;
-				green[i]=0;
-				blue[i]=0;
-			}
-			red[cnt]=1; green[cnt]=1; blue[cnt]=1;		
+			setOnlyCluster(cnt);		
 		}else{
-			red=sred;
-			green=sgreen;
-			blue=sblue;
-			red[cnt]=1; green[cnt]=1; blue[cnt]=1;
+			setHightlightCluster(cnt);
 		}
 	}else{
 		cnt=-1;	
@@ -300,18 +296,18 @@ void drawBouncingPoint() {
        			i1=ri1; i2=ri2; i3=ri3;
        		}
        		int is = i1 + i2*leng1 + i3*leng1*leng2;
-       		if(red[lpoints[i1][i2][i3]]>0 || green[lpoints[i1][i2][i3]]>0 || blue[lpoints[i1][i2][i3]]>0){
+       		if(red[is]>0 || green[is]>0 || blue[is]>0){
        		if(isinsector[is]<2){
-       			if(red[lpoints[i1][i2][i3]]==1 && green[lpoints[i1][i2][i3]]==1 && blue[lpoints[i1][i2][i3]]==1){
+       			if(red[is]==1 && green[is]==1 && blue[is]==1){
        				glDepthMask(GL_TRUE);
 				//glEnable( GL_BLEND );
-				glColor4f(red[lpoints[i1][i2][i3]], green[lpoints[i1][i2][i3]], blue[lpoints[i1][i2][i3]], 1);
+				glColor4f(red[is], green[is], blue[is], 1);
 			}else{
 				if(alpha<1.0){
 					glDepthMask(GL_FALSE);
 				//	glDisable( GL_BLEND );
 				}
-				glColor4f(red[lpoints[i1][i2][i3]], green[lpoints[i1][i2][i3]], blue[lpoints[i1][i2][i3]], alpha);
+				glColor4f(red[is], green[is], blue[is], alpha);
 			}
 			// drawSphere(i1,i2,i3);
 			glVertex3f(i1-(double)Ns/2.0+0.5, i2-(double)Ns/2.0+0.5, i3-(double)Ns/2.0+0.5);

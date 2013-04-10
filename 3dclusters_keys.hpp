@@ -5,16 +5,68 @@ void setHightlightCluster(int cnt){
 	red=sred;
 	green=sgreen;
 	blue=sblue;
-	red[cnt]=1; green[cnt]=1; blue[cnt]=1;
+	for(int i1=0;i1<leng1;i1++)
+	for(int i2=0;i2<leng2;i2++)
+	for(int i3=0;i3<leng3;i3++){
+		int is = i1 + i2*leng1 + i3*leng1*leng2;
+		if(lpoints.at(i1).at(i2).at(i3)==cnt){
+			red[is]=1; green[is]=1; blue[is]=1;
+		}
+	}
 }
 
 void setOnlyCluster(int cnt){
-	for(int i=0;i<nclusters;i++){
-		red[i]=0;
-		green[i]=0;
-		blue[i]=0;
+	for(int i1=0;i1<leng1;i1++)
+	for(int i2=0;i2<leng2;i2++)
+	for(int i3=0;i3<leng3;i3++){
+		int is = i1 + i2*leng1 + i3*leng1*leng2;
+		if(lpoints.at(i1).at(i2).at(i3)!=cnt){
+		red[is]=0; green[is]=0; blue[is]=0;
+		}else{
+			red[is]=1; green[is]=1; blue[is]=1;
+		}
 	}
-	red[cnt]=1; green[cnt]=1; blue[cnt]=1;
+	
+}
+
+void setSectorColors(bool set){
+	if(set==true){
+		for(int i1=0;i1<leng1;i1++)
+		for(int i2=0;i2<leng2;i2++)
+		for(int i3=0;i3<leng3;i3++){
+			int is = i1 + i2*leng1 + i3*leng1*leng2;
+			if(isinsector[is] == -1){
+				red[is]=1; green[is]=0; blue[is]=0;
+			}else if(isinsector[is] == 0){
+				red[is]=0; green[is]=1; blue[is]=0;
+			}else if(isinsector[is] == 1){
+				red[is]=0; green[is]=0; blue[is]=1;
+			}
+		}
+	}else{
+		red=sred;
+		green=sgreen;
+		blue=sblue;
+	}
+}
+
+void setOnlySector(int sec){
+	for(int i1=0;i1<leng1;i1++)
+	for(int i2=0;i2<leng2;i2++)
+	for(int i3=0;i3<leng3;i3++){
+		int is = i1 + i2*leng1 + i3*leng1*leng2;
+		if(isinsector[is]!=sec){
+			red[is]=0; green[is]=0; blue[is]=0;
+		}else{
+			if(sec==-1){
+				red[is]=1; green[is]=0; blue[is]=0;
+			}else if(sec==0){
+				red[is]=0; green[is]=1; blue[is]=0;
+			}else if(sec==1){
+				red[is]=0; green[is]=0; blue[is]=1;
+			}
+		}
+	}
 }
 
 void processNormalKeys(unsigned char key, int x, int y){
@@ -68,7 +120,6 @@ void processNormalKeys(unsigned char key, int x, int y){
 			cout << "Cluster " << cnt << " selected!" << endl;
 		}
 	}else if(key == 's' || key == 'S' ){
-
 		int mod = glutGetModifiers();
 		if (mod == GLUT_ACTIVE_SHIFT){
 			onecluster=1;
@@ -108,16 +159,21 @@ void processNormalKeys(unsigned char key, int x, int y){
 		}
 	}else if(key == '1'){
 		// Select the sector -1
-
+		setOnlySector(-1);
 	}else if(key == '2'){
 		// Select the sector 0
-	
+		setOnlySector(0);
 	}else if(key == '3'){
 		// Select the sector 1
-	
-	}else if(key == 'c'){
+		setOnlySector(1);
+	}else if(key == 'z' || key == 'Z'){
 		// Sector colors
-		
+		int mod = glutGetModifiers();
+		if (mod == GLUT_ACTIVE_SHIFT){
+			setSectorColors(false);
+		}else{
+			setSectorColors(true);
+		}
 	}
 }
 
