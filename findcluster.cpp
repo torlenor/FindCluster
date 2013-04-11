@@ -25,6 +25,7 @@ int matrixdim=3, leng1=4, leng2=4, leng3=4, leng4=4, Nspace=4*4*4*4;
 int nmeas=1;
 
 bool detail=false; // Controlls if we want detailed information for every configuration
+bool doboxes=false; // Controlls if we want box counting calculations
 
 // Filename string vector
 vector<string> fevname;
@@ -34,6 +35,10 @@ vector<vector<complex<double> > > pollev;
 
 // Neib vector
 vector<vector<int> > neib;
+
+// Box size vector
+vector<int> boxsize;
+vector<int> boxes;
 
 // Vectors to store cluster information
 struct Clusterstruct{
@@ -60,6 +65,8 @@ struct Observablestruct{
 	double avgclustersize;
 
 	double cut;
+
+	vector<vector<int> > numberofboxes;
 };
 
 Observablestruct *obs;
@@ -72,6 +79,10 @@ void fillSectors(Clusterstruct &lclusterdata, double delta);
 void findClusters(Clusterstruct &lclusterdata);
 void checkClusters(Clusterstruct &lclusterdata);
 void findPercolatingCluster(Clusterstruct &lclusterdata);
+
+void clusterRadius(Observablestruct &lobs, Clusterstruct &lclusterdata);
+void hideInBoxes(Observablestruct &lobs, Clusterstruct &lclusterdata);
+
 void calcObservables(Observablestruct &lobs, Clusterstruct &lclusterdata);
 
 void writeConfigResultsstdout(Observablestruct &lobs, Clusterstruct &lclusterdata);
@@ -104,7 +115,7 @@ int main(int argc, char *argv[]){
 	cout << "------------------------------------------------------------------------------" << endl;
 	for(int n=0;n<nmeas;n++){
 		if(detail){
-			cout << endl <<"------------------------------------------------------------------------------" << endl;
+			cout << endl << "------------------------------------------------------------------------------" << endl;
 			cout << fevname[n] << "..." << endl;
 		}else{
 			cout << "\r" <<  fevname[n] << "..." << flush;
@@ -120,15 +131,22 @@ int main(int argc, char *argv[]){
 		findClusters(clusterdata[n]);	// Identify clusters
 		checkClusters(clusterdata[n]); // Check clusters
 		findPercolatingCluster(clusterdata[n]); // Find percolating clusters
-	
+
+		sortClusterSize(clusterdata[n]); // Sort clusters per number of members
+
+		// clusterRadius(obs[n], clusterdata[n]);
+
+		if(doboxes)
+			hideInBoxes(obs[n], clusterdata[n]);
+
 		calcObservables(obs[n], clusterdata[n]);
 		if(detail){
 			cout << endl << "Details for " << fevname[n] << ":" << endl;
 			writeConfigResultsstdout(obs[n], clusterdata[n]);
 		}
 		
-		sortClusterSize(clusterdata[n]);
-		
+	
+		// Write data for 3dclusters program
 		stringstream f3dclustername;
 		f3dclustername << "3dcluster_" << leng1 << "x" << leng4 << "_m" << setprecision(0) << fixed << n << ".data";
 		cluster3doutput(clusterdata[n], f3dclustername.str());
@@ -156,6 +174,112 @@ int main(int argc, char *argv[]){
 	delete [] obs; obs=0;
 	
 	return 0;
+}
+
+void getCoords(int is, int &i1, int &i2, int &i3){
+	i1 = (is % (leng1*leng2) ) % leng1;
+	i2 = (is % (leng1*leng2) ) / leng1;
+	i3 = is / (leng1*leng2);
+
+	if(is != i1 + i2*leng1 + i3*leng1*leng2)
+		cout << "ERROR: Problem in getCoords!" << endl;
+}
+
+void hideInBoxes(Observablestruct &lobs, Clusterstruct &lclusterdata){
+	lobs.numberofboxes.resize(boxsize.size());
+	lobs.numberofboxes.resize(lclusterdata.clustermembers.size());
+	for(unsigned int c=0;c<lobs.numberofboxes.size();c++){
+		lobs.numberofboxes[c].resize(boxsize.size());
+	}
+
+	int boxcnt=0, is, i1, i2, i3;
+	bool clusterinbox=false;
+	for(unsigned int c=0; c<lclusterdata.clustermembers.size();c++){
+		for(unsigned int size=0;size<boxsize.size();size++){
+			boxcnt=0;
+			// Loop over all boxes
+			for(int box1=0;box1<boxes[size];box1++)
+			for(int box2=0;box2<boxes[size];box2++)
+			for(int box3=0;box3<boxes[size];box3++){
+				clusterinbox=false;
+				// Loop over all points in box
+				for(int b1=0;b1<boxsize[size];b1++)
+				for(int b2=0;b2<boxsize[size];b2++)
+				for(int b3=0;b3<boxsize[size];b3++){
+					i1 = b1 + box1*boxsize[size];
+					i2 = b2 + box2*boxsize[size];
+					i3 = b3 + box3*boxsize[size];
+					
+					is = latmap(i1, i2, i3);
+
+					if(lclusterdata.isincluster[is] == (int)c)
+						clusterinbox=true;
+				}
+
+				if(clusterinbox==true)
+					boxcnt++;
+
+			} // Boxes in all directions
+			lobs.numberofboxes[c][size]=boxcnt;
+		} // Boxsize
+		if(lobs.numberofboxes[c][0] != (int)lclusterdata.clustermembers[c].size()){
+			cout << "ERROR: Number of boxes for boxsize = 1 has to be equal to number of cluster elements!" << endl;
+		}
+		if(lobs.numberofboxes[c][lobs.numberofboxes[c].size()-1] != 1){
+			cout << "ERROR: Number of boxes for boxsize = Ns has to be equal 1!" << endl;
+		}
+	} // Cluster
+}
+
+void searchMinCoords(Clusterstruct &lclusterdata, unsigned int &c, int &mini1, int &mini2, int &mini3){
+	mini1=leng1; mini2=leng2; mini3=leng3;
+	int i1=0, i2=0, i3=0;
+	for(unsigned int member=0; member<lclusterdata.clustermembers[c].size();member++){
+		getCoords(lclusterdata.clustermembers[c][member], i1, i2, i3);
+//		cout << i1 << " " << i2 << " " << i3 << endl;
+		if(i1<mini1){
+			mini1=i1;
+		}
+		if(i2<mini2){
+			mini2=i2;
+		}
+		if(i3<mini3){
+			mini3=i3;
+		}
+	}
+}
+
+void clusterRadius(Observablestruct &lobs, Clusterstruct &lclusterdata){
+	double centerofmass[3], radiussquare;
+	int i1, i2, i3, mini1, mini2, mini3;
+	for(unsigned int c=0;c<lclusterdata.clustermembers.size();c++){
+		radiussquare=0;
+		centerofmass[0]=0;
+		centerofmass[1]=0;
+		centerofmass[2]=0;
+		searchMinCoords(lclusterdata, c, mini1, mini2, mini3);
+		// cout << "mini1 = " << mini1 << " mini2 = " << mini2 << " mini3 = " << mini3 << endl;
+		// mini1=0; mini2=0;mini3=0;
+		for(unsigned int member=0; member<lclusterdata.clustermembers[c].size();member++){
+			getCoords(lclusterdata.clustermembers[c][member], i1, i2, i3);
+			centerofmass[0] += i1-mini1;
+			centerofmass[1] += i2-mini2;
+			centerofmass[2] += i3-mini3;
+		}
+		centerofmass[0] = centerofmass[0]/(double)lclusterdata.clustermembers[c].size();
+		centerofmass[1] = centerofmass[1]/(double)lclusterdata.clustermembers[c].size();
+		centerofmass[2] = centerofmass[2]/(double)lclusterdata.clustermembers[c].size();
+		
+		for(unsigned int member=0; member<lclusterdata.clustermembers[c].size();member++){
+			getCoords(lclusterdata.clustermembers[c][member], i1, i2, i3);
+			radiussquare += pow(centerofmass[0]-(i1-mini1), 2)
+					+ pow(centerofmass[1]-(i2-mini2), 2)
+					+ pow(centerofmass[2]-(i3-mini3), 2);
+		}
+		radiussquare = radiussquare/(double)lclusterdata.clustermembers[c].size();
+		cout << "Cluster " << c << " radius = " << setprecision(14) << sqrt(radiussquare) << endl;
+		cout << "Is sorted cluster = " << lclusterdata.isinsortedcluster[lclusterdata.clustermembers[c][0]] << endl;
+	}
 }
 
 void sortClusterSize(Clusterstruct &lclusterdata){
@@ -307,6 +431,16 @@ void writeConfigResultsstdout(Observablestruct &lobs, Clusterstruct &lclusterdat
 	cout << endl;
 	cout << "Average cluster size = " << lobs.avgclustersize << endl;
 	cout << "Largest cluster is cluster " << lobs.maxclusterid << " with " << lobs.maxclustersize << " members." << endl;
+			
+	if(doboxes){
+		cout << endl << "Boxes:" << endl;
+		for(unsigned int c=0; c<lclusterdata.clustermembers.size(); c++){
+			cout << "Cluster = " << c << "(sorted cluster = " << lclusterdata.isinsortedcluster[lclusterdata.clustermembers[c][0]] << " )"<< endl;
+			for(unsigned int size=0; size<boxsize.size(); size++){
+			cout << lobs.numberofboxes[c][size] << " boxes of size " << boxsize[size] << " needed." << endl;
+			}
+		}
+	}
 }
 
 void fillSectors(Clusterstruct &lclusterdata, double delta){

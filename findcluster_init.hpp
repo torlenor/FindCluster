@@ -16,6 +16,7 @@ char texthelp[]="Usage: findcluster.x [OPTION] ... [POLLEVCONFIG/POLLEVCONFIGLIS
 		"  -f, --fraction FRACTION    fraction (default = 1.0)\n"
 		"  -n, --nmeas NMEAS          number of configurations (default = 1)\n"
 		"  -d, --detail               write detailed output for every calculated configuration\n"
+		"  -b, --boxes                performes the box counting calculation (expensive)\n"
 		"\n"  
 		"  -h  --help                 display this help and exit\n"
 		"  -v  --version              output version information and exit\n"
@@ -54,6 +55,7 @@ int init(int &argc, char *argv[]){
 			{"fraction", required_argument, 0, 'f'},
 			{"nmeas", required_argument, 0, 'n'},
 			{"detail", no_argument, 0, 'd'},
+			{"boxes", no_argument, 0, 'b'},
 			/* These options set a flag. */
 			// {"free", no_argument, 0, 'f'},
 			// {"u0", required_argument, 0, 0},
@@ -65,7 +67,7 @@ int init(int &argc, char *argv[]){
 		/* getopt_long stores the option index here. */
 		int option_index = 0;
 
-		c = getopt_long (argc, argv, "s:t:f:n:hvd",
+		c = getopt_long (argc, argv, "s:t:f:n:hvdb",
 		long_options, &option_index);
 
 		/* Detect the end of the options. */
@@ -104,6 +106,10 @@ int init(int &argc, char *argv[]){
 
 			case 'd':
 				detail = true;
+				break;
+			
+			case 'b':
+				doboxes = true;
 				break;
 
 			case 'v':
@@ -187,6 +193,23 @@ int init(int &argc, char *argv[]){
 		// (&clusterdata[0])->clustersector will not be allocated here, but on the fly with push_back
 		(&clusterdata[n])->isincluster.resize(Nspace);
 		// (&clusterdata[0])->clustermembers will not be allocated here, but on the fly with push_back
+	}
+
+	if(doboxes){
+		// Boxsize array
+		for(int s=0;s<Ns;s++){
+			if( Ns % (s+1) == 0)
+				boxsize.push_back(s+1);
+		}
+		
+		for(unsigned int i=0;i<boxsize.size();i++){
+			boxes.push_back(Ns/boxsize[i]);
+		}
+	
+		#ifdef DEBUG
+		for(unsigned int i=0;i<boxsize.size();i++)
+			cout << "Size = " << boxsize[i] << " Nr. of boxes = " << boxes[i] << endl;
+		#endif
 	}
 	#ifdef DEBUG
 	cout << "done!" << endl;
