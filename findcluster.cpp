@@ -24,6 +24,8 @@ int matrixdim=3, leng1=4, leng2=4, leng3=4, leng4=4, Nspace=4*4*4*4;
 
 int nmeas=1;
 
+bool detail=false; // Controlls if we want detailed information for every configuration
+
 // Filename string vector
 vector<string> fevname;
 
@@ -41,10 +43,12 @@ struct Clusterstruct{
 	vector<vector<int> > clustermembers; // lclusterdata.clustermembers[c][i] stores the members/lattice points of the cluster c (0 < i < N_c)
 
 	vector<int> percolatingclusters; // Percolating clusters
-	vector<int> percclusterdirection;
+	vector<vector<int> > percolatingdirections;
 	
 	vector<int> sortedcluster;
 	vector<int> isinsortedcluster;
+
+	int nsectm1, nsect0, nsectp1;
 };
 
 Clusterstruct *clusterdata;
@@ -70,14 +74,12 @@ void checkClusters(Clusterstruct &lclusterdata);
 void findPercolatingCluster(Clusterstruct &lclusterdata);
 void calcObservables(Observablestruct &lobs, Clusterstruct &lclusterdata);
 
-void writeOneConfigResultsstdout(Observablestruct &lobs, Clusterstruct &lclusterdata);
-
+void writeConfigResultsstdout(Observablestruct &lobs, Clusterstruct &lclusterdata);
 void writeClusterList(Clusterstruct &lclusterdata);
-
-void sortClusterSize(Clusterstruct &lclusterdata);
 
 void calcExp();
 
+void sortClusterSize(Clusterstruct &lclusterdata);
 void cluster3doutput(Clusterstruct &clusterdata, string f3dname);
 
 int latmap(int i1, int i2, int i3);
@@ -99,9 +101,14 @@ int main(int argc, char *argv[]){
 	
 	// Main part
 	// Loop over all nmeas configurations
+	cout << "------------------------------------------------------------------------------" << endl;
 	for(int n=0;n<nmeas;n++){
-		cout << "------------------------------------------------------------------------------" << endl;
-		cout << "Working on configuration " << fevname[n] << "..." << endl;
+		if(detail){
+			cout << endl <<"------------------------------------------------------------------------------" << endl;
+			cout << fevname[n] << "..." << endl;
+		}else{
+			cout << "\r" <<  fevname[n] << "..." << flush;
+		}
 		if(readPollEvBinary(leng1, leng2, leng3, leng4, matrixdim, pollev, fevname[n]) != 0){
 			cout << "ERROR: Problems with writePollEvBinary !" << endl;
 			return 1;
@@ -115,7 +122,10 @@ int main(int argc, char *argv[]){
 		findPercolatingCluster(clusterdata[n]); // Find percolating clusters
 	
 		calcObservables(obs[n], clusterdata[n]);
-		// writeOneConfigResultsstdout(obs[n], clusterdata[n]);
+		if(detail){
+			cout << endl << "Details for " << fevname[n] << ":" << endl;
+			writeConfigResultsstdout(obs[n], clusterdata[n]);
+		}
 		
 		sortClusterSize(clusterdata[n]);
 		
@@ -123,7 +133,8 @@ int main(int argc, char *argv[]){
 		f3dclustername << "3dcluster_" << leng1 << "x" << leng4 << "_m" << setprecision(0) << fixed << n << ".data";
 		cluster3doutput(clusterdata[n], f3dclustername.str());
 	}
-	
+
+	// Write clusterfilenamelist for 3dcluster program
 	ofstream f3dclusterlist;
 	f3dclusterlist.open("3dcluster.list");
 	for(int n=0;n<nmeas;n++){
@@ -133,11 +144,10 @@ int main(int argc, char *argv[]){
 	}
 	f3dclusterlist.close();
 
+	cout << endl;
+	cout << "------------------------------------------------------------------------------" << endl;
+	
 	calcExp();
-
-	cout << endl; 
-	// writeClusterList(clusterdata[0]);
-	cout << "Total number of clusters = " << clusterdata[0].clustermembers.size() << endl;
 
 	string f3dname("clusters.data");
 	cluster3doutput(clusterdata[0], f3dname);
@@ -205,7 +215,6 @@ void cluster3doutput(Clusterstruct &lclusterdata, string f3dname){
 		for(int i3=0;i3<leng3;i3++){
 			is = i1 + i2*leng1 + i3*leng1*leng2;
 
-			// f3d << i1 << " " << i2 << " " << i3 << " " << lclusterdata.isincluster[is] << " " << lclusterdata.isinsector[is] << endl;
 			f3d << i1 << " " << i2 << " " << i3 << " " << lclusterdata.isinsortedcluster[is] << " " << lclusterdata.isinsector[is] << endl;
 		}
 		f3d.close();
@@ -243,11 +252,12 @@ void calcExp(){
 	cout << "Average cluster size = " << avgclustersize << ", Maximum cluster size = " << maxclustersize << endl;
 	cout << "Average cluster err  = " << avgclustersizeerr << ", Maximum cluster err  = " << maxclustersizeerr << endl;
 	cout << "Cut = " << cut << " Cut err = " << cuterr << endl;
-
 }
 
 void calcObservables(Observablestruct &lobs, Clusterstruct &lclusterdata){
+	#ifdef DEBUG	
 	cout << "Calculating observables... " << flush;
+	#endif
 	// Find largest cluster
 	int size=-1, largestcluster=-1;
 	for(unsigned int c=0; c<lclusterdata.clustermembers.size(); c++){
@@ -276,24 +286,33 @@ void calcObservables(Observablestruct &lobs, Clusterstruct &lclusterdata){
 	}
 
 	lobs.cut = cut/(double)Nspace;
-
+	#ifdef DEBUG
 	cout << "done!" << endl;
+	#endif
 }
 
-void writeOneConfigResultsstdout(Observablestruct &lobs, Clusterstruct &lclusterdata){
-	cout << endl << lclusterdata.percolatingclusters.size() << " of " << lclusterdata.clustermembers.size() << " clusters are percolating!" << endl;
+void writeConfigResultsstdout(Observablestruct &lobs, Clusterstruct &lclusterdata){
+	cout << "Number of points in the different sectors:" << endl;
+	cout << "Sector -1 # = " << lclusterdata.nsectm1 << " Sector 0 # = " << lclusterdata.nsect0 << " Sector 1 # = " << lclusterdata.nsectp1 << ", Sectors cut = " << Nspace - lclusterdata.nsectm1 - lclusterdata.nsect0 - lclusterdata.nsectp1 << endl << endl;
+
+	cout  << lclusterdata.percolatingclusters.size() << " of " << lclusterdata.clustermembers.size() << " clusters are percolating!" << endl;
 	for(unsigned int c=0;c<lclusterdata.percolatingclusters.size();c++){
-		cout << "Cluster " << lclusterdata.percolatingclusters[c] << " is percolating!" << endl;
+		cout << "Cluster " << lclusterdata.percolatingclusters[c] << " is percolating in direction ("
+			<< lclusterdata.percolatingdirections[c][0] << "," 
+			<< lclusterdata.percolatingdirections[c][1] << ","
+			<< lclusterdata.percolatingdirections[c][2] << ")!" << endl;
 		cout << "The cluster has " << lclusterdata.clustermembers[lclusterdata.percolatingclusters[c]].size() << " members and is in sector " << lclusterdata.clustersector[lclusterdata.percolatingclusters[c]] << " !" << endl;
 	}
 	
 	cout << endl;
 	cout << "Average cluster size = " << lobs.avgclustersize << endl;
-	cout << "Largest cluster is cluster " << lobs.maxclusterid << " with " << lobs.maxclustersize << " members." << endl << endl;
+	cout << "Largest cluster is cluster " << lobs.maxclusterid << " with " << lobs.maxclustersize << " members." << endl;
 }
 
 void fillSectors(Clusterstruct &lclusterdata, double delta){
+	#ifdef DEBUG
 	cout << "Categorizing lattice points by sector (delta = " << delta << " )... " << flush;
+	#endif
 
 	int csectp1=0;
 	int csectm1=0;
@@ -327,16 +346,16 @@ void fillSectors(Clusterstruct &lclusterdata, double delta){
 		}
 	}
 	
-//	#ifdef DEBUG
-	cout << "Sector 1 # : " << csectp1 << " , Sector 0 # : " << csect0 << " , Sector -1 # : " << csectm1 << endl;
-//	#endif
-	
+	lclusterdata.nsectm1=csectm1; lclusterdata.nsect0=csect0; lclusterdata.nsectp1=csectp1;
+	#ifdef DEBUG
 	cout << "done!" << endl;
+	#endif
 }
 
 void findPercolatingCluster(Clusterstruct &lclusterdata){
-	// Idea from Fortran code
+	#ifdef DBEUG
 	cout << "Searching for percolating clusters... " << flush;
+	#endif
 	
 	int is=0;
 	
@@ -369,7 +388,7 @@ void findPercolatingCluster(Clusterstruct &lclusterdata){
 		}
 	}
 	
-	int sum1, sum2, sum3;
+	int sum1, sum2, sum3, percclustercnt=-1;
 	for(unsigned int c=0;c<lclusterdata.clustermembers.size();c++){
 		sum1=0; sum2=0; sum3=0;
 		for(int i1=0;i1<leng1;i1++)
@@ -380,19 +399,37 @@ void findPercolatingCluster(Clusterstruct &lclusterdata){
 			sum3 += members[c][2][i3];
 			
 		if(sum1 == leng1 || sum2 == leng2 || sum3 == leng3){
+			percclustercnt++;
 			lclusterdata.percolatingclusters.push_back(c);
+			lclusterdata.percolatingdirections.push_back(vector<int>());
+			lclusterdata.percolatingdirections[percclustercnt].resize(3);
+			lclusterdata.percolatingdirections[percclustercnt][0]=0;
+			lclusterdata.percolatingdirections[percclustercnt][1]=0;
+			lclusterdata.percolatingdirections[percclustercnt][2]=0;
+			if(sum1 == leng1)
+				lclusterdata.percolatingdirections[percclustercnt][0]=1;
+			if(sum2 == leng2)
+				lclusterdata.percolatingdirections[percclustercnt][1]=1;
+			if(sum3 == leng3)
+				lclusterdata.percolatingdirections[percclustercnt][2]=1;
 			#ifdef DEBUG
 			cout << "sum1 = " << sum1 << " sum2 = " << sum2 << " sum3 = " << sum3 << endl;
 			cout << "Cluster c = " << c << " added!" << endl;
+			cout << "Percolating in direction (" << lclusterdata.percolatingdirections[percclustercnt][0] << ","
+				<< lclusterdata.percolatingdirections[percclustercnt][1] << "," 
+				<< lclusterdata.percolatingdirections[percclustercnt][2] << ")." << endl;
 			#endif
 		}
 	}
-	
+	#ifdef DBEUG	
 	cout << "done!" << endl;
+	#endif
 }
 
 void findClusters(Clusterstruct &lclusterdata){
+	#ifdef DEBUG
 	cout << "Finding clusters... " << flush;
+	#endif
 	int sector = 0, cluster = 0, memberis = 0, isneib = 0;
 
 	vector<bool> isfiled;
@@ -448,12 +485,15 @@ void findClusters(Clusterstruct &lclusterdata){
 		if(isfiled[is] == false)
 			cout << "WARNING: Some points did not get filled!" << endl;
 	}
-	
+	#ifdef DEBUG	
 	cout << "done!" << endl;
+	#endif
 }
 
 void checkClusters(Clusterstruct &lclusterdata){
+	#ifdef DEBUG	
 	cout << "Checking clusters... " << flush;
+	#endif
 
 	for(int is=0;is<Nspace;is++){
 		if(lclusterdata.isincluster[is] < 0)
@@ -495,7 +535,9 @@ void checkClusters(Clusterstruct &lclusterdata){
 		cout << "WARNING: Problem with clustermember IDs!" << endl;
 	}
 	
+	#ifdef DEBUG	
 	cout << "done!" << endl;
+	#endif
 }
 
 int latmap(int i1, int i2, int i3){

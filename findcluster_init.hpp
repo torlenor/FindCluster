@@ -15,6 +15,7 @@ char texthelp[]="Usage: findcluster.x [OPTION] ... [POLLEVCONFIG/POLLEVCONFIGLIS
 		"  -t, --Nt TSIZE             temporal lattice extent (default = 4)\n"
 		"  -f, --fraction FRACTION    fraction (default = 1.0)\n"
 		"  -n, --nmeas NMEAS          number of configurations (default = 1)\n"
+		"  -d, --detail               write detailed output for every calculated configuration\n"
 		"\n"  
 		"  -h  --help                 display this help and exit\n"
 		"  -v  --version              output version information and exit\n"
@@ -29,7 +30,7 @@ char texthelp[]="Usage: findcluster.x [OPTION] ... [POLLEVCONFIG/POLLEVCONFIGLIS
 int init(int &argc, char *argv[]){
 
 	cout << endl;
-	cout << "findcluster.x" << endl
+	cout << "findcluster.x " << MAJOR_VERSION << "." << MINOR_VERSION << "." << REVISION_VERSION << endl
 		<< "Finds cluster and performs calculations with it." << endl
 		<< "Uses Polyakov loop eigenvalues as input." << endl << endl;
 
@@ -52,6 +53,7 @@ int init(int &argc, char *argv[]){
 			{"Nt", required_argument, 0, 't'},
 			{"fraction", required_argument, 0, 'f'},
 			{"nmeas", required_argument, 0, 'n'},
+			{"detail", no_argument, 0, 'd'},
 			/* These options set a flag. */
 			// {"free", no_argument, 0, 'f'},
 			// {"u0", required_argument, 0, 0},
@@ -63,7 +65,7 @@ int init(int &argc, char *argv[]){
 		/* getopt_long stores the option index here. */
 		int option_index = 0;
 
-		c = getopt_long (argc, argv, "s:t:f:n:hv",
+		c = getopt_long (argc, argv, "s:t:f:n:hvd",
 		long_options, &option_index);
 
 		/* Detect the end of the options. */
@@ -98,6 +100,10 @@ int init(int &argc, char *argv[]){
 
 			case 'n':
 				nmeas = atoi(optarg);
+				break;
+
+			case 'd':
+				detail = true;
 				break;
 
 			case 'v':
@@ -163,20 +169,28 @@ int init(int &argc, char *argv[]){
 
 	fillNeib();
 
+	#ifdef DEBUG
 	cout << "Allocating 3d (Ns^3 * 3) lattice for Polyakov loop evs... " << flush;
+	#endif
 	pollev.resize(Nspace);
 	for(int is=0;is<Nspace;is++)
 		pollev[is].resize(matrixdim);
+	#ifdef DEBUG
 	cout << "done!" << endl;
+	#endif
 	
+	#ifdef DEBUG
 	cout << "Creating cluster data arrays..." << flush;
+	#endif
 	for(int n=0;n<nmeas;n++){
 		(&clusterdata[n])->isinsector.resize(Nspace);
 		// (&clusterdata[0])->clustersector will not be allocated here, but on the fly with push_back
 		(&clusterdata[n])->isincluster.resize(Nspace);
 		// (&clusterdata[0])->clustermembers will not be allocated here, but on the fly with push_back
 	}
+	#ifdef DEBUG
 	cout << "done!" << endl;
+	#endif
 	
 	return 0;
 }

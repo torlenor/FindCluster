@@ -12,7 +12,9 @@ int writePollEvBinary(string fevname);
 void checkPollEv();
 
 void checkPollEv(int leng1, int leng2, int leng3, int leng4, int matrixdim, vector<vector<complex<double> > > &pollev){
+	#ifdef DEBUG
 	cout << "Performing some checks on the evs... " << flush;
+	#endif
 
 	complex<double> sum;
 	double eps=1E-12;
@@ -32,8 +34,10 @@ void checkPollEv(int leng1, int leng2, int leng3, int leng4, int matrixdim, vect
 
 	if(abs(abs(sum) - 1.0) > eps)
 		cout << endl << "WARNING: Sum over all abs(ev)'s / 3Ns*Ns*Ns = " << abs(sum) << " > 1"  << endl;
-	
+
+	#ifdef DEBUG
 	cout << "done!" << endl;
+	#endif
 }
 
 int readPollEv(int leng1, int leng2, int leng3, int leng4, int matrixdim, vector<vector<complex<double> > > &pollev, string fevname){
@@ -64,7 +68,9 @@ int readPollEv(int leng1, int leng2, int leng3, int leng4, int matrixdim, vector
 }
 
 int readPollEvBinary(int leng1, int leng2, int leng3, int leng4, int matrixdim, vector<vector<complex<double> > > &pollev, string fevname){
+	#ifdef DEBUG
 	cout << "Reading 3d lattice with Polyakov loop evs... " << flush;
+	#endif
 	
 	int elems=0;
        	FILE* pFile;
@@ -104,8 +110,9 @@ int readPollEvBinary(int leng1, int leng2, int leng3, int leng4, int matrixdim, 
 
 		fclose(pFile);
 	}
-	
+	#ifdef DEBUG
 	cout << "done!" << endl;
+	#endif
 	
         return nindex + 4 - elems;
 }
