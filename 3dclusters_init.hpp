@@ -6,7 +6,7 @@
 #include <string.h>
 
 #define MAJOR_VERSION 0
-#define MINOR_VERSION 0
+#define MINOR_VERSION 1
 #define REVISION_VERSION 0
 
 char texthelp[]="Usage: 3dclusters.x [OPTION] ... [CLUSTERCONFIGLIST]\n"
