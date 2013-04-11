@@ -31,7 +31,7 @@ int parameterInit(int &argc, char *argv[]){
 	// Handle command line parameters
 	
 	cout << endl;
-	cout << "3dclusters.x" << endl
+	cout << "3dclusters.x "<< MAJOR_VERSION << "." << MINOR_VERSION << "." << REVISION_VERSION << endl
 		<< "Visualization of clusters." << endl;
 
 	cout << "Initializing... " << endl;
