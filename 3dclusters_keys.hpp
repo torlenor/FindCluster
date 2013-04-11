@@ -1,6 +1,10 @@
 #ifndef THREEDCLUSTERS_KEYS_HPP
 #define THREEDCLUSTERS_KEYS_HPP
 
+//
+// Stuff to handle the normal keys
+//
+
 void setHightlightCluster(int cnt){
 	red=sred;
 	green=sgreen;
@@ -105,14 +109,14 @@ void processNormalKeys(unsigned char key, int x, int y){
 	}else if(key == 'c' || key == 'C' ){
 		int mod = glutGetModifiers();
 		if (mod == GLUT_ACTIVE_SHIFT){
-			onecluster=0;
+			onecluster=false;
 			cnt--;
 			if(cnt < 0)
 				cnt = nclusters-1;
 			setHightlightCluster(cnt);
 			cout << "Cluster " << cnt << " selected!" << endl;
 		}else{
-			onecluster=0;
+			onecluster=false;
 			cnt++;
 			if(cnt > nclusters-1)
 				cnt = 0;
@@ -122,14 +126,14 @@ void processNormalKeys(unsigned char key, int x, int y){
 	}else if(key == 's' || key == 'S' ){
 		int mod = glutGetModifiers();
 		if (mod == GLUT_ACTIVE_SHIFT){
-			onecluster=1;
+			onecluster=true;
 			cnt--;
 			if(cnt < 0)
 				cnt = nclusters-1;
 			setOnlyCluster(cnt);
 			cout << "Cluster " << cnt << " selected!" << endl;
 		}else{
-			onecluster=1;
+			onecluster=true;
 			cnt++;
 			if(cnt > nclusters-1)
 				cnt = 0;

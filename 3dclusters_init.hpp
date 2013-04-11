@@ -15,7 +15,6 @@ char texthelp[]="Usage: 3dclusters.x [OPTION] ... [CLUSTERCONFIGLIST]\n"
 		"\n"
 		"Mandatory arguments to long options are mandatory for short options too.\n"
 		"  -s, --Ns SSIZE             spatial lattice extent (default = 8)\n"
-		"  -t, --Nt TSIZE             temporal lattice extent (default = 4)\n"
 		"  -n, --nmeas NMEAS          number of configurations (default = 1)\n"
 		"\n"  
 		"  -h  --help                 display this help and exit\n"
@@ -29,6 +28,8 @@ char texthelp[]="Usage: 3dclusters.x [OPTION] ... [CLUSTERCONFIGLIST]\n"
 		"Report bugs to hps@abyle.org\n";
 
 int parameterInit(int &argc, char *argv[]){
+	// Handle command line parameters
+	
 	cout << endl;
 	cout << "3dclusters.x" << endl
 		<< "Visualization of clusters." << endl;
@@ -48,7 +49,6 @@ int parameterInit(int &argc, char *argv[]){
 			/* These options don't set a flag.
 			We distinguish them by their indices. */
 			{"Ns", required_argument, 0, 's'},
-			{"Nt", required_argument, 0, 't'},
 			{"nmeas", required_argument, 0, 'n'},
 			/* These options set a flag. */
 			// {"free", no_argument, 0, 'f'},
@@ -61,7 +61,7 @@ int parameterInit(int &argc, char *argv[]){
 		/* getopt_long stores the option index here. */
 		int option_index = 0;
 
-		c = getopt_long (argc, argv, "s:t:n:hv",
+		c = getopt_long (argc, argv, "s:n:hv",
 		long_options, &option_index);
 
 		/* Detect the end of the options. */
@@ -84,10 +84,6 @@ int parameterInit(int &argc, char *argv[]){
 
 			case 's':
 				Ns = atoi(optarg);
-				break;
-
-			case 't':
-				Nt = atoi(optarg);
 				break;
 
 			case 'n':
@@ -118,7 +114,7 @@ int parameterInit(int &argc, char *argv[]){
 		return 1;
 	}
 
-	leng1=Ns; leng2=Ns; leng3=Ns; leng4=Nt;
+	leng1=Ns; leng2=Ns; leng3=Ns;
 
 	cout << "done!" << endl;
 	

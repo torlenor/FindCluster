@@ -13,70 +13,20 @@
 
 using namespace std;
 
-int Ns=40, Nt=8;
-
-int leng1=Ns, leng2=Ns, leng3=Ns, leng4=Nt, nclusters=0;
-int nconfig=0, selconfig=0;
-
-string f3dlistname;
-
+#include "3dclusters.h"
 #include "3dclusters_init.hpp"
-
-// angle for rotation for the camerca direction
-float anglex = 0.0f;float angley = 0.0f;
-
-// actual vector representing the camera's direction
-float lx=0.0f,lz=-1.0f, ly = 0.0f;
-
-// XZ position of the camera
-float x=0.0f, z=(double)Ns+20, y = 0.00f;
-
-unsigned frameCount = 0;
-
-double vtemp=0;
-
-float deltaAnglex = 0.0f;float deltaAngley = 0.0f;
-float deltaMove = 0;
-int xOrigin = -1; int yOrigin = -1; 
-
-const double FREQ=60; // Hz
-const double TIMERMSECS=1000*1/(double)FREQ;
-
-const double dt = TIMERMSECS/1000;;
-
-const int dim=3;
-
-// Stuff for the spheres
-double sphereradius=0.35; // Sphere radius
-const int sphereSlices=8; // Sphere slices around Z axis
-const int sphereStacks=8; //Sphere stacks/slices along the z axis
-
-double pointsize=10; // Sphere radius
-
-double alpha=1;
-
-double minx=-Ns - 0.5, maxx=Ns + 0.5,
-      	miny=-Ns - 0.5,maxy=Ns + 0.5,
-	minz=-Ns - 0.5,maxz=Ns + 0.5;
 
 int mainWindow;
 
+// Config names and data vectors
 vector<string> filenames;
-
 vector<vector<vector<int > > > lpoints;
 vector<int> isinsector;
 
-vector<vector<vector<int > > > pointsdisabled;
-
+// One color for every point (we store it two times)
 vector<double> red, sred;
 vector<double> green, sgreen;
 vector<double> blue, sblue;
-
-int cnt=-1;
-
-void cluster3input(int config);
-
-int onecluster=0;
 
 #include "3dclusters_keys.hpp"
 
@@ -90,7 +40,7 @@ void cluster3input(int config){
 		f3d >> cleng1 >> cleng2 >> cleng3 >> cleng4;
 		f3d >> nclusters;
 		
-		if(cleng1 != leng1 || cleng2 != leng2 || cleng3 != leng3 || cleng4 != leng4)
+		if(cleng1 != leng1 || cleng2 != leng2 || cleng3 != leng3)
 			cout << "WARNING: Lattice size missmatch!" << endl;
 		
 		int ii1, ii2, ii3, cluster, sector, is;
@@ -123,7 +73,7 @@ void cluster3input(int config){
 	sblue=blue;
 	
 	if(cnt>-1 && cnt<nclusters){
-		if(onecluster==1){
+		if(onecluster==true){
 			setOnlyCluster(cnt);		
 		}else{
 			setHightlightCluster(cnt);
@@ -197,8 +147,6 @@ void computePos(float deltaMove) {
 	        if(angley>360) angley-=360;
 	        if(anglex<0) anglex+=360;
 	        if(angley<0) angley+=360;
-	        
-//	        cout << "anglex = " << anglex << " angley = " << angley << endl;
 }
 
 void calcSphereColor(double &red, double &green, double &blue, int cluster){
@@ -240,8 +188,6 @@ void calcSphereColor(double &red, double &green, double &blue, int cluster){
 			red=v; green=p; blue=q;
 			break;
 	}
-	
-	// cout << red << " " << green << " " << blue << endl;
 }
 
 void drawSquare(){
@@ -258,30 +204,27 @@ void drawSphere(double x, double y, double z){
 	glPopMatrix();
 }
 
-void drawBouncingPoint() {
+void drawLattice() {
 	double x=0, crandx;
 	double y=0, crandy;
 	double z=0, crandz;
 	
+	// Depth buffer modification for solid objects
 	glDepthMask(GL_TRUE);
 	glEnable( GL_BLEND );
 	
+	// Draw wireframe box around the scene
 	drawSquare();
-
-	//glPointSize(sphereradius);
-	//glEnable(GL_POINT_SMOOTH);
 
 	glPointSize(pointsize);
 
-	if(alpha<1.0){
-		glDepthMask(GL_FALSE);
-	//	glDisable( GL_BLEND );
-	}
-	int i1=0, i2=0, i3=0;
+	int i1=0, i2=0, i3=0, is;
 	glBegin(GL_POINTS);
        	for(int ri1=0;ri1<leng1;ri1++)
        	for(int ri2=0;ri2<leng2;ri2++)
        	for(int ri3=0;ri3<leng3;ri3++){
+       		// Render the points from back to front, regardless of camera angle
+       		// TODO: Has to be implemented for rotations around x axis, too!
        		if( angley >= 0 && angley <= 45){
        			i1=ri3; i2=ri2; i3=ri1;
        		}else if(angley >= 45 && angley <= 135){
@@ -291,21 +234,22 @@ void drawBouncingPoint() {
        		}else if(angley >= 225 && angley <= 315){
        			i1=ri1; i2=ri2; i3=ri3;   
       		}else if(angley >= 315 && angley <= 360){
-      				i1=ri3; i2=ri2; i3=ri1;
+      			i1=ri3; i2=ri2; i3=ri1;
       		}else{
        			i1=ri1; i2=ri2; i3=ri3;
        		}
-       		int is = i1 + i2*leng1 + i3*leng1*leng2;
+       		
+       		is = i1 + i2*leng1 + i3*leng1*leng2;
        		if(red[is]>0 || green[is]>0 || blue[is]>0){
        		if(isinsector[is]<2){
        			if(red[is]==1 && green[is]==1 && blue[is]==1){
+       				// The white points are always solid
        				glDepthMask(GL_TRUE);
-				//glEnable( GL_BLEND );
 				glColor4f(red[is], green[is], blue[is], 1);
 			}else{
 				if(alpha<1.0){
+					// Deactivate depth buffer modification for transparent objects
 					glDepthMask(GL_FALSE);
-				//	glDisable( GL_BLEND );
 				}
 				glColor4f(red[is], green[is], blue[is], alpha);
 			}
@@ -314,13 +258,8 @@ void drawBouncingPoint() {
 		}
 		}
 	}
-	glEnd();
-
-	glDepthMask(GL_TRUE);
+	glEnd(); // GL_POINTS
 }
-
-double usedTime=0;
-double pTime=0;
 
 // Simple render function
 void renderScene(int value){
@@ -339,19 +278,21 @@ void renderScene(int value){
                  x + lx,y + ly,z + lz, 
                  0.0f,1.0f,0.0f);
 
+	// Compute movement and rotation of the camera
         if(deltaMove || deltaAnglex || deltaAngley) {
 	                computePos(deltaMove);
 	                glutSetWindow(mainWindow);
 	                glutPostRedisplay();
         }
 
+	// Rotate the camera
 	glRotatef(anglex, 1.0f, 0.0f, 0.0f);
 	glRotatef(angley, 0.0f, 1.0f, 0.0f);
 
-	drawBouncingPoint();
+	// Render function
+	drawLattice();
 
-	// angle+=0.4f;
-
+	// FPS stuff
 	usedTime += currentTime-pTime;
 	pTime=currentTime;
 
@@ -391,13 +332,12 @@ void renderScene(int value){
 }
 
 void changeSize(int w, int h){
+	// Keeps the aspect ratio right if one changes the window size
 	if(h == 0)
 		h = 1;
 
 	float ratio = 1.0*w/h;
 
-	// glPointSize( 6.0*ratio );
-	
 	// Projection matrix
 	glMatrixMode(GL_PROJECTION);
 
@@ -417,7 +357,7 @@ void changeSize(int w, int h){
 }
 
 int getFilelist(string f3dlistname){
-	// Read finname file and fill fevname
+	// Read f3dlistname file and fill filenames
 	ifstream fin;
 	fin.open(f3dlistname.c_str());
 	if(fin.is_open()!=true){
@@ -466,7 +406,7 @@ int openglInit(){
 }
 
 int init(){;
-	// Data
+	// Vectors to hold the data
 	lpoints.resize(leng1);
 	for(int i1=0;i1<leng1;i1++){
 		lpoints[i1].resize(leng2);
@@ -476,7 +416,7 @@ int init(){;
 	}
 	isinsector.resize(leng1*leng2*leng3);
 	
-	
+	// Get the file list
 	selconfig=0;
 	filenames.resize(nconfig);
 	getFilelist(f3dlistname);
