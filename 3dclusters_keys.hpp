@@ -27,7 +27,15 @@ void setOnlyCluster(int cnt){
 		if(lpoints.at(i1).at(i2).at(i3)!=cnt){
 		red[is]=0; green[is]=0; blue[is]=0;
 		}else{
-			red[is]=1; green[is]=1; blue[is]=1;
+			if(isinsector[is] == -1){
+				red[is]=1; green[is]=0; blue[is]=0;
+			}else if(isinsector[is] == 0){
+				red[is]=0; green[is]=1; blue[is]=0;
+			}else if(isinsector[is] == 1){
+				red[is]=0; green[is]=0; blue[is]=1;
+			}
+
+//			red[is]=1; green[is]=1; blue[is]=1;
 		}
 	}
 	
@@ -177,6 +185,24 @@ void processNormalKeys(unsigned char key, int x, int y){
 			setSectorColors(false);
 		}else{
 			setSectorColors(true);
+		}
+	}else if(key == 'b' || key == 'B'){
+		int mod = glutGetModifiers();
+		if (mod == GLUT_ACTIVE_SHIFT){
+			box--;
+			if(box<0){
+				showboxes=false;
+				box=-1;
+			}
+			if(showboxes==true)
+				cout << "Box size = " << boxsize[box] << endl;
+		}else{
+			box++;
+			if(box>=boxsize.size()){
+				box=boxsize.size()-1;
+			}
+			showboxes=true;
+			cout << "Box size = " << boxsize[box] << endl;
 		}
 	}
 }

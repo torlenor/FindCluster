@@ -23,6 +23,11 @@ vector<string> filenames;
 vector<vector<vector<int > > > lpoints;
 vector<int> isinsector;
 
+int box=-1;
+
+vector<int> boxsize;
+vector<int> boxes;
+
 // One color for every point (we store it two times)
 vector<double> red, sred;
 vector<double> green, sgreen;
@@ -195,6 +200,78 @@ void drawSquare(){
 	glutWireCube(maxx-minx);
 }
 
+void drawHalfBox(float x, float y, float z, float size, float red, float green, float blue){
+	float ux, uy, uz; // Ursprung
+	float ax, ay, az;
+	float bx, by, bz;
+	float cx, cy, cz;
+
+	ux = x - size/2.0;
+	uy = y - size/2.0;
+	uz = z - size/2.0;
+	
+	ax = ux + size;
+	ay = uy;
+	az = uz;
+	
+	bx = ux;
+	by = uy + size;
+	bz = uz;
+	
+	cx = ux;
+	cy = uy;
+	cz = uz + size;
+
+	glColor3f(red, green, blue);
+	glBegin(GL_LINES);
+		glVertex3i( ux, uy, uz);
+		glVertex3i( ax, ay, az);
+
+		glVertex3i( ux, uy, uz);
+		glVertex3i( bx, by, bz);
+
+		glVertex3i( ux, uy, uz);
+		glVertex3i( cx, cy, cz);
+	glEnd(); 
+}
+
+void drawBoxes(){
+	double m1, m2, m3;
+	for(int box1=0; box1<boxes[box]; box1++){
+	m1=box1*boxsize[box]+boxsize[box]/2.0-0.5;
+	for(int box2=0; box2<boxes[box]; box2++){
+	m2=box2*boxsize[box]+boxsize[box]/2.0-0.5;
+	for(int box3=0; box3<boxes[box]; box3++){
+		m3=box3*boxsize[box]+boxsize[box]/2.0-0.5;
+		glPushMatrix();
+			glTranslatef(m1-(double)Ns/2.0+0.5,m2-(double)Ns/2.0+0.5,m3-(double)Ns/2.0+0.5);
+			if(lpoints.at(m1).at(m2).at(m3)==cnt){
+			 	glColor3f(1.0, 1.0, 1.0);
+			 	glutWireCube(boxsize[box]);
+			}
+		glPopMatrix();
+	}
+	}
+	}
+	
+	/*
+	float i1, i2, i3, ii1, ii2, ii3, m1, m2, m3;
+	for(int box1=0; box1<boxes[box]; box1++){
+	ii1=box1*boxsize[box]+boxsize[box]/2.0-0.5;
+	for(int box2=0; box2<boxes[box]; box2++){
+	ii2=box2*boxsize[box]+boxsize[box]/2.0-0.5;
+	for(int box3=0; box3<boxes[box]; box3++){
+	ii3=box3*boxsize[box]+boxsize[box]/2.0-0.5;
+		i1=ii1-(double)Ns/2.0+0.5;
+		i2=ii2-(double)Ns/2.0+0.5;
+		i3=ii3-(double)Ns/2.0+0.5;
+		drawHalfBox((float)i1, (float)i2, (float)i3, boxsize[box], 1.0, 1.0, 1.0);
+	}
+	}
+	} */
+	
+}
+
 void drawSphere(double x, double y, double z){
 	glPushMatrix();
 		glTranslatef(x-(double)Ns/2.0+0.5,y-(double)Ns/2.0+0.5,z-(double)Ns/2.0+0.5);
@@ -215,11 +292,14 @@ void drawLattice() {
 	
 	// Draw wireframe box around the scene
 	drawSquare();
+	if(showboxes==true){
+		drawBoxes();
+	}
 
 	glPointSize(pointsize);
 
 	int i1=0, i2=0, i3=0, is;
-	glBegin(GL_POINTS);
+//	glBegin(GL_POINTS);
        	for(int ri1=0;ri1<leng1;ri1++)
        	for(int ri2=0;ri2<leng2;ri2++)
        	for(int ri3=0;ri3<leng3;ri3++){
@@ -253,12 +333,12 @@ void drawLattice() {
 				}
 				glColor4f(red[is], green[is], blue[is], alpha);
 			}
-			// drawSphere(i1,i2,i3);
-			glVertex3f(i1-(double)Ns/2.0+0.5, i2-(double)Ns/2.0+0.5, i3-(double)Ns/2.0+0.5);
+			drawSphere(i1,i2,i3);
+			// glVertex3f(i1-(double)Ns/2.0+0.5, i2-(double)Ns/2.0+0.5, i3-(double)Ns/2.0+0.5);
 		}
 		}
 	}
-	glEnd(); // GL_POINTS
+//	glEnd(); // GL_POINTS
 }
 
 // Simple render function
@@ -425,6 +505,16 @@ int init(){;
 	minx=-(double)Ns/2.0-0.5; maxx=(double)Ns/2.0+0.5;
       	miny=-(double)Ns/2.0-0.5; maxy=(double)Ns/2.0+0.5;
 	minz=-(double)Ns/2.0-0.5; maxz=(double)Ns/2.0+0.5;
+
+	// Boxes
+	for(int s=0;s<Ns;s++){
+		if( Ns % (s+1) == 0)
+			boxsize.push_back(s+1);
+	}   
+
+	for(unsigned int i=0;i<boxsize.size();i++){
+		boxes.push_back(Ns/boxsize[i]);
+	}   
 }
 
 int main(int argc, char **argv){

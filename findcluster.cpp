@@ -67,6 +67,8 @@ struct Observablestruct{
 	double cut;
 
 	vector<vector<int> > numberofboxes;
+	
+	vector<double> clusterradius;
 };
 
 Observablestruct *obs;
@@ -134,7 +136,7 @@ int main(int argc, char *argv[]){
 
 		sortClusterSize(clusterdata[n]); // Sort clusters per number of members
 
-		// clusterRadius(obs[n], clusterdata[n]);
+		clusterRadius(obs[n], clusterdata[n]);
 
 		if(doboxes)
 			hideInBoxes(obs[n], clusterdata[n]);
@@ -259,7 +261,7 @@ void clusterRadius(Observablestruct &lobs, Clusterstruct &lclusterdata){
 		centerofmass[2]=0;
 		searchMinCoords(lclusterdata, c, mini1, mini2, mini3);
 		// cout << "mini1 = " << mini1 << " mini2 = " << mini2 << " mini3 = " << mini3 << endl;
-		// mini1=0; mini2=0;mini3=0;
+		mini1=0; mini2=0;mini3=0;
 		for(unsigned int member=0; member<lclusterdata.clustermembers[c].size();member++){
 			getCoords(lclusterdata.clustermembers[c][member], i1, i2, i3);
 			centerofmass[0] += i1-mini1;
@@ -276,9 +278,8 @@ void clusterRadius(Observablestruct &lobs, Clusterstruct &lclusterdata){
 					+ pow(centerofmass[1]-(i2-mini2), 2)
 					+ pow(centerofmass[2]-(i3-mini3), 2);
 		}
-		radiussquare = radiussquare/(double)lclusterdata.clustermembers[c].size();
-		cout << "Cluster " << c << " radius = " << setprecision(14) << sqrt(radiussquare) << endl;
-		cout << "Is sorted cluster = " << lclusterdata.isinsortedcluster[lclusterdata.clustermembers[c][0]] << endl;
+		radiussquare = sqrt(radiussquare/(double)lclusterdata.clustermembers[c].size());
+		lobs.clusterradius.push_back(radiussquare);
 	}
 }
 
@@ -421,7 +422,7 @@ void writeConfigResultsstdout(Observablestruct &lobs, Clusterstruct &lclusterdat
 
 	cout  << lclusterdata.percolatingclusters.size() << " of " << lclusterdata.clustermembers.size() << " clusters are percolating!" << endl;
 	for(unsigned int c=0;c<lclusterdata.percolatingclusters.size();c++){
-		cout << "Cluster " << lclusterdata.percolatingclusters[c] << " is percolating in direction ("
+		cout << "Cluster " << lclusterdata.percolatingclusters[c] << " is percolating in directions ("
 			<< lclusterdata.percolatingdirections[c][0] << "," 
 			<< lclusterdata.percolatingdirections[c][1] << ","
 			<< lclusterdata.percolatingdirections[c][2] << ")!" << endl;
@@ -432,14 +433,29 @@ void writeConfigResultsstdout(Observablestruct &lobs, Clusterstruct &lclusterdat
 	cout << "Average cluster size = " << lobs.avgclustersize << endl;
 	cout << "Largest cluster is cluster " << lobs.maxclusterid << " with " << lobs.maxclustersize << " members." << endl;
 			
-	if(doboxes){
+/*	if(doboxes){
 		cout << endl << "Boxes:" << endl;
 		for(unsigned int c=0; c<lclusterdata.clustermembers.size(); c++){
-			cout << "Cluster = " << c << "(sorted cluster = " << lclusterdata.isinsortedcluster[lclusterdata.clustermembers[c][0]] << " )"<< endl;
+			cout << "Cluster = " << c << " with " << lclusterdata.clustermembers[c].size() << " members:" << endl;
 			for(unsigned int size=0; size<boxsize.size(); size++){
 			cout << lobs.numberofboxes[c][size] << " boxes of size " << boxsize[size] << " needed." << endl;
 			}
 		}
+	} */
+	
+	if(doboxes){
+		cout << endl << "Boxes (Clusters sorted based on # of members):" << endl;
+		for(unsigned int c=0; c<lclusterdata.sortedcluster.size(); c++){
+			cout << "Cluster = " << lclusterdata.sortedcluster[c] << " with " << lclusterdata.clustermembers[lclusterdata.sortedcluster[c]].size() << " members:" << endl;
+			for(unsigned int size=0; size<boxsize.size(); size++){
+			cout << lobs.numberofboxes[lclusterdata.sortedcluster[c]][size] << " boxes of size " << boxsize[size] << " needed." << endl;
+			}
+		}
+	}
+
+	cout << endl << "Cluster radius (Fortunato):" << endl;
+	for(unsigned int c=0; c<lclusterdata.sortedcluster.size(); c++){
+		cout << "Cluster ( " << lclusterdata.clustermembers[lclusterdata.sortedcluster[c]].size() << " members ) = " << lclusterdata.sortedcluster[c] << " radius = " << setprecision(14) << lobs.clusterradius[lclusterdata.sortedcluster[c]] << endl;
 	}
 }
 
