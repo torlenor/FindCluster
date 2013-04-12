@@ -33,8 +33,8 @@ int xOrigin = -1; int yOrigin = -1;
 
 // Stuff which define sphere properties
 double sphereradius=0.35; // Sphere radius
-const int sphereSlices=6; // Sphere slices around Z axis
-const int sphereStacks=6; //Sphere stacks/slices along the z axis
+const int sphereSlices=8; // Sphere slices around Z axis
+const int sphereStacks=8; //Sphere stacks/slices along the z axis
 
 double pointsize=10; // Sphere radius
 

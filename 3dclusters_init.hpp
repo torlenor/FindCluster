@@ -16,6 +16,7 @@ char texthelp[]="Usage: 3dclusters.x [OPTION] ... [CLUSTERCONFIGLIST]\n"
 		"Mandatory arguments to long options are mandatory for short options too.\n"
 		"  -s, --Ns SSIZE             spatial lattice extent (default = 8)\n"
 		"  -n, --nmeas NMEAS          number of configurations (default = 1)\n"
+		"  -k, --sphere	              use real spheres instead of points (can be really slow!)\n"
 		"\n"  
 		"  -h  --help                 display this help and exit\n"
 		"  -v  --version              output version information and exit\n"
@@ -50,6 +51,7 @@ int parameterInit(int &argc, char *argv[]){
 			We distinguish them by their indices. */
 			{"Ns", required_argument, 0, 's'},
 			{"nmeas", required_argument, 0, 'n'},
+			{"sphere", no_argument, 0, 'k'},
 			/* These options set a flag. */
 			// {"free", no_argument, 0, 'f'},
 			// {"u0", required_argument, 0, 0},
@@ -61,7 +63,7 @@ int parameterInit(int &argc, char *argv[]){
 		/* getopt_long stores the option index here. */
 		int option_index = 0;
 
-		c = getopt_long (argc, argv, "s:n:hv",
+		c = getopt_long (argc, argv, "s:n:khv",
 		long_options, &option_index);
 
 		/* Detect the end of the options. */
@@ -88,6 +90,10 @@ int parameterInit(int &argc, char *argv[]){
 
 			case 'n':
 				nconfig = atoi(optarg);
+				break;
+
+			case 'k':
+				usespheres=true;
 				break;
 
 			case 'v':

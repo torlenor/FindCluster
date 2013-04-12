@@ -13,6 +13,8 @@
 
 using namespace std;
 
+bool usespheres=false;
+
 #include "3dclusters.h"
 #include "3dclusters_init.hpp"
 
@@ -299,7 +301,9 @@ void drawLattice() {
 	
 	// Depth buffer modification for solid objects
 	glDepthMask(GL_TRUE);
-	glEnable( GL_BLEND );
+	glDisable( GL_BLEND );
+	glDisable(GL_LIGHT0);
+	glDisable(GL_LIGHTING);
 	
 	// Draw wireframe box around the scene
 	drawSquare();
@@ -307,10 +311,15 @@ void drawLattice() {
 		drawBoxes();
 	}
 
+	glEnable( GL_BLEND );
+	glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHT0);
+
 	glPointSize(pointsize);
 
 	int i1=0, i2=0, i3=0, is;
-	glBegin(GL_POINTS);
+	if(usespheres==false)
+		glBegin(GL_POINTS);
        	for(int ri1=0;ri1<leng1;ri1++)
        	for(int ri2=0;ri2<leng2;ri2++)
        	for(int ri3=0;ri3<leng3;ri3++){
@@ -344,12 +353,16 @@ void drawLattice() {
 				}
 				glColor4f(red[is], green[is], blue[is], alpha);
 			}
-			// drawSphere(i1,i2,i3);
-			glVertex3f(i1-(double)Ns/2.0+0.5, i2-(double)Ns/2.0+0.5, i3-(double)Ns/2.0+0.5);
+			if(usespheres==true){
+				drawSphere(i1,i2,i3);
+			}else{
+				glVertex3f(i1-(double)Ns/2.0+0.5, i2-(double)Ns/2.0+0.5, i3-(double)Ns/2.0+0.5);
+			}
 		}
 		}
 	}
-	glEnd(); // GL_POINTS
+	if(usespheres==false)
+		glEnd(); // GL_POINTS
 }
 
 // Simple render function
@@ -474,14 +487,16 @@ int openglInit(){
 	glEnable( GL_POINT_SMOOTH );
 	glEnable( GL_BLEND );
 	glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
-//	glEnable(GL_LIGHTING);
-//	glEnable(GL_LIGHT0);
+	if(usespheres==true){
+		glEnable(GL_LIGHTING);
+		glEnable(GL_LIGHT0);
+		glColorMaterial ( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE );
+		glEnable ( GL_COLOR_MATERIAL );
+	}
 // 	glEnable(GL_LIGHT1);
-//	glColorMaterial ( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE );
-//	glEnable ( GL_COLOR_MATERIAL );
 	
-//	glEnable(GL_SMOOTH);
-//	glShadeModel(GL_SMOOTH);
+	glEnable(GL_SMOOTH);
+	glShadeModel(GL_SMOOTH);
 
 	// glutIgnoreKeyRepeat(1);
 	// Register callbacks
