@@ -302,8 +302,10 @@ void drawLattice() {
 	// Depth buffer modification for solid objects
 	glDepthMask(GL_TRUE);
 	glDisable( GL_BLEND );
-	glDisable(GL_LIGHT0);
-	glDisable(GL_LIGHTING);
+	if(usespheres==true){
+		glDisable(GL_LIGHT0);
+		glDisable(GL_LIGHTING);
+	}
 	
 	// Draw wireframe box around the scene
 	drawSquare();
@@ -312,8 +314,10 @@ void drawLattice() {
 	}
 
 	glEnable( GL_BLEND );
-	glEnable(GL_LIGHTING);
-	glEnable(GL_LIGHT0);
+	if(usespheres==true){
+		glEnable(GL_LIGHTING);
+		glEnable(GL_LIGHT0);
+	}
 
 	glPointSize(pointsize);
 
