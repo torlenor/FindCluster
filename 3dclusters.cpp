@@ -237,6 +237,7 @@ void drawHalfBox(float x, float y, float z, float size, float red, float green, 
 
 void drawBoxes(){
 	double m1, m2, m3;
+	bool cinbox=false;
 	for(int box1=0; box1<boxes[box]; box1++){
 	m1=box1*boxsize[box]+boxsize[box]/2.0-0.5;
 	for(int box2=0; box2<boxes[box]; box2++){
@@ -245,7 +246,17 @@ void drawBoxes(){
 		m3=box3*boxsize[box]+boxsize[box]/2.0-0.5;
 		glPushMatrix();
 			glTranslatef(m1-(double)Ns/2.0+0.5,m2-(double)Ns/2.0+0.5,m3-(double)Ns/2.0+0.5);
-			if(lpoints.at(m1).at(m2).at(m3)==cnt){
+			cinbox=false;
+			for(int i1=box1*boxsize[box];i1<(box1+1)*boxsize[box];i1++)
+			for(int i2=box2*boxsize[box];i2<(box2+1)*boxsize[box];i2++)
+			for(int i3=box3*boxsize[box];i3<(box3+1)*boxsize[box];i3++){
+				if(lpoints.at(i1).at(i2).at(i3)==cnt){
+					cinbox=true;
+					break;
+				}
+			}
+			//if(lpoints.at(m1).at(m2).at(m3)==cnt){
+			if(cinbox){
 			 	glColor3f(1.0, 1.0, 1.0);
 			 	glutWireCube(boxsize[box]);
 			}
@@ -299,7 +310,7 @@ void drawLattice() {
 	glPointSize(pointsize);
 
 	int i1=0, i2=0, i3=0, is;
-//	glBegin(GL_POINTS);
+	glBegin(GL_POINTS);
        	for(int ri1=0;ri1<leng1;ri1++)
        	for(int ri2=0;ri2<leng2;ri2++)
        	for(int ri3=0;ri3<leng3;ri3++){
@@ -333,12 +344,12 @@ void drawLattice() {
 				}
 				glColor4f(red[is], green[is], blue[is], alpha);
 			}
-			drawSphere(i1,i2,i3);
-			// glVertex3f(i1-(double)Ns/2.0+0.5, i2-(double)Ns/2.0+0.5, i3-(double)Ns/2.0+0.5);
+			// drawSphere(i1,i2,i3);
+			glVertex3f(i1-(double)Ns/2.0+0.5, i2-(double)Ns/2.0+0.5, i3-(double)Ns/2.0+0.5);
 		}
 		}
 	}
-//	glEnd(); // GL_POINTS
+	glEnd(); // GL_POINTS
 }
 
 // Simple render function

@@ -197,6 +197,10 @@ void hideInBoxes(Observablestruct &lobs, Clusterstruct &lclusterdata){
 	int boxcnt=0, is, i1, i2, i3;
 	bool clusterinbox=false;
 	for(unsigned int c=0; c<lclusterdata.clustermembers.size();c++){
+		// We should not calculate trivial box sizes!
+		// lobs.numberofboxes[c][0]=lclusterdata.clustermembers[c].size();
+		// lobs.numberofboxes[c][boxsize.size()-1]=1;
+		// for(unsigned int size=1;size<boxsize.size()-1;size++){
 		for(unsigned int size=0;size<boxsize.size();size++){
 			boxcnt=0;
 			// Loop over all boxes
