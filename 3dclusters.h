@@ -4,7 +4,7 @@
 // Lattice dimensions
 int Ns=40;
 int leng1=Ns, leng2=Ns, leng3=Ns, nclusters=0;
-int nconfig=0, selconfig=0;
+int nconfig=1, selconfig=0;
 
 string f3dlistname;
 
