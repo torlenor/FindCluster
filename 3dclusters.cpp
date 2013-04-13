@@ -351,7 +351,7 @@ void drawLattice() {
        				glDepthMask(GL_TRUE);
 				glColor4f(red[is], green[is], blue[is], 1);
 			}else{
-				if(alpha<1.0){
+				if(alpha<1.0 && ! usespheres){
 					// Deactivate depth buffer modification for transparent objects
 					glDepthMask(GL_FALSE);
 				}
