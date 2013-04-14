@@ -324,6 +324,10 @@ void drawLattice() {
 	int i1=0, i2=0, i3=0, is;
 	if(usespheres==false)
 		glBegin(GL_POINTS);
+	if(alpha<1.0 && ! usespheres){
+		// Deactivate depth buffer modification for transparent objects
+		glDepthMask(GL_FALSE);
+	}
        	for(int ri1=0;ri1<leng1;ri1++)
        	for(int ri2=0;ri2<leng2;ri2++)
        	for(int ri3=0;ri3<leng3;ri3++){
@@ -351,10 +355,6 @@ void drawLattice() {
        				glDepthMask(GL_TRUE);
 				glColor4f(red[is], green[is], blue[is], 1);
 			}else{
-				if(alpha<1.0 && ! usespheres){
-					// Deactivate depth buffer modification for transparent objects
-					glDepthMask(GL_FALSE);
-				}
 				glColor4f(red[is], green[is], blue[is], alpha);
 			}
 			if(usespheres==true){
