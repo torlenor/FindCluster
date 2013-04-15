@@ -17,6 +17,7 @@ char texthelp[]="Usage: findcluster.x [OPTION] ... [POLLEVCONFIG/POLLEVCONFIGLIS
 		"  -n, --nmeas NMEAS          number of configurations (default = 1)\n"
 		"  -d, --detail               write detailed output for every calculated configuration\n"
 		"  -b, --boxes                performes the box counting calculation (expensive)\n"
+		"  -r, --rsector RADIUS       use alternative sector classification with r = RADIUS\n"
 		"\n"  
 		"  -h  --help                 display this help and exit\n"
 		"  -v  --version              output version information and exit\n"
@@ -56,6 +57,7 @@ int init(int &argc, char *argv[]){
 			{"nmeas", required_argument, 0, 'n'},
 			{"detail", no_argument, 0, 'd'},
 			{"boxes", no_argument, 0, 'b'},
+			{"rsector", required_argument, 0, 'r'},
 			/* These options set a flag. */
 			// {"free", no_argument, 0, 'f'},
 			// {"u0", required_argument, 0, 0},
@@ -67,7 +69,7 @@ int init(int &argc, char *argv[]){
 		/* getopt_long stores the option index here. */
 		int option_index = 0;
 
-		c = getopt_long (argc, argv, "s:t:f:n:hvdb",
+		c = getopt_long (argc, argv, "s:t:f:n:r:hvdb",
 		long_options, &option_index);
 
 		/* Detect the end of the options. */
@@ -110,6 +112,11 @@ int init(int &argc, char *argv[]){
 			
 			case 'b':
 				doboxes = true;
+				break;
+			
+			case 'r':
+				usealternativesectors = true;
+				r = atof(optarg);
 				break;
 
 			case 'v':

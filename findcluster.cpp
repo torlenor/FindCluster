@@ -24,6 +24,8 @@ int matrixdim=3, leng1=4, leng2=4, leng3=4, leng4=4, Nspace=4*4*4*4;
 
 int nmeas=1;
 
+bool usealternativesectors=false;
+
 bool detail=false; // Controlls if we want detailed information for every configuration
 bool doboxes=false; // Controlls if we want box counting calculations
 
@@ -63,11 +65,13 @@ struct Observablestruct{
 	int maxclusterid;
 	
 	double avgclustersize;
+	double avgclustersizeF;
 
 	double cut;
 
 	vector<vector<int> > numberofboxes;
 	
+	vector<vector<double> > centerofmass;
 	vector<double> clusterradius;
 };
 
@@ -78,6 +82,7 @@ int init(int &argc, char *argv[]);
 
 // Stuff to find and categorize sectors/clusters for one configuration
 void fillSectors(Clusterstruct &lclusterdata, double delta);
+void fillSectorsAlt(Clusterstruct &lclusterdata, double r);
 void findClusters(Clusterstruct &lclusterdata);
 void checkClusters(Clusterstruct &lclusterdata);
 void findPercolatingCluster(Clusterstruct &lclusterdata);
@@ -100,6 +105,8 @@ int latmap(int i1, int i2, int i3);
 double fraction = 1.0;
 double delta0 = M_PI/3.0;
 double delta = delta0*fraction;
+
+double r = 0;
 
 #include "findcluster_init.hpp"
 
@@ -128,8 +135,12 @@ int main(int argc, char *argv[]){
 		}
 	
 		checkPollEv(leng1, leng2, leng3, leng4, matrixdim, pollev);
-	
-		fillSectors(clusterdata[n], delta); // Categorize lattice points by sectors
+		
+		if(usealternativesectors==true){
+			fillSectorsAlt(clusterdata[n], r); // Categorize lattice points by sectors using alternative prescription
+		}else{
+			fillSectors(clusterdata[n], delta); // Categorize lattice points by sectors
+		}
 		findClusters(clusterdata[n]);	// Identify clusters
 		checkClusters(clusterdata[n]); // Check clusters
 		findPercolatingCluster(clusterdata[n]); // Find percolating clusters
@@ -258,6 +269,9 @@ void searchMinCoords(Clusterstruct &lclusterdata, unsigned int &c, int &mini1, i
 void clusterRadius(Observablestruct &lobs, Clusterstruct &lclusterdata){
 	double centerofmass[3], radiussquare;
 	int i1, i2, i3, mini1, mini2, mini3;
+
+	lobs.centerofmass.resize(lclusterdata.clustermembers.size());
+
 	for(unsigned int c=0;c<lclusterdata.clustermembers.size();c++){
 		radiussquare=0;
 		centerofmass[0]=0;
@@ -268,19 +282,23 @@ void clusterRadius(Observablestruct &lobs, Clusterstruct &lclusterdata){
 		mini1=0; mini2=0;mini3=0;
 		for(unsigned int member=0; member<lclusterdata.clustermembers[c].size();member++){
 			getCoords(lclusterdata.clustermembers[c][member], i1, i2, i3);
-			centerofmass[0] += i1-mini1;
-			centerofmass[1] += i2-mini2;
-			centerofmass[2] += i3-mini3;
+			centerofmass[0] += (i1-mini1);
+			centerofmass[1] += (i2-mini2);
+			centerofmass[2] += (i3-mini3);
 		}
 		centerofmass[0] = centerofmass[0]/(double)lclusterdata.clustermembers[c].size();
 		centerofmass[1] = centerofmass[1]/(double)lclusterdata.clustermembers[c].size();
 		centerofmass[2] = centerofmass[2]/(double)lclusterdata.clustermembers[c].size();
+
+		lobs.centerofmass[c].push_back(centerofmass[0]);
+		lobs.centerofmass[c].push_back(centerofmass[1]);
+		lobs.centerofmass[c].push_back(centerofmass[2]);
 		
 		for(unsigned int member=0; member<lclusterdata.clustermembers[c].size();member++){
 			getCoords(lclusterdata.clustermembers[c][member], i1, i2, i3);
-			radiussquare += pow(centerofmass[0]-(i1-mini1), 2)
+			radiussquare += (pow(centerofmass[0]-(i1-mini1), 2)
 					+ pow(centerofmass[1]-(i2-mini2), 2)
-					+ pow(centerofmass[2]-(i3-mini3), 2);
+					+ pow(centerofmass[2]-(i3-mini3), 2));
 		}
 		radiussquare = sqrt(radiussquare/(double)lclusterdata.clustermembers[c].size());
 		lobs.clusterradius.push_back(radiussquare);
@@ -355,31 +373,37 @@ void cluster3doutput(Clusterstruct &lclusterdata, string f3dname){
 void calcExp(){
 	double maxclustersize=0, maxclustersizeerr=0;
 	double avgclustersize=0, avgclustersizeerr=0;
+	double avgclustersizeF=0, avgclustersizeFerr=0;
 	double cut=0, cuterr=0;
 	// Plain mean value
 	for(int n=0; n<nmeas; n++){
 		maxclustersize += (&obs[n])->maxclustersize;
 		avgclustersize += (&obs[n])->avgclustersize;
+		avgclustersizeF += (&obs[n])->avgclustersizeF;
 		cut += (&obs[n])->cut;
 	}
 
 	maxclustersize = maxclustersize/(double)nmeas;
 	avgclustersize = avgclustersize/(double)nmeas;
+	avgclustersizeF = avgclustersizeF/(double)nmeas;
 	cut = cut/(double)nmeas;
 
 	// Plain standard deviation
 	for(int n=0;n<nmeas;n++){
 		maxclustersizeerr=pow((&obs[n])->maxclustersize-maxclustersize,2);
 		avgclustersizeerr=pow((&obs[n])->avgclustersize-avgclustersize,2);
+		avgclustersizeFerr=pow((&obs[n])->avgclustersizeF-avgclustersizeF,2);
 		cuterr=pow((&obs[n])->cut-cut,2);
 	}
 	maxclustersizeerr=sqrt(maxclustersizeerr)/(double)nmeas;
 	avgclustersizeerr=sqrt(avgclustersizeerr)/(double)nmeas;
+	avgclustersizeFerr=sqrt(avgclustersizeFerr)/(double)nmeas;
 	cuterr=sqrt(cuterr)/(double)nmeas;
 
 	cout << "Expectation values: " << endl;
-	cout << "Average cluster size = " << avgclustersize << ", Maximum cluster size = " << maxclustersize << endl;
+	cout << "Average cluster size = " << setprecision(14) << avgclustersize << ", Maximum cluster size = " << maxclustersize << endl;
 	cout << "Average cluster err  = " << avgclustersizeerr << ", Maximum cluster err  = " << maxclustersizeerr << endl;
+	cout << "Average cluster size Fortunato (1.7) = " << avgclustersizeF << ", Error  = " << avgclustersizeFerr << endl;
 	cout << "Cut = " << cut << " Cut err = " << cuterr << endl;
 }
 
@@ -406,6 +430,41 @@ void calcObservables(Observablestruct &lobs, Clusterstruct &lclusterdata){
 	}
 	
 	lobs.avgclustersize = avgclustersize/(double)lclusterdata.clustermembers.size();
+
+	// Calculate average cluster size from Fortunato (1.7)
+	// First calculate the number of clusters of size s per lattice site
+	vector<int> sizes;
+	vector<double> sizedist;
+	int curcsize;
+	int knownsize=0;
+	for(unsigned int c=0; c<lclusterdata.clustermembers.size(); c++){
+		curcsize = lclusterdata.clustermembers[c].size();
+		knownsize=0;
+		for(unsigned int s=0; s<sizes.size(); s++){
+			if(sizes[s] == curcsize){
+				knownsize = s;
+				break;
+			}
+		}
+		if(knownsize>0){
+			sizedist[knownsize] += 1.0/(double)Nspace;
+		}else{
+			sizes.push_back(curcsize);
+			sizedist.push_back(1.0/(double)Nspace);
+		}
+	}
+
+	double norm=0;
+	for(unsigned int size=0; size<sizedist.size(); size++){
+		norm += sizedist[size]*sizes[size];
+	}
+
+	double avgclustersizeF=0;
+	for(unsigned int size=0; size<sizedist.size(); size++){
+		avgclustersizeF += sizedist[size]*pow(sizes[size],2)/norm;
+	}
+
+	lobs.avgclustersizeF = avgclustersizeF;
 
 	// Calculate cut
 	double cut=0;
@@ -435,6 +494,7 @@ void writeConfigResultsstdout(Observablestruct &lobs, Clusterstruct &lclusterdat
 	
 	cout << endl;
 	cout << "Average cluster size = " << lobs.avgclustersize << endl;
+	cout << "Average cluster size Fortunato = " << lobs.avgclustersizeF << endl;
 	cout << "Largest cluster is cluster " << lobs.maxclusterid << " with " << lobs.maxclustersize << " members." << endl;
 			
 /*	if(doboxes){
@@ -459,8 +519,62 @@ void writeConfigResultsstdout(Observablestruct &lobs, Clusterstruct &lclusterdat
 
 	cout << endl << "Cluster radius (Fortunato):" << endl;
 	for(unsigned int c=0; c<lclusterdata.sortedcluster.size(); c++){
-		cout << "Cluster ( " << lclusterdata.clustermembers[lclusterdata.sortedcluster[c]].size() << " members ) = " << lclusterdata.sortedcluster[c] << " radius = " << setprecision(14) << lobs.clusterradius[lclusterdata.sortedcluster[c]] << endl;
+		cout << "Cluster ( " << lclusterdata.clustermembers[lclusterdata.sortedcluster[c]].size() << " members ) = " << lclusterdata.sortedcluster[c] << " radius = " << setprecision(5) << lobs.clusterradius[lclusterdata.sortedcluster[c]] << setprecision(2) << ", Center of Mass = (" << lobs.centerofmass[lclusterdata.sortedcluster[c]][0] << "," << lobs.centerofmass[lclusterdata.sortedcluster[c]][1] << "," << lobs.centerofmass[lclusterdata.sortedcluster[c]][2] << ")"  << endl;
 	}
+}
+
+void fillSectorsAlt(Clusterstruct &lclusterdata, double r){
+	#ifdef DEBUG
+	cout << "Categorizing lattice points by sector ( radius = " << r << " )... " << flush;
+	#endif
+
+	int csectp1=0;
+	int csectm1=0;
+	int csect0=0;
+
+	delta = M_PI/3.0;
+	
+	double tracephase=0;
+	double radius=0;
+	
+	#ifdef DEBUG
+	cout << "Delta = " << delta << endl;
+	cout << "r = " << r << endl;
+	#endif
+	
+	for(int is=0;is<Nspace;is++)
+		lclusterdata.isinsector[is] = 2;
+	
+	for(int is=0;is<Nspace;is++){
+		tracephase = arg(pollev[is][0] + pollev[is][1] + pollev[is][2]);
+		radius = abs(pollev[is][0] + pollev[is][1] + pollev[is][2]);
+		
+		if(abs(tracephase - 2.0*M_PI/3.0) <= delta){
+			if(radius >= r){
+				lclusterdata.isinsector[is]=1;
+				csectp1++;
+			}
+		}
+		
+		if(abs(tracephase) < delta){
+			if(radius >= r){
+				lclusterdata.isinsector[is]=0;
+				csect0++;
+			}
+		}
+		
+		if(abs(tracephase + 2.0*M_PI/3.0) <= delta){
+			if(radius >= r){
+				lclusterdata.isinsector[is]=-1;
+				csectm1++;
+			}
+		}
+	}
+	
+	lclusterdata.nsectm1=csectm1; lclusterdata.nsect0=csect0; lclusterdata.nsectp1=csectp1;
+	#ifdef DEBUG
+	cout << "done!" << endl;
+	#endif
 }
 
 void fillSectors(Clusterstruct &lclusterdata, double delta){
