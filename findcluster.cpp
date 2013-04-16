@@ -19,6 +19,8 @@ using namespace std;
 #include "version.h"
 #include "include/generic.hpp"
 
+#include "include/jackknife.h"
+
 int Ns=4, Nt=4;
 int matrixdim=3, leng1=4, leng2=4, leng3=4, leng4=4, Nspace=4*4*4*4;
 
@@ -53,6 +55,7 @@ struct Clusterstruct{
 	vector<vector<int> > percolatingdirections;
 	
 	vector<int> sortedcluster;
+	vector<int> sortedrealcluster;
 	vector<int> isinsortedcluster;
 
 	int nsectm1, nsect0, nsectp1;
@@ -73,6 +76,10 @@ struct Observablestruct{
 	
 	vector<vector<double> > centerofmass;
 	vector<double> clusterradius;
+
+	double percc;
+
+	double lcboxcnt;
 };
 
 Observablestruct *obs;
@@ -199,7 +206,7 @@ void getCoords(int is, int &i1, int &i2, int &i3){
 }
 
 void hideInBoxes(Observablestruct &lobs, Clusterstruct &lclusterdata){
-	lobs.numberofboxes.resize(boxsize.size());
+	// lobs.numberofboxes.resize(boxsize.size());
 	lobs.numberofboxes.resize(lclusterdata.clustermembers.size());
 	for(unsigned int c=0;c<lobs.numberofboxes.size();c++){
 		lobs.numberofboxes[c].resize(boxsize.size());
@@ -209,10 +216,10 @@ void hideInBoxes(Observablestruct &lobs, Clusterstruct &lclusterdata){
 	bool clusterinbox=false;
 	for(unsigned int c=0; c<lclusterdata.clustermembers.size();c++){
 		// We should not calculate trivial box sizes!
-		// lobs.numberofboxes[c][0]=lclusterdata.clustermembers[c].size();
-		// lobs.numberofboxes[c][boxsize.size()-1]=1;
-		// for(unsigned int size=1;size<boxsize.size()-1;size++){
-		for(unsigned int size=0;size<boxsize.size();size++){
+		lobs.numberofboxes[c][0]=lclusterdata.clustermembers[c].size();
+		lobs.numberofboxes[c][boxsize.size()-1]=1;
+		for(unsigned int size=1;size<boxsize.size()-1;size++){
+		// for(unsigned int size=0;size<boxsize.size();size++){
 			boxcnt=0;
 			// Loop over all boxes
 			for(int box1=0;box1<boxes[size];box1++)
@@ -334,6 +341,11 @@ void sortClusterSize(Clusterstruct &lclusterdata){
 			lclusterdata.isinsortedcluster[lclusterdata.clustermembers[lclusterdata.sortedcluster[c]][member]] = c;
 		}
 	}
+
+	for(unsigned c=0; c<lclusterdata.sortedcluster.size(); c++){
+		if(lclusterdata.isinsector[lclusterdata.clustermembers[lclusterdata.sortedcluster[c]][0]] < 2)
+			lclusterdata.sortedrealcluster.push_back(lclusterdata.sortedcluster[c]);
+	}
 }
 
 void writeClusterList(Clusterstruct &lclusterdata){
@@ -374,37 +386,103 @@ void calcExp(){
 	double maxclustersize=0, maxclustersizeerr=0;
 	double avgclustersize=0, avgclustersizeerr=0;
 	double avgclustersizeF=0, avgclustersizeFerr=0;
+	double avgpercc=0, avgperccerr=0;
 	double cut=0, cuterr=0;
-	// Plain mean value
-	for(int n=0; n<nmeas; n++){
-		maxclustersize += (&obs[n])->maxclustersize;
-		avgclustersize += (&obs[n])->avgclustersize;
-		avgclustersizeF += (&obs[n])->avgclustersizeF;
-		cut += (&obs[n])->cut;
-	}
-
-	maxclustersize = maxclustersize/(double)nmeas;
-	avgclustersize = avgclustersize/(double)nmeas;
-	avgclustersizeF = avgclustersizeF/(double)nmeas;
-	cut = cut/(double)nmeas;
-
-	// Plain standard deviation
+	
+	double ddata[nmeas];
+	// Start of Jackknife
+	// Maximal cluster size expectation value
 	for(int n=0;n<nmeas;n++){
-		maxclustersizeerr=pow((&obs[n])->maxclustersize-maxclustersize,2);
-		avgclustersizeerr=pow((&obs[n])->avgclustersize-avgclustersize,2);
-		avgclustersizeFerr=pow((&obs[n])->avgclustersizeF-avgclustersizeF,2);
-		cuterr=pow((&obs[n])->cut-cut,2);
+		for(int j=0;j<nmeas;j++){
+			if(n!=j)
+				ddata[n] += (&obs[j])->maxclustersize;
+		}
+		ddata[n] = ddata[n]/(double)(nmeas-1);
 	}
-	maxclustersizeerr=sqrt(maxclustersizeerr)/(double)nmeas;
-	avgclustersizeerr=sqrt(avgclustersizeerr)/(double)nmeas;
-	avgclustersizeFerr=sqrt(avgclustersizeFerr)/(double)nmeas;
-	cuterr=sqrt(cuterr)/(double)nmeas;
+	Jackknife(ddata, maxclustersize, maxclustersizeerr, nmeas);
+	
+	// Average cluster size expectation value
+	for(int n=0;n<nmeas;n++){
+		ddata[n]=0;
+		for(int j=0;j<nmeas;j++){
+			if(n!=j)
+				ddata[n] += (&obs[j])->avgclustersize;
+		}
+		ddata[n] = ddata[n]/(double)(nmeas-1);
+	}
+	Jackknife(ddata, avgclustersize, avgclustersizeerr, nmeas);
+	
+	// Average cluster size expectation value (Fortunato (1.7))
+	for(int n=0;n<nmeas;n++){
+		ddata[n]=0;
+		for(int j=0;j<nmeas;j++){
+			if(n!=j)
+				ddata[n] += (&obs[j])->avgclustersizeF;
+		}
+		ddata[n] = ddata[n]/(double)(nmeas-1);
+	}
+	Jackknife(ddata, avgclustersizeF, avgclustersizeFerr, nmeas);
+	
+	// Cut expectation value
+	for(int n=0;n<nmeas;n++){
+		ddata[n]=0;
+		for(int j=0;j<nmeas;j++){
+			if(n!=j)
+				ddata[n] += (&obs[j])->cut;
+		}
+		ddata[n] = ddata[n]/(double)(nmeas-1);
+	}
+	Jackknife(ddata, cut, cuterr, nmeas);
 
-	cout << "Expectation values: " << endl;
+	cout << "Expectation values (single eliminitation jackknife): " << endl;
 	cout << "Average cluster size = " << setprecision(14) << avgclustersize << ", Maximum cluster size = " << maxclustersize << endl;
 	cout << "Average cluster err  = " << avgclustersizeerr << ", Maximum cluster err  = " << maxclustersizeerr << endl;
 	cout << "Average cluster size Fortunato (1.7) = " << avgclustersizeF << ", Error  = " << avgclustersizeFerr << endl;
 	cout << "Cut = " << cut << " Cut err = " << cuterr << endl;
+
+	cout << endl;
+
+	// Number of percolating clusters expectation value
+	for(int n=0;n<nmeas;n++){
+		ddata[n]=0;
+		for(int j=0;j<nmeas;j++){
+			if(n!=j)
+				ddata[n] += (&obs[j])->percc;
+		}
+		ddata[n] = ddata[n]/(double)(nmeas-1);
+	}
+	Jackknife(ddata, avgpercc, avgperccerr, nmeas);
+
+	ofstream fnpercc;
+	fnpercc.open("npercc.res");
+	fnpercc << Ns << " " << Nt << " " << avgpercc << " " << avgperccerr << endl;
+	fnpercc.close();
+
+	if(doboxes){
+		// Box counts for largest cluster which is not in sector 2
+		vector<double> avgboxcnt, avgboxcnterr;
+		avgboxcnt.resize(boxsize.size());
+		avgboxcnterr.resize(boxsize.size());
+		
+		for(unsigned int size=0; size<boxsize.size(); size++){
+			for(int n=0;n<nmeas;n++){
+				ddata[n]=0;
+
+				for(int j=0;j<nmeas;j++){
+					if(n!=j)
+					ddata[n] += (&obs[j])->numberofboxes[(&clusterdata[j])->sortedrealcluster[0]][size];
+				}
+				ddata[n] = ddata[n]/(double)(nmeas-1);
+			}
+			Jackknife(ddata, avgboxcnt[size], avgboxcnterr[size], nmeas);
+		}
+
+		ofstream fboxcnt;
+		fboxcnt.open("boxcnt.res");
+		for(unsigned int size=0; size<boxsize.size(); size++){
+			fboxcnt << boxsize[size] << " " << avgboxcnt[size] << " " << avgboxcnterr[size] << endl;
+		}
+	}
 }
 
 void calcObservables(Observablestruct &lobs, Clusterstruct &lclusterdata){
@@ -477,6 +555,9 @@ void calcObservables(Observablestruct &lobs, Clusterstruct &lclusterdata){
 	#ifdef DEBUG
 	cout << "done!" << endl;
 	#endif
+
+	// Store number of percolating clusters
+	lobs.percc=lclusterdata.percolatingclusters.size();
 }
 
 void writeConfigResultsstdout(Observablestruct &lobs, Clusterstruct &lclusterdata){
