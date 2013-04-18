@@ -197,6 +197,27 @@ int main(int argc, char *argv[]){
 			f3dclustername << "3dcluster_" << leng1 << "x" << leng4 << "_m" << setprecision(0) << fixed << n << ".data";
 			cluster3doutput(clusterdata[n], f3dclustername.str());
 		}
+
+		if(memorysaver){
+			clusterdata[n].isinsector.resize(0);
+			clusterdata[n].clustersector.resize(0);
+			clusterdata[n].isincluster.resize(0);
+
+			for(unsigned c=0;c<clusterdata[n].clustermembers.size();c++){
+				clusterdata[n].clustermembers[c].resize(0);
+			}
+			clusterdata[n].clustermembers.resize(0);
+
+			clusterdata[n].percolatingclusters.resize(0);
+			for(unsigned p=0; p<clusterdata[n].percolatingdirections.size(); p++){
+				clusterdata[n].percolatingdirections[p].resize(0);
+			}
+			clusterdata[n].percolatingdirections.resize(0);
+		    
+			clusterdata[n].sortedcluster.resize(0);
+			clusterdata[n].sortedrealcluster.resize(0);
+			clusterdata[n].isinsortedcluster.resize(0);
+		}
 	}
 
 	if(do3d){
@@ -214,15 +235,10 @@ int main(int argc, char *argv[]){
 	cout << endl;
 	cout << "------------------------------------------------------------------------------" << endl;
 
-	if(memorysaver){
-		delete [] clusterdata; clusterdata=0;;
-	}
 	
 	calcExp();
 
-	if(! memorysaver){
-		delete [] clusterdata; clusterdata=0;
-	}
+	delete [] clusterdata; clusterdata=0;
 	delete [] obs; obs=0;
 	
 	return 0;
