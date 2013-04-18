@@ -138,6 +138,8 @@ void printsettings(){
 		cout << "Writing detailed results for every configuration." <<  endl;
 	if(do3d)
 		cout << "Writing 3dcluster visualization data files." <<  endl;
+	if(memorysaver)
+		cout << "Memory saver active." <<  endl;
 }
 
 int main(int argc, char *argv[]){
