@@ -28,6 +28,8 @@ int nmeas=1;
 
 bool usealternativesectors=false;
 
+bool do3d=false;
+
 bool detail=false; // Controlls if we want detailed information for every configuration
 bool doboxes=false; // Controlls if we want box counting calculations
 
@@ -130,6 +132,8 @@ void printsettings(){
 		cout << "Calculating 'box' observables." << endl;
 	if(detail)
 		cout << "Writing detailed results for every configuration." <<  endl;
+	if(do3d)
+		cout << "Writing 3dcluster visualization data files." <<  endl;
 }
 
 int main(int argc, char *argv[]){
@@ -183,29 +187,30 @@ int main(int argc, char *argv[]){
 		}
 		
 	
-		// Write data for 3dclusters program
-		stringstream f3dclustername;
-		f3dclustername << "3dcluster_" << leng1 << "x" << leng4 << "_m" << setprecision(0) << fixed << n << ".data";
-		cluster3doutput(clusterdata[n], f3dclustername.str());
+		if(do3d){
+			// Write data for 3dclusters program
+			stringstream f3dclustername;
+			f3dclustername << "3dcluster_" << leng1 << "x" << leng4 << "_m" << setprecision(0) << fixed << n << ".data";
+			cluster3doutput(clusterdata[n], f3dclustername.str());
+		}
 	}
 
-	// Write clusterfilenamelist for 3dcluster program
-	ofstream f3dclusterlist;
-	f3dclusterlist.open("3dcluster.list");
-	for(int n=0;n<nmeas;n++){
-		stringstream f3dclustername;
-		f3dclustername << "3dcluster_" << leng1 << "x" << leng4 << "_m" << setprecision(0) << fixed << n << ".data";
-		f3dclusterlist << f3dclustername.str() << endl;
+	if(do3d){
+		// Write clusterfilenamelist for 3dcluster program
+		ofstream f3dclusterlist;
+		f3dclusterlist.open("3dcluster.list");
+		for(int n=0;n<nmeas;n++){
+			stringstream f3dclustername;
+			f3dclustername << "3dcluster_" << leng1 << "x" << leng4 << "_m" << setprecision(0) << fixed << n << ".data";
+			f3dclusterlist << f3dclustername.str() << endl;
+		}
+		f3dclusterlist.close();
 	}
-	f3dclusterlist.close();
 
 	cout << endl;
 	cout << "------------------------------------------------------------------------------" << endl;
 	
 	calcExp();
-
-	string f3dname("clusters.data");
-	cluster3doutput(clusterdata[0], f3dname);
 
 	delete [] clusterdata; clusterdata=0;
 	delete [] obs; obs=0;
@@ -470,8 +475,10 @@ void calcExp(){
 	}
 	Jackknife(ddata, avgpercc, avgperccerr, nmeas);
 
+	stringstream fnperccname;
+	fnperccname << "npercc_" << Ns << "x" << Nt << ".res";
 	ofstream fnpercc;
-	fnpercc.open("npercc.res");
+	fnpercc.open(fnperccname.str().c_str());
 	fnpercc << Ns << " " << Nt << " " << avgpercc << " " << avgperccerr << endl;
 	fnpercc.close();
 
@@ -494,8 +501,10 @@ void calcExp(){
 			Jackknife(ddata, avgboxcnt[size], avgboxcnterr[size], nmeas);
 		}
 
+		stringstream fboxcntname;
+		fboxcntname << "boxcnt_" << Ns << "x" << Nt << ".res";
 		ofstream fboxcnt;
-		fboxcnt.open("boxcnt.res");
+		fboxcnt.open(fboxcntname.str().c_str());
 		for(unsigned int size=0; size<boxsize.size(); size++){
 			fboxcnt << boxsize[size] << " " << avgboxcnt[size] << " " << avgboxcnterr[size] << endl;
 		}

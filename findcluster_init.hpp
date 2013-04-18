@@ -18,6 +18,7 @@ char texthelp[]="Usage: findcluster.x [OPTION] ... [POLLEVCONFIG/POLLEVCONFIGLIS
 		"  -d, --detail               write detailed output for every calculated configuration\n"
 		"  -b, --boxes                performes the box counting calculation (expensive)\n"
 		"  -r, --rsector RADIUS       use alternative sector classification with r = RADIUS\n"
+		"  --3d                       write 3dcluster data files\n"
 		"\n"  
 		"  -h  --help                 display this help and exit\n"
 		"  -v  --version              output version information and exit\n"
@@ -58,6 +59,7 @@ int init(int &argc, char *argv[]){
 			{"detail", no_argument, 0, 'd'},
 			{"boxes", no_argument, 0, 'b'},
 			{"rsector", required_argument, 0, 'r'},
+			{"3d", no_argument, 0, 0},
 			/* These options set a flag. */
 			// {"free", no_argument, 0, 'f'},
 			// {"u0", required_argument, 0, 0},
@@ -85,9 +87,8 @@ int init(int &argc, char *argv[]){
 				if (optarg)
 					printf (" with arg %s", optarg);
 				printf ("\n");A */
-		            //    if( strcmp( "u0", long_options[option_index].name ) == 0 ) {
-			    //                u0 = atof(optarg);
-			    //	}
+		                if( strcmp( "3d", long_options[option_index].name ) == 0 )
+			                   do3d = true;
 				break;
 
 			case 's':
