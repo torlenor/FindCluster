@@ -1,5 +1,5 @@
 set term pdfcairo enhan
-set output "boxsizecut_radius0.9.pdf"
+set output "boxsizecut_radius0.60.pdf"
 
 set xtics (1,2,4,5,8,10,20,40)
 set logscale x
@@ -9,17 +9,17 @@ set xrange [0.9:50]
 set xlabel "s" 
 set ylabel "N(s)"
 
-set label 1 "Cut alternative prescription radius=0.9" at 1,10
+set label 1 "Cut alternative prescription radius=0.60" at 1,10
 
 set pointsize 0.4
 linew=3
 
-plot "./40x2/boxcnt.res" u 1:2:3 w yerrorlines t "5 T_c" lw linew, \
-"./40x4/boxcnt.res" u 1:2:3 w yerrorlines t "2.5 T_c" lw linew, \
-"./40x6/boxcnt.res" u 1:2:3 w yerrorlines t "1.67 T_c" lw linew , \
-"./40x8/boxcnt.res" u 1:2:3 w yerrorlines t "1.25 T_c" lw linew, \
-"./40x9/boxcnt.res" u 1:2:3 w yerrorlines t "1.11 T_c" lw linew, \
-"./40x10/boxcnt.res" u 1:2:3 w yerrorlines t "1.00 T_c" lw linew, \
-"./40x11/boxcnt.res" u 1:2:3 w yerrorlines t "0.91 T_c" lw linew, \
-"./40x12/boxcnt.res" u 1:2:3 w yerrorlines t "0.83 T_c" lw linew, \
-"./40x14/boxcnt.res" u 1:2:3 w yerrorlines t "0.71 T_c" lw linew
+plot "./40x2/boxcnt_40x2.res" u 1:2:3 w yerrorlines t "5 T_c" lw linew, \
+"./40x4/boxcnt_40x4.res" u 1:2:3 w yerrorlines t "2.5 T_c" lw linew, \
+"./40x6/boxcnt_40x6.res" u 1:2:3 w yerrorlines t "1.67 T_c" lw linew , \
+"./40x8/boxcnt_40x8.res" u 1:2:3 w yerrorlines t "1.25 T_c" lw linew, \
+"./40x9/boxcnt_40x9.res" u 1:2:3 w yerrorlines t "1.11 T_c" lw linew, \
+"./40x10/boxcnt_40x10.res" u 1:2:3 w yerrorlines t "1.00 T_c" lw linew, \
+"./40x11/boxcnt_40x11.res" u 1:2:3 w yerrorlines t "0.91 T_c" lw linew, \
+"./40x12/boxcnt_40x12.res" u 1:2:3 w yerrorlines t "0.83 T_c" lw linew, \
+"./40x14/boxcnt_40x14.res" u 1:2:3 w yerrorlines t "0.71 T_c" lw linew

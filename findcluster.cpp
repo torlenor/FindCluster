@@ -413,11 +413,12 @@ void calcExp(){
 	
 	double ddata[nmeas];
 	// Start of Jackknife
-	// Maximal cluster size expectation value
+	// Maximal cluster size per volume expectation value
 	for(int n=0;n<nmeas;n++){
+		ddata[n]=0;
 		for(int j=0;j<nmeas;j++){
 			if(n!=j)
-				ddata[n] += (&obs[j])->maxclustersize;
+				ddata[n] += (&obs[j])->maxclustersize/(double)Nspace;
 		}
 		ddata[n] = ddata[n]/(double)(nmeas-1);
 	}
@@ -457,8 +458,8 @@ void calcExp(){
 	Jackknife(ddata, cut, cuterr, nmeas);
 
 	cout << "Expectation values (single eliminitation jackknife): " << endl;
-	cout << "Average cluster size = " << setprecision(14) << avgclustersize << ", Maximum cluster size = " << maxclustersize << endl;
-	cout << "Average cluster err  = " << avgclustersizeerr << ", Maximum cluster err  = " << maxclustersizeerr << endl;
+	cout << "Average cluster size = " << setprecision(14) << avgclustersize << ", Maximum cluster size / V = " << maxclustersize << endl;
+	cout << "Average cluster err  = " << avgclustersizeerr << ", Maximum cluster / V err  = " << maxclustersizeerr << endl;
 	cout << "Average cluster size Fortunato (1.7) = " << avgclustersizeF << ", Error  = " << avgclustersizeFerr << endl;
 	cout << "Cut = " << cut << " Cut err = " << cuterr << endl;
 
