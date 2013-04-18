@@ -117,6 +117,21 @@ double r = 0;
 
 #include "findcluster_init.hpp"
 
+void printsettings(){
+	cout << "Settings:" << endl << endl;
+	cout << "Lattice size = " << leng1 << "x" << leng2 << "x" << leng3 << "x" << leng4 << endl;
+	cout << "Number of configurations = " << nmeas << endl;
+	if(! usealternativesectors){
+		cout << "Cut fraction = " << fraction << endl;
+	}else{
+		cout << "Alternative cut prescription, radius r = " << r << endl;
+	}
+	if(doboxes)
+		cout << "Calculating 'box' observables." << endl;
+	if(detail)
+		cout << "Writing detailed results for every configuration." <<  endl;
+}
+
 int main(int argc, char *argv[]){
 	// Handle command line information and initialize arrays and other stuff...
 	if(init(argc, argv) != 0){
@@ -125,7 +140,9 @@ int main(int argc, char *argv[]){
 	}
 
 	cout << endl;
-	
+	printsettings();
+	cout << endl;
+
 	// Main part
 	// Loop over all nmeas configurations
 	cout << "------------------------------------------------------------------------------" << endl;
