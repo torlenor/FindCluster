@@ -199,15 +199,15 @@ int init(int &argc, char *argv[]){
 	cout << "done!" << endl;
 	#endif
 	
-	#ifdef DEBUG
-	cout << "Creating cluster data arrays..." << flush;
-	#endif
-	for(int n=0;n<nmeas;n++){
-		(&clusterdata[n])->isinsector.resize(Nspace);
+//	#ifdef DEBUG
+//	cout << "Creating cluster data arrays..." << flush;
+//	#endif
+//	for(int n=0;n<nmeas;n++){
+//		(&clusterdata[n])->isinsector.resize(Nspace);
 		// (&clusterdata[0])->clustersector will not be allocated here, but on the fly with push_back
-		(&clusterdata[n])->isincluster.resize(Nspace);
+//		(&clusterdata[n])->isincluster.resize(Nspace);
 		// (&clusterdata[0])->clustermembers will not be allocated here, but on the fly with push_back
-	}
+//	}
 
 	if(doboxes){
 		// Boxsize array

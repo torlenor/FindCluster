@@ -157,6 +157,10 @@ int main(int argc, char *argv[]){
 	// Loop over all nmeas configurations
 	cout << "------------------------------------------------------------------------------" << endl;
 	for(int n=0;n<nmeas;n++){
+		// Allocate memory for faster access
+                (&clusterdata[n])->isinsector.resize(Nspace);
+                (&clusterdata[n])->isincluster.resize(Nspace);
+
 		if(detail){
 			cout << endl << "------------------------------------------------------------------------------" << endl;
 			cout << fevname[n] << "..." << endl;
