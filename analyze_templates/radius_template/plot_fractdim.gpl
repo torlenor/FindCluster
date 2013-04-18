@@ -1,0 +1,15 @@
+set term pdfcairo enhan
+set output "fract_dim_radius1.00.pdf"
+
+set label 1 "Cut alternative prescription radius=1.00" at 2,1.6
+
+set xrange [0:5.5]
+set yrange [1.0:3.2]
+
+set xlabel "T/T_c"
+set ylabel "D"
+
+set pointsize 0.4
+linew=3
+
+plot "fit_results.data" u (10/$1):2:3 w yerrorlines lw linew

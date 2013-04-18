@@ -1,0 +1,123 @@
+set term pdfcairo enhanced dashed
+set output "boxsizecut_fraction0.6_fit.pdf"
+
+set xtics (1,2,4,5,8,10,20,40)
+set logscale x
+set logscale y
+set xrange [0.9:50]
+
+set xlabel "s" 
+set ylabel "N(s)"
+
+set label 1 "Cut fraction=0.6" at 1,10
+
+# Fitting stuff
+set fit errorvariables
+
+f02(x)=C2*x**(-D2)
+f04(x)=C4*x**(-D4)
+f06(x)=C6*x**(-D6)
+f08(x)=C8*x**(-D8)
+f09(x)=C9*x**(-D9)
+f10(x)=C10*x**(-D10)
+f11(x)=C11*x**(-D11)
+f12(x)=C12*x**(-D12)
+f14(x)=C14*x**(-D14)
+
+D2=2.2
+C2=10000
+r2a=2
+r2b=20
+fit [r2a:r2b] f02(x) "./40x2/boxcnt.res" u 1:2 via C2,D2
+
+D4=2.2
+C4=10000
+r4a=4
+r4b=20
+fit [r4a:r4b] f04(x) "./40x4/boxcnt.res" u 1:2 via C4,D4
+
+D6=2.2
+C6=10000
+r6a=4
+r6b=20
+fit [r6a:r6b] f06(x) "./40x6/boxcnt.res" u 1:2 via C6,D6
+
+D8=2.2
+C8=10000
+r8a=4
+r8b=20
+fit [r8a:r8b] f08(x) "./40x8/boxcnt.res" u 1:2 via C8,D8
+
+D9=2.2
+C9=1000
+r9a=5
+r9b=20
+fit [r9a:r9b] f09(x) "./40x9/boxcnt.res" u 1:2 via C9,D9
+
+D10=2.2
+C10=1000
+r10a=2
+r10b=10
+fit [r10a:r10b] f10(x) "./40x10/boxcnt.res" u 1:2 via C10,D10
+
+D11=2.2
+C11=1000
+r11a=2
+r11b=8
+fit [r11a:r11b] f11(x) "./40x11/boxcnt.res" u 1:2 via C11,D11
+
+D12=2.2
+C12=1000
+r12a=2
+r12b=10
+fit [r12a:r12b] f12(x) "./40x12/boxcnt.res" u 1:2 via C12,D12
+
+D14=2.2
+C14=1000
+r14a=2
+r14b=8
+fit [r14a:r14b] f14(x) "./40x14/boxcnt.res" u 1:2 via C14,D14
+
+# Write fit parameters to file
+set print "fit_results.data"
+print 2,D2,D2_err
+print 4,D4,D4_err
+print 6,D6,D6_err
+print 8,D8,D8_err
+print 9,D9,D9_err
+print 10,D10,D10_err
+print 11,D11,D11_err
+print 12,D12,D12_err
+print 14,D14,D14_err
+
+set pointsize 0.4
+linew=3
+linewfit=6
+
+plot "./40x2/boxcnt.res" u 1:2:3 w yerrorlines t gprintf("5 T_c, D=%1.2f",D2) lw linew lc rgb "red" lt 1, \
+f02(x) w lines notitle lc rgb "red" lt 3, \
+( r2a < x && x < r2b ) ? f02(x) : 1/0 w lines notitle lc rgb "red" lt 2 lw linewfit, \
+"./40x4/boxcnt.res" u 1:2:3 w yerrorlines t gprintf("2.5 T_c, D=%1.2f",D4) lw linew lc rgb "blue" lt 1,  \
+f04(x) w lines notitle lc rgb "blue" lt 3, \
+( r4a < x && x < r4b ) ? f04(x) : 1/0 w lines notitle lc rgb "blue" lt 2 lw linewfit, \
+"./40x6/boxcnt.res" u 1:2:3 w yerrorlines t gprintf("1.67 T_c, D=%1.2f",D6) lw linew lc rgb "green" lt 1, \
+f06(x) w lines notitle lc rgb "green" lt 3, \
+( r6a < x && x < r6b ) ? f06(x) : 1/0 w lines notitle lc rgb "green" lt 2 lw linewfit, \
+"./40x8/boxcnt.res" u 1:2:3 w yerrorlines t gprintf("1.25 T_c, D=%1.2f",D8) lw linew lc rgb "brown" lt 1, \
+f08(x) w lines notitle lc rgb "brown" lt 3, \
+( r8a < x && x < r8b ) ? f08(x) : 1/0 w lines notitle lc rgb "brown" lt 2 lw linewfit, \
+"./40x9/boxcnt.res" u 1:2:3 w yerrorlines t gprintf("1.11 T_c, D=%1.2f",D9) lw linew lc rgb "purple" lt 1, \
+f09(x) w lines notitle lc rgb "purple" lt 3, \
+( r9a < x && x < r9b ) ? f09(x) : 1/0 w lines notitle lc rgb "purple" lt 2 lw linewfit, \
+"./40x10/boxcnt.res" u 1:2:3 w yerrorlines t gprintf("1.00 T_c, D=%1.2f",D10) lw linew lc rgb "orange" lt 1, \
+f10(x) w lines notitle lc rgb "orange" lt 3, \
+( r10a < x && x < r10b ) ? f10(x) : 1/0 w lines notitle lc rgb "orange" lt 2 lw linewfit, \
+"./40x11/boxcnt.res" u 1:2:3 w yerrorlines t gprintf("0.91 T_c, D=%1.2f",D11) lw linew lc rgb "grey40" lt 1, \
+f11(x) w lines notitle lc rgb "gray40" lt 3, \
+( r11a < x && x < r11b ) ? f11(x) : 1/0 w lines notitle lc rgb "gray40" lt 2 lw linewfit, \
+"./40x12/boxcnt.res" u 1:2:3 w yerrorlines t gprintf("0.83 T_c, D=%1.2f",D12) lw linew lc rgb "steelblue" lt 1, \
+f12(x) w lines notitle lc rgb "steelblue" lt 3, \
+( r12a < x && x < r12b ) ? f12(x) : 1/0 w lines notitle lc rgb "steelblue" lt 2 lw linewfit, \
+"./40x14/boxcnt.res" u 1:2:3 w yerrorlines t gprintf("0.71 T_c, D=%1.2f",D14) lw linew lc rgb "black" lt 1, \
+f14(x) w lines notitle lc rgb "black" lt 3, \
+( r14a < x && x < r14b ) ? f14(x) : 1/0 w lines notitle lc rgb "black" lt 2 lw linewfit
