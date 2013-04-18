@@ -10,6 +10,7 @@ for t in 2 3 4 5 6 7 8 9 10 11 12 14 16 18 20 ; do
         echo "#$ -V" >> c40x${t}.sh
         echo "#$ -q all.q" >> c40x${t}.sh
         echo "#$ -N analyze${t}" >> c40x${t}.sh
+	echo "setenv MV2_ENABLE_AFFINITY 0"  >> c40x${t}.sh
 	echo "cd ${PWD}/40x${t}" >> c40x${t}.sh
 	echo "/usr/bin/time -o ../40x${t}.log --append ../findcluster.x -s 40 -t $t -n $meas -f $fraction pollev_40x${t}_b6.20.list -b > ../40x${t}.log" >> c40x${t}.sh
 	echo "exit 0" >> c40x${t}.sh
