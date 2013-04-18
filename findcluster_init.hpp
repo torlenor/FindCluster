@@ -19,6 +19,7 @@ char texthelp[]="Usage: findcluster.x [OPTION] ... [POLLEVCONFIG/POLLEVCONFIGLIS
 		"  -b, --boxes                performes the box counting calculation (expensive)\n"
 		"  -r, --rsector RADIUS       use alternative sector classification with r = RADIUS\n"
 		"  --3d                       write 3dcluster data files\n"
+		"  -m, --memory               drop clusterdata vectors after calculating the observables\n"
 		"\n"  
 		"  -h  --help                 display this help and exit\n"
 		"  -v  --version              output version information and exit\n"
@@ -60,6 +61,7 @@ int init(int &argc, char *argv[]){
 			{"boxes", no_argument, 0, 'b'},
 			{"rsector", required_argument, 0, 'r'},
 			{"3d", no_argument, 0, 0},
+			{"memory", no_argument, 0, 'm'},
 			/* These options set a flag. */
 			// {"free", no_argument, 0, 'f'},
 			// {"u0", required_argument, 0, 0},
@@ -71,7 +73,7 @@ int init(int &argc, char *argv[]){
 		/* getopt_long stores the option index here. */
 		int option_index = 0;
 
-		c = getopt_long (argc, argv, "s:t:f:n:r:hvdb",
+		c = getopt_long (argc, argv, "s:t:f:n:r:hvdbm",
 		long_options, &option_index);
 
 		/* Detect the end of the options. */
@@ -118,6 +120,10 @@ int init(int &argc, char *argv[]){
 			case 'r':
 				usealternativesectors = true;
 				r = atof(optarg);
+				break;
+			
+			case 'm':
+				memorysaver = true;
 				break;
 
 			case 'v':

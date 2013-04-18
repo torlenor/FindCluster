@@ -33,6 +33,8 @@ bool do3d=false;
 bool detail=false; // Controlls if we want detailed information for every configuration
 bool doboxes=false; // Controlls if we want box counting calculations
 
+bool memorysaver=false; // Controlls if we drop the clusterdata arrays after observable calculations
+
 // Filename string vector
 vector<string> fevname;
 
@@ -82,6 +84,8 @@ struct Observablestruct{
 	double percc;
 
 	double lcboxcnt;
+
+	int largestclusterid;
 };
 
 Observablestruct *obs;
@@ -209,10 +213,16 @@ int main(int argc, char *argv[]){
 
 	cout << endl;
 	cout << "------------------------------------------------------------------------------" << endl;
+
+	if(memorysaver){
+		delete [] clusterdata; clusterdata=0;;
+	}
 	
 	calcExp();
 
-	delete [] clusterdata; clusterdata=0;
+	if(! memorysaver){
+		delete [] clusterdata; clusterdata=0;
+	}
 	delete [] obs; obs=0;
 	
 	return 0;
@@ -495,7 +505,7 @@ void calcExp(){
 
 				for(int j=0;j<nmeas;j++){
 					if(n!=j)
-					ddata[n] += (&obs[j])->numberofboxes[(&clusterdata[j])->sortedrealcluster[0]][size];
+					ddata[n] += (&obs[j])->numberofboxes[(&obs[j])->largestclusterid][size];
 				}
 				ddata[n] = ddata[n]/(double)(nmeas-1);
 			}
@@ -590,6 +600,8 @@ void calcObservables(Observablestruct &lobs, Clusterstruct &lclusterdata){
 
 	// Store number of percolating clusters
 	lobs.percc=lclusterdata.percolatingclusters.size();
+
+	lobs.largestclusterid=lclusterdata.sortedrealcluster[0];
 }
 
 void writeConfigResultsstdout(Observablestruct &lobs, Clusterstruct &lclusterdata){
