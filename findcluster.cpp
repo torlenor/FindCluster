@@ -519,7 +519,7 @@ void calcObservables(Observablestruct &lobs, Clusterstruct &lclusterdata){
 	// Find largest cluster
 	int size=-1, largestcluster=-1;
 	for(unsigned int c=0; c<lclusterdata.clustermembers.size(); c++){
-		if( (int)lclusterdata.clustermembers[c].size() > size){
+		if( (int)lclusterdata.clustermembers[c].size() > size && lclusterdata.clustersector[c] < 2){
 			size = lclusterdata.clustermembers[c].size();
 			largestcluster = c;
 		}
@@ -530,11 +530,14 @@ void calcObservables(Observablestruct &lobs, Clusterstruct &lclusterdata){
 	
 	// Calculate average cluster size
 	double avgclustersize=0;
+	int cnt=0;
 	for(unsigned int c=0; c<lclusterdata.clustermembers.size(); c++){
-		avgclustersize += lclusterdata.clustermembers[c].size();
+		if(lclusterdata.clustersector[c] < 2){
+			avgclustersize += lclusterdata.clustermembers[c].size();
+			cnt++;
+		}
 	}
-	
-	lobs.avgclustersize = avgclustersize/(double)lclusterdata.clustermembers.size();
+	lobs.avgclustersize = avgclustersize/(double)cnt;
 
 	// Calculate average cluster size from Fortunato (1.7)
 	// First calculate the number of clusters of size s per lattice site
@@ -543,19 +546,21 @@ void calcObservables(Observablestruct &lobs, Clusterstruct &lclusterdata){
 	int curcsize;
 	int knownsize=0;
 	for(unsigned int c=0; c<lclusterdata.clustermembers.size(); c++){
-		curcsize = lclusterdata.clustermembers[c].size();
-		knownsize=0;
-		for(unsigned int s=0; s<sizes.size(); s++){
-			if(sizes[s] == curcsize){
-				knownsize = s;
-				break;
+		if(lclusterdata.clustersector[c] < 2){
+			curcsize = lclusterdata.clustermembers[c].size();
+			knownsize=0;
+			for(unsigned int s=0; s<sizes.size(); s++){
+				if(sizes[s] == curcsize){
+					knownsize = s;
+					break;
+				}
 			}
-		}
-		if(knownsize>0){
-			sizedist[knownsize] += 1.0/(double)Nspace;
-		}else{
-			sizes.push_back(curcsize);
-			sizedist.push_back(1.0/(double)Nspace);
+			if(knownsize>0){
+				sizedist[knownsize] += 1.0/(double)Nspace;
+			}else{
+				sizes.push_back(curcsize);
+				sizedist.push_back(1.0/(double)Nspace);
+			}
 		}
 	}
 

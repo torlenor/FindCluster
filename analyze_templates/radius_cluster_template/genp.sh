@@ -1,6 +1,6 @@
 #!/bin/bash
 meas=400
-databasedir="../../b6.2"
+databasedir="/cl_tmp/07schadh/su3runs/su3pp/bin"
 radius=0.85
 for t in 2 3 4 5 6 7 8 9 10 11 12 14 16 18 20 ; do 
 	echo "#\!/bin/bash" > c40x${t}.sh
