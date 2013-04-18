@@ -185,7 +185,7 @@ int main(int argc, char *argv[]){
 
 		sortClusterSize(clusterdata[n]); // Sort clusters per number of members
 
-		clusterRadius(obs[n], clusterdata[n]);
+		// clusterRadius(obs[n], clusterdata[n]);
 
 		if(doboxes)
 			hideInBoxes(obs[n], clusterdata[n]);
@@ -620,8 +620,18 @@ void calcObservables(Observablestruct &lobs, Clusterstruct &lclusterdata){
 	cout << "done!" << endl;
 	#endif
 
-	// Store number of percolating clusters
-	lobs.percc=lclusterdata.percolatingclusters.size();
+	// Store number of percolating clusters in a certain direction
+	int pcount=0;
+	for(unsigned int p=0; p<lclusterdata.percolatingclusters.size(); p++){
+		if(lclusterdata.percolatingdirections[p][0] == 1 && lclusterdata.percolatingdirections[p][1] == 1 && lclusterdata.percolatingdirections[p][2] == 1){
+			pcount++;
+		}
+		//if(lclusterdata.percolatingdirections[p][0] == 1){
+		//	pcount++;
+		//}
+	}
+//	lobs.percc=lclusterdata.percolatingclusters.size();
+	lobs.percc=pcount;
 
 	lobs.largestclusterid=lclusterdata.sortedrealcluster[0];
 }
