@@ -29,7 +29,7 @@ char texthelp[]="Usage: genpollhist1d_jack.x [OPTION] ... [POLLEVCONFIG/POLLEVCO
 int init(int &argc, char *argv[]){
 	cout << endl;
 	cout << "genpollhist1d_jack.x " << MAJOR_VERSION << "." << MINOR_VERSION << "." << REVISION_VERSION << endl
-		<< "Finds cluster and performs calculations with it." << endl
+		<< "Calculates histograms from Polyakov loop eigenvalues." << endl 
 		<< "Uses Polyakov loop eigenvalues as input." << endl << endl;
 
 
