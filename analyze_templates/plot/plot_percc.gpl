@@ -1,0 +1,17 @@
+set term pdfcairo enhan
+
+load "./gnuplot.settings"
+
+set output sprintf("percc_f%.2f.pdf", f)
+
+set label 1 sprintf("Cut f=%.2f", f) at 1,3
+
+set xrange [0:5.5]
+set yrange [-0.5:3.5]
+
+set xlabel "T/T_c"
+
+set pointsize 0.4
+linew=3
+
+plot "./percc.res" u (Ntcrit/$2):3:4 w yerrorlines lw linew
