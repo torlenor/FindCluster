@@ -62,6 +62,8 @@ struct Clusterstruct{
 	vector<int> sortedrealcluster;
 	vector<int> isinsortedcluster;
 
+	vector<vector<int> > clusterisperiodic;
+
 	int nsectm1, nsect0, nsectp1;
 };
 
@@ -185,7 +187,7 @@ int main(int argc, char *argv[]){
 
 		sortClusterSize(clusterdata[n]); // Sort clusters per number of members
 
-		// clusterRadius(obs[n], clusterdata[n]);
+		clusterRadius(obs[n], clusterdata[n]);
 
 		if(doboxes)
 			hideInBoxes(obs[n], clusterdata[n]);
@@ -241,6 +243,12 @@ int main(int argc, char *argv[]){
 	cout << endl;
 	cout << "------------------------------------------------------------------------------" << endl;
 
+	cout << "The following clusters are connected over the PBCs: " << endl;
+	for(unsigned int c=0;c<clusterdata[0].clusterisperiodic.size();c++){
+		if(clusterdata[0].clusterisperiodic[clusterdata[0].sortedcluster[c]][0]==1 || clusterdata[0].clusterisperiodic[clusterdata[0].sortedcluster[c]][1]==1 || clusterdata[0].clusterisperiodic[clusterdata[0].sortedcluster[c]][2]==1){
+			cout << "Cluster (size sorted) " << c << endl;
+		}
+	}
 	
 	calcExp();
 
@@ -309,27 +317,9 @@ void hideInBoxes(Observablestruct &lobs, Clusterstruct &lclusterdata){
 	} // Cluster
 }
 
-void searchMinCoords(Clusterstruct &lclusterdata, unsigned int &c, int &mini1, int &mini2, int &mini3){
-	mini1=leng1; mini2=leng2; mini3=leng3;
-	int i1=0, i2=0, i3=0;
-	for(unsigned int member=0; member<lclusterdata.clustermembers[c].size();member++){
-		getCoords(lclusterdata.clustermembers[c][member], i1, i2, i3);
-//		cout << i1 << " " << i2 << " " << i3 << endl;
-		if(i1<mini1){
-			mini1=i1;
-		}
-		if(i2<mini2){
-			mini2=i2;
-		}
-		if(i3<mini3){
-			mini3=i3;
-		}
-	}
-}
-
 void clusterRadius(Observablestruct &lobs, Clusterstruct &lclusterdata){
 	double centerofmass[3], radiussquare;
-	int i1, i2, i3, mini1, mini2, mini3;
+	int i1, i2, i3;
 
 	lobs.centerofmass.resize(lclusterdata.clustermembers.size());
 
@@ -338,15 +328,26 @@ void clusterRadius(Observablestruct &lobs, Clusterstruct &lclusterdata){
 		centerofmass[0]=0;
 		centerofmass[1]=0;
 		centerofmass[2]=0;
-		searchMinCoords(lclusterdata, c, mini1, mini2, mini3);
 		// cout << "mini1 = " << mini1 << " mini2 = " << mini2 << " mini3 = " << mini3 << endl;
-		mini1=0; mini2=0;mini3=0;
 		for(unsigned int member=0; member<lclusterdata.clustermembers[c].size();member++){
 			getCoords(lclusterdata.clustermembers[c][member], i1, i2, i3);
-			centerofmass[0] += (i1-mini1);
-			centerofmass[1] += (i2-mini2);
-			centerofmass[2] += (i3-mini3);
+			if(lclusterdata.clusterisperiodic[c][0] == 1){
+				centerofmass[0] += i1 - Ns;
+			}else{
+				centerofmass[0] += i1;
+			}
+			if(lclusterdata.clusterisperiodic[c][1] == 1){
+				centerofmass[1] += i2 - Ns;
+			}else{
+				centerofmass[1] += i2;
+			}
+			if(lclusterdata.clusterisperiodic[c][2] == 1){
+				centerofmass[2] += i3 - Ns;
+			}else{
+				centerofmass[2] += i3;
+			}
 		}
+
 		centerofmass[0] = centerofmass[0]/(double)lclusterdata.clustermembers[c].size();
 		centerofmass[1] = centerofmass[1]/(double)lclusterdata.clustermembers[c].size();
 		centerofmass[2] = centerofmass[2]/(double)lclusterdata.clustermembers[c].size();
@@ -357,9 +358,15 @@ void clusterRadius(Observablestruct &lobs, Clusterstruct &lclusterdata){
 		
 		for(unsigned int member=0; member<lclusterdata.clustermembers[c].size();member++){
 			getCoords(lclusterdata.clustermembers[c][member], i1, i2, i3);
-			radiussquare += (pow(centerofmass[0]-(i1-mini1), 2)
-					+ pow(centerofmass[1]-(i2-mini2), 2)
-					+ pow(centerofmass[2]-(i3-mini3), 2));
+			if(lclusterdata.clusterisperiodic[c][0] == 1)
+				i1 -= Ns;
+			if(lclusterdata.clusterisperiodic[c][1] == 1)
+				i2 -= Ns;
+			if(lclusterdata.clusterisperiodic[c][2] == 1)
+				i3 -= Ns;
+			radiussquare += (pow(centerofmass[0]-i1, 2)
+					+ pow(centerofmass[1]-i2, 2)
+					+ pow(centerofmass[2]-i3, 2));
 		}
 		radiussquare = sqrt(radiussquare/(double)lclusterdata.clustermembers[c].size());
 		lobs.clusterradius.push_back(radiussquare);
@@ -872,11 +879,19 @@ void findClusters(Clusterstruct &lclusterdata){
 			sector = lclusterdata.isinsector[is];
 			cluster++; // current cluster id (Note: We begin counting with ID 0!)
 			lclusterdata.clustersector.push_back(sector); // Current cluster is in sector sector
-			lclusterdata.clustermembers.push_back(vector<int>()); // Add a new cluster
 			
+			lclusterdata.clustermembers.push_back(vector<int>()); // Add a new cluster
 			lclusterdata.clustermembers[cluster].push_back(is); // Add is to this new cluster
+
 			lclusterdata.isincluster[is] = cluster; // Set the cluster id for the point  is
 			isfiled[is] = true; // Lattice point is now filed
+			
+			// Modification due to cluster radius with PBCs
+			lclusterdata.clusterisperiodic.push_back(vector<int>()); // Add a new cluster
+			lclusterdata.clusterisperiodic[cluster].resize(3);
+			for(int i=0;i<3;i++)
+				lclusterdata.clusterisperiodic[cluster][i]=0;
+			int ci1=0, ci2=0, ci3=0;
 			
 			// Iterate over all found points in the actual cluster (loop does not have fixed length)
 			int member = 0;
@@ -889,6 +904,37 @@ void findClusters(Clusterstruct &lclusterdata){
 						lclusterdata.clustermembers[cluster].push_back(isneib);
 						lclusterdata.isincluster[isneib] = cluster;
 						isfiled[isneib] = true;
+
+						// Check if over periodic boundaries
+						getCoords(memberis, ci1, ci2, ci3);
+						switch(mu){
+							case 0: if(ci1 + 1 == leng1)
+									lclusterdata.clusterisperiodic[cluster][0]=1;
+								break;
+
+							case 1: if(ci2 + 1 == leng2)
+									lclusterdata.clusterisperiodic[cluster][1]=1;
+								break;
+							
+							case 2: if(ci3 + 1 == leng3)
+									lclusterdata.clusterisperiodic[cluster][2]=1;
+								break;
+							
+							case 3: if(ci1 - 1 == -1)
+									lclusterdata.clusterisperiodic[cluster][0]=1;
+								break;
+							
+							case 4: if(ci2 - 1 == -1)
+									lclusterdata.clusterisperiodic[cluster][1]=1;
+								break;
+							
+							case 5: if(ci3 - 1 == -1)
+									lclusterdata.clusterisperiodic[cluster][2]=1;
+								break;
+
+							default: cout << "ERROR: Error in cluster switch!" << endl;
+						}
+
 					}
 				}
 				
@@ -1014,5 +1060,3 @@ void fillNeib(){
                 }
 	}
 }
-
-
