@@ -86,6 +86,8 @@ struct Observablestruct{
 	double lcboxcnt;
 
 	int largestclusterid;
+
+	double laserdim;
 };
 
 Observablestruct *obs;
@@ -442,6 +444,7 @@ void calcExp(){
 	double avgclustersizeF=0, avgclustersizeFerr=0;
 	double avgpercc=0, avgperccerr=0;
 	double cut=0, cuterr=0;
+	double mlaserdim=0, mlaserdimerr=0;
 	
 	double ddata[nmeas];
 	// Start of Jackknife
@@ -488,12 +491,23 @@ void calcExp(){
 		ddata[n] = ddata[n]/(double)(nmeas-1);
 	}
 	Jackknife(ddata, cut, cuterr, nmeas);
+	
+	for(int n=0;n<nmeas;n++){
+		ddata[n]=0;
+		for(int j=0;j<nmeas;j++){
+			if(n!=j)
+				ddata[n] += (&obs[j])->laserdim;
+		}
+		ddata[n] = ddata[n]/(double)(nmeas-1);
+	}
+	Jackknife(ddata, mlaserdim, mlaserdimerr, nmeas);
 
 	cout << "Expectation values (single eliminitation jackknife): " << endl;
 	cout << "Average cluster size = " << setprecision(14) << avgclustersize << ", Maximum cluster size / V = " << maxclustersize << endl;
 	cout << "Average cluster err  = " << avgclustersizeerr << ", Maximum cluster / V err  = " << maxclustersizeerr << endl;
 	cout << "Average cluster size Fortunato (1.7) = " << avgclustersizeF << ", Error  = " << avgclustersizeFerr << endl;
 	cout << "Cut = " << cut << " Cut err = " << cuterr << endl;
+	cout << "Laserdim = " << mlaserdim << " Laserdim err = " << mlaserdimerr << endl;
 
 	cout << endl;
 
@@ -634,6 +648,81 @@ void calcObservables(Observablestruct &lobs, Clusterstruct &lclusterdata){
 	lobs.percc=pcount;
 
 	lobs.largestclusterid=lclusterdata.sortedrealcluster[0];
+
+	lobs.laserdim=0;
+
+	int i1=0, i2=0, i3=0, is=0;
+	bool incluster=false;
+	// First direction i1
+	for(i2=0;i2<Ns;i2++)
+	for(i3=0;i3<Ns;i3++){
+		i1=0;
+		is=latmap(i1, i2, i3);
+		if(lclusterdata.isincluster[is]==lobs.largestclusterid)
+			incluster=true;
+		for(i1=1;i1<Ns;i1++){
+			is=latmap(i1, i2, i3);
+			if(incluster==true){
+				if(lclusterdata.isincluster[is] != lobs.largestclusterid){
+					incluster=false;
+					lobs.laserdim++;
+				}
+			}else{
+				if(lclusterdata.isincluster[is] == lobs.largestclusterid){
+					incluster=true;
+					lobs.laserdim++;
+				}
+			}
+		}
+	}
+	
+	// Second direction i2
+	incluster=false;
+	for(i1=0;i1<Ns;i1++)
+	for(i3=0;i3<Ns;i3++){
+		i2=0;
+		is=latmap(i1, i2, i3);
+		if(lclusterdata.isincluster[is]==lobs.largestclusterid)
+			incluster=true;
+		for(i2=1;i2<Ns;i2++){
+			is=latmap(i1, i2, i3);
+			if(incluster==true){
+				if(lclusterdata.isincluster[is] != lobs.largestclusterid){
+					incluster=false;
+					lobs.laserdim++;
+				}
+			}else{
+				if(lclusterdata.isincluster[is] == lobs.largestclusterid){
+					incluster=true;
+					lobs.laserdim++;
+				}
+			}
+		}
+	}
+	
+	// Third direction i3
+	incluster=false;
+	for(i1=0;i1<Ns;i1++)
+	for(i2=0;i2<Ns;i2++){
+		i3=0;
+		is=latmap(i1, i2, i3);
+		if(lclusterdata.isincluster[is]==lobs.largestclusterid)
+			incluster=true;
+		for(i3=1;i3<Ns;i3++){
+			is=latmap(i1, i2, i3);
+			if(incluster==true){
+				if(lclusterdata.isincluster[is] != lobs.largestclusterid){
+					incluster=false;
+					lobs.laserdim++;
+				}
+			}else{
+				if(lclusterdata.isincluster[is] == lobs.largestclusterid){
+					incluster=true;
+					lobs.laserdim++;
+				}
+			}
+		}
+	}
 }
 
 void writeConfigResultsstdout(Observablestruct &lobs, Clusterstruct &lclusterdata){
