@@ -15,6 +15,8 @@ using namespace std;
 int Ns=0;
 int Nt=0;
 
+double f=0.6;
+
 ConfigData *config;
 
 complex<double> localPoll(int i1, int i2, int i3);
@@ -23,8 +25,8 @@ complex<double> totalPoll();
 void gslhisto(string fhistofilename, int nbinsx, int nbinsy, double *datax, double *datay, int Ndatax, int Ndatay);
 
 int main(int argc, char *argv[]){
-	if(argc<8){
-		cout << "./cluster.x Ns Nt confin phaseout histoout nbinsx nbinsy" << endl;
+	if(argc<9){
+		cout << "./cluster.x Ns Nt confin phaseout histoout nbinsx nbinsy fraction" << endl;
 		return 1;
 	}
 
@@ -35,6 +37,8 @@ int main(int argc, char *argv[]){
 	string fhistofilename=argv[5];
 	int nbinsx=atoi(argv[6]);
 	int nbinsy=atoi(argv[7]);
+	f=atof(argv[8]);
+	f=1-f;
 
 	config = new ConfigData(Ns, Ns, Ns, Nt, 3);
 
@@ -48,9 +52,9 @@ int main(int argc, char *argv[]){
 	poll = totalPoll();
 	cout << "Total Polyakov loop P = " << poll << endl << endl;
 
-	cout << "Performing a random Z_3 rotation... " << flush;
-	config->z3rot();
-	cout << "done!" << endl << endl;
+	// cout << "Performing a random Z_3 rotation... " << flush;
+	// config->z3rot();
+	// cout << "done!" << endl << endl;
 	
 	cout << "Writing local Polyakov loop phases... " << flush;
 	ofstream file;
@@ -157,6 +161,11 @@ void gslhisto(string fhistofilename, int nbinsx, int nbinsy, double *datax, doub
 			ymax=datay[n];
 	}
 
+	xmax=1;
+	xmin=-0.5;
+	ymax=1;
+	ymin=-1;
+
 	cout << "Ranges:" << endl;
 	cout << "x_min = " << xmin << " x_max = " << xmax << endl;
 	cout << "y_min = " << ymin << " y_max = " << ymax << endl;
@@ -166,14 +175,17 @@ void gslhisto(string fhistofilename, int nbinsx, int nbinsy, double *datax, doub
 	gsl_histogram2d_set_ranges_uniform (h, xmin, xmax, ymin, ymax);
 
 	int ret=0;
-	for(int x=0;x<Ndatax;x++)
-		for(int y=0;y<Ndatay;y++){
-			ret = gsl_histogram2d_increment(h, datax[x], datay[y]);
+	for(int x=0;x<Ndatax;x++){
+	//	for(int y=0;y<Ndatay;y++){
+			double argZ=arg( complex<double>( datax[x], datay[x] ));
+			if(abs( argZ - 2.0*M_PI/3.0 ) < M_PI/3*f || abs( argZ ) < M_PI/3*f || abs( argZ + 2.0*M_PI/3.0 ) < M_PI/3*f)
+				ret = gsl_histogram2d_increment(h, datax[x], datay[x]);
 			/* if(ret == GSL_EDOM){
 				cout << "Entry not added to histogram!" << endl;
 				cout << "x = " << datax[x] << " y = " << datay[y] << endl;
 			} */
-		}
+	//	}
+	}
 
 	cout << "Writing histogram data to file " << fhistofilename << " ..." << endl;
 	ofstream fhisto;
@@ -188,6 +200,7 @@ void gslhisto(string fhistofilename, int nbinsx, int nbinsy, double *datax, doub
 	fhisto.close();
 
 	cout << "Sum over all bins = " << gsl_histogram2d_sum(h) << endl;
+	cout << "Total number of data values = " << Ndatax << endl;
 
 	// Deallocate gsl_histogram space
 	gsl_histogram2d_free(h);

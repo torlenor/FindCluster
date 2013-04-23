@@ -1,0 +1,28 @@
+set term pdfcairo enhan
+
+load "./gnuplot.settings"
+
+set output sprintf ("boxsize_f%.2f.pdf",f)
+
+set xtics (1,2,4,5,8,10,20,40)
+set logscale x
+set logscale y
+set xrange [0.9:50]
+
+set xlabel "s" 
+set ylabel "N(s)"
+
+set label 1 sprintf("Cut f=%.2f", f) at 1,10
+
+set pointsize 0.4
+linew=3
+
+plot "./40x2/boxcnt_40x2.res" u 1:2:3 w yerrorlines t "3.00 T_c" lw linew, \
+"./40x3/boxcnt_40x3.res" u 1:2:3 w yerrorlines t "2.00 T_c" lw linew, \
+"./40x4/boxcnt_40x4.res" u 1:2:3 w yerrorlines t "1.50 T_c" lw linew, \
+"./40x5/boxcnt_40x5.res" u 1:2:3 w yerrorlines t "1.20 T_c" lw linew , \
+"./40x6/boxcnt_40x6.res" u 1:2:3 w yerrorlines t "1.00 T_c" lw linew , \
+"./40x7/boxcnt_40x7.res" u 1:2:3 w yerrorlines t "0.86 T_c" lw linew, \
+"./40x8/boxcnt_40x8.res" u 1:2:3 w yerrorlines t "0.75 T_c" lw linew, \
+"./40x10/boxcnt_40x10.res" u 1:2:3 w yerrorlines t "0.60 T_c" lw linew, \
+"./40x12/boxcnt_40x12.res" u 1:2:3 w yerrorlines t "0.50 T_c" lw linew

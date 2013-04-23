@@ -1,0 +1,137 @@
+set term pdfcairo enhanced dashed
+
+load "./gnuplot.settings"
+
+set output sprintf ("boxsize_f%.2f_fit.pdf",f)
+
+set xtics (1,2,4,5,8,10,20,40)
+set logscale x
+set logscale y
+set xrange [0.9:50]
+
+set xlabel "s" 
+set ylabel "N(s)"
+
+set label 1 sprintf("Cut f=%.2f", f) at 1,10
+
+# Filenames
+fname2="./40x2/boxcnt_40x2.res"
+fname3="./40x3/boxcnt_40x3.res"
+fname4="./40x4/boxcnt_40x4.res"
+fname5="./40x5/boxcnt_40x5.res"
+fname6="./40x6/boxcnt_40x6.res"
+fname7="./40x7/boxcnt_40x7.res"
+fname8="./40x8/boxcnt_40x8.res"
+fname10="./40x10/boxcnt_40x10.res"
+fname12="./40x12/boxcnt_40x12.res"
+
+# Fitting stuff
+set fit errorvariables
+
+f02(x)=C2*x**(-D2)
+f03(x)=C3*x**(-D3)
+f04(x)=C4*x**(-D4)
+f05(x)=C5*x**(-D5)
+f06(x)=C6*x**(-D6)
+f07(x)=C7*x**(-D7)
+f08(x)=C8*x**(-D8)
+f10(x)=C10*x**(-D10)
+f12(x)=C12*x**(-D12)
+
+D2=2.2
+C2=10000
+r2a=2
+r2b=20
+fit [r2a:r2b] f02(x) fname2 u 1:2 via C2,D2
+
+D3=2.2
+C3=10000
+r3a=4
+r3b=20
+fit [r3a:r3b] f03(x) fname3 u 1:2 via C3,D3
+
+D4=2.2
+C4=10000
+r4a=4
+r4b=20
+fit [r4a:r4b] f04(x) fname4 u 1:2 via C4,D4
+
+D5=2.2
+C5=10000
+r5a=4
+r5b=20
+fit [r5a:r5b] f05(x) fname5 u 1:2 via C5,D5
+
+D6=2.2
+C6=1000
+r6a=5
+r6b=20
+fit [r6a:r6b] f06(x) fname6 u 1:2 via C6,D6
+
+D7=2.2
+C7=1000
+r7a=2
+r7b=10
+fit [r7a:r7b] f07(x) fname7 u 1:2 via C7,D7
+
+D8=2.2
+C8=1000
+r8a=2
+r8b=8
+fit [r8a:r8b] f08(x) fname8 u 1:2 via C8,D8
+
+D10=2.2
+C10=1000
+r10a=2
+r10b=10
+fit [r10a:r10b] f10(x) fname10 u 1:2 via C10,D10
+
+D12=2.2
+C12=1000
+r12a=2
+r12b=8
+fit [r12a:r12b] f12(x) fname12 u 1:2 via C12,D12
+
+# Write fit parameters to file
+set print "fit_results.data"
+print 2,D2,D2_err
+print 3,D3,D3_err
+print 4,D4,D4_err
+print 5,D5,D5_err
+print 6,D6,D6_err
+print 7,D7,D7_err
+print 8,D8,D8_err
+print 10,D10,D10_err
+print 12,D12,D12_err
+
+set pointsize 0.4
+linew=3
+linewfit=6
+
+plot fname2 u 1:2:3 w yerrorlines t gprintf("3.00 T_c, D=%1.2f",D2) lw linew lc rgb "red" lt 1, \
+f02(x) w lines notitle lc rgb "red" lt 3, \
+( r2a < x && x < r2b ) ? f02(x) : 1/0 w lines notitle lc rgb "red" lt 2 lw linewfit, \
+fname3 u 1:2:3 w yerrorlines t gprintf("2.00 T_c, D=%1.2f",D3) lw linew lc rgb "blue" lt 1,  \
+f03(x) w lines notitle lc rgb "blue" lt 3, \
+( r3a < x && x < r3b ) ? f03(x) : 1/0 w lines notitle lc rgb "blue" lt 2 lw linewfit, \
+fname4 u 1:2:3 w yerrorlines t gprintf("1.50 T_c, D=%1.2f",D4) lw linew lc rgb "green" lt 1, \
+f04(x) w lines notitle lc rgb "green" lt 3, \
+( r4a < x && x < r4b ) ? f04(x) : 1/0 w lines notitle lc rgb "green" lt 2 lw linewfit, \
+fname5 u 1:2:3 w yerrorlines t gprintf("1.20 T_c, D=%1.2f",D5) lw linew lc rgb "brown" lt 1, \
+f05(x) w lines notitle lc rgb "brown" lt 3, \
+( r5a < x && x < r5b ) ? f05(x) : 1/0 w lines notitle lc rgb "brown" lt 2 lw linewfit, \
+fname6 u 1:2:3 w yerrorlines t gprintf("1.00 T_c, D=%1.2f",D6) lw linew lc rgb "purple" lt 1, \
+f06(x) w lines notitle lc rgb "purple" lt 3, \
+( r6a < x && x < r6b ) ? f06(x) : 1/0 w lines notitle lc rgb "purple" lt 2 lw linewfit, \
+fname7 u 1:2:3 w yerrorlines t gprintf("0.86 T_c, D=%1.2f",D7) lw linew lc rgb "orange" lt 1, \
+f07(x) w lines notitle lc rgb "orange" lt 3, \
+( r7a < x && x < r7b ) ? f07(x) : 1/0 w lines notitle lc rgb "orange" lt 2 lw linewfit, \
+fname8 u 1:2:3 w yerrorlines t gprintf("0.75 T_c, D=%1.2f",D8) lw linew lc rgb "grey40" lt 1, \
+f08(x) w lines notitle lc rgb "gray40" lt 3, \
+( r8a < x && x < r8b ) ? f08(x) : 1/0 w lines notitle lc rgb "gray40" lt 2 lw linewfit, \
+fname10 u 1:2:3 w yerrorlines t gprintf("0.60 T_c, D=%1.2f",D10) lw linew lc rgb "steelblue" lt 1, \
+f10(x) w lines notitle lc rgb "steelblue" lt 3, \
+( r10a < x && x < r10b ) ? f10(x) : 1/0 w lines notitle lc rgb "steelblue" lt 2 lw linewfit, \
+fname12 u 1:2:3 w yerrorlines t gprintf("0.50 T_c, D=%1.2f",D12) lw linew lc rgb "black" lt 1, \
+f12(x) w lines notitle lc rgb "black" lt 3, \
+( r12a < x && x < r12b ) ? f12(x) : 1/0 w lines notitle lc rgb "black" lt 2 lw linewfit

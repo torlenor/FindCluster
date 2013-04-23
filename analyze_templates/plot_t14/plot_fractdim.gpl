@@ -1,0 +1,18 @@
+set term pdfcairo enhan
+
+load "./gnuplot.settings"
+
+set output sprintf("fract_dim_f%0.2f.pdf", f)
+
+set label 1 sprintf("Cut f=%.2f", f) at 5.5,1.6
+
+set xrange [Trangemin:Trangemax]
+set yrange [1.4:3.2]
+
+set xlabel "T/T_c"
+set ylabel "D"
+
+set pointsize 0.4
+linew=3
+
+plot "fit_results.data" u (Ntcrit/$1):2:3 w yerrorlines lw linew notitle
