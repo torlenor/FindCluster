@@ -322,6 +322,74 @@ void hideInBoxes(Observablestruct &lobs, Clusterstruct &lclusterdata){
 	} // Cluster
 }
 
+void findShift(Clusterstruct &lclusterdata, int c){
+	int shifti1=0, shifti2=0, shifti3=0;
+	bool isempty=false;
+	int i1, i2, i3, is;
+	// if true, perform shift calculation in i1
+	if(lclusterdata.clusterisperiodic[c][0] == 1){
+		shifti1=0;
+		// Find empty i2/i3 plane
+		for(i1=0;i1<Ns;i1++){
+			isempty=true;
+			for(i2=0;i2<Ns;i2++){
+				for(i3=0;i3<Ns;i3++){
+					is = latmap(i1, i2, i3);
+					if(lclusterdata.isincluster[is] == c)
+						isempty=false;
+				}
+			}
+			if(isempty==true){
+				shifti1=i1;
+				break;
+			}
+		}
+		cout << "Cluster " << c << " shifti1 = " << shifti1 << endl;
+	}
+	
+	// if true, perform shift calculation in i2
+	if(lclusterdata.clusterisperiodic[c][1] == 1){
+		shifti2=0;
+		// Find empty i1/i3 plane
+		for(i2=0;i2<Ns;i2++){
+			isempty=true;
+			for(i1=0;i1<Ns;i1++){
+				for(i3=0;i3<Ns;i3++){
+					is = latmap(i1, i2, i3);
+					if(lclusterdata.isincluster[is] == c)
+						isempty=false;
+				}
+			}
+			if(isempty==true){
+				shifti2=i2;
+				break;
+			}
+		}
+		cout << "Cluster " << c << " shifti2 = " << shifti2 << endl;
+	}
+	
+	// if true, perform shift calculation in i3
+	if(lclusterdata.clusterisperiodic[c][2] == 1){
+		shifti3=0;
+		// Find empty i1/i2 plane
+		for(i3=0;i3<Ns;i3++){
+			isempty=true;
+			for(i1=0;i1<Ns;i1++){
+				for(i2=0;i2<Ns;i2++){
+					is = latmap(i1, i2, i3);
+					if(lclusterdata.isincluster[is] == c)
+						isempty=false;
+				}
+			}
+			if(isempty==true){
+				shifti3=i3;
+				break;
+			}
+		}
+		cout << "Cluster " << c << " shifti3 = " << shifti3 << endl;
+	}
+}
+
 void clusterRadius(Observablestruct &lobs, Clusterstruct &lclusterdata){
 	double centerofmass[3], radiussquare;
 	int i1, i2, i3;
@@ -336,21 +404,9 @@ void clusterRadius(Observablestruct &lobs, Clusterstruct &lclusterdata){
 		// cout << "mini1 = " << mini1 << " mini2 = " << mini2 << " mini3 = " << mini3 << endl;
 		for(unsigned int member=0; member<lclusterdata.clustermembers[c].size();member++){
 			getCoords(lclusterdata.clustermembers[c][member], i1, i2, i3);
-			if(lclusterdata.clusterisperiodic[c][0] == 1){
-				centerofmass[0] += i1 - Ns;
-			}else{
-				centerofmass[0] += i1;
-			}
-			if(lclusterdata.clusterisperiodic[c][1] == 1){
-				centerofmass[1] += i2 - Ns;
-			}else{
-				centerofmass[1] += i2;
-			}
-			if(lclusterdata.clusterisperiodic[c][2] == 1){
-				centerofmass[2] += i3 - Ns;
-			}else{
-				centerofmass[2] += i3;
-			}
+			centerofmass[0] += i1;
+			centerofmass[1] += i2; 
+			centerofmass[2] += i3; 
 		}
 
 		centerofmass[0] = centerofmass[0]/(double)lclusterdata.clustermembers[c].size();
@@ -363,15 +419,9 @@ void clusterRadius(Observablestruct &lobs, Clusterstruct &lclusterdata){
 		
 		for(unsigned int member=0; member<lclusterdata.clustermembers[c].size();member++){
 			getCoords(lclusterdata.clustermembers[c][member], i1, i2, i3);
-			if(lclusterdata.clusterisperiodic[c][0] == 1)
-				i1 -= Ns;
-			if(lclusterdata.clusterisperiodic[c][1] == 1)
-				i2 -= Ns;
-			if(lclusterdata.clusterisperiodic[c][2] == 1)
-				i3 -= Ns;
-			radiussquare += (pow(centerofmass[0]-i1, 2)
-					+ pow(centerofmass[1]-i2, 2)
-					+ pow(centerofmass[2]-i3, 2));
+			radiussquare += (pow(centerofmass[0] - i1, 2)
+					+ pow(centerofmass[1] - i2, 2)
+					+ pow(centerofmass[2] - i3, 2));
 		}
 		radiussquare = sqrt(radiussquare/(double)lclusterdata.clustermembers[c].size());
 		lobs.clusterradius.push_back(radiussquare);
@@ -962,7 +1012,7 @@ void findClusters(Clusterstruct &lclusterdata){
 	}
 	
 	int totalmembers=0;
-	
+
 	cluster = -1; // Note: We begin counting with ID 0!
 	for(int is=0;is<Nspace;is++){
 		if(isfiled[is] == false){
@@ -982,7 +1032,7 @@ void findClusters(Clusterstruct &lclusterdata){
 			for(int i=0;i<3;i++)
 				lclusterdata.clusterisperiodic[cluster][i]=0;
 			int ci1=0, ci2=0, ci3=0;
-			
+		
 			// Iterate over all found points in the actual cluster (loop does not have fixed length)
 			int member = 0;
 			while((unsigned int)member < lclusterdata.clustermembers[cluster].size()){
@@ -1024,7 +1074,6 @@ void findClusters(Clusterstruct &lclusterdata){
 
 							default: cout << "ERROR: Error in cluster switch!" << endl;
 						}
-
 					}
 				}
 				
