@@ -198,6 +198,15 @@ int main(int argc, char *argv[]){
 		if(detail){
 			cout << endl << "Details for " << fevname[n] << ":" << endl;
 			writeConfigResultsstdout(obs[n], clusterdata[n]);
+
+			cout << endl << "The following clusters are connected over the PBCs: " << endl;
+			for(unsigned int c=0;c<clusterdata[0].clusterisperiodic.size();c++){
+				if(clusterdata[0].clusterisperiodic[clusterdata[0].sortedcluster[c]][0]==1 
+				|| clusterdata[0].clusterisperiodic[clusterdata[0].sortedcluster[c]][1]==1 
+				|| clusterdata[0].clusterisperiodic[clusterdata[0].sortedcluster[c]][2]==1){
+					cout << "Cluster (size sorted) " << c << endl;
+				}
+			}
 		}
 		
 	
@@ -245,12 +254,6 @@ int main(int argc, char *argv[]){
 	cout << endl;
 	cout << "------------------------------------------------------------------------------" << endl;
 
-	cout << "The following clusters are connected over the PBCs: " << endl;
-	for(unsigned int c=0;c<clusterdata[0].clusterisperiodic.size();c++){
-		if(clusterdata[0].clusterisperiodic[clusterdata[0].sortedcluster[c]][0]==1 || clusterdata[0].clusterisperiodic[clusterdata[0].sortedcluster[c]][1]==1 || clusterdata[0].clusterisperiodic[clusterdata[0].sortedcluster[c]][2]==1){
-			cout << "Cluster (size sorted) " << c << endl;
-		}
-	}
 	
 	calcExp();
 
@@ -562,7 +565,13 @@ void calcExp(){
 		for(unsigned int size=0; size<boxsize.size(); size++){
 			fboxcnt << boxsize[size] << " " << avgboxcnt[size] << " " << avgboxcnterr[size] << endl;
 		}
+		fboxcnt.close();
 	}
+	stringstream flaserdimname;
+	flaserdimname << "laserdim_" << Ns << "x" << Nt << ".res";
+	ofstream flaserdim;
+	flaserdim.open(flaserdimname.str().c_str());
+	flaserdim << Nt << " " << mlaserdim << " " << mlaserdimerr << " " << maxclustersize << " " << maxclustersizeerr << endl;
 }
 
 void calcObservables(Observablestruct &lobs, Clusterstruct &lclusterdata){
@@ -669,16 +678,12 @@ void calcObservables(Observablestruct &lobs, Clusterstruct &lclusterdata){
 			incluster=true;
 		for(i1=1;i1<Ns;i1++){
 			is=latmap(i1, i2, i3);
-			if(incluster==true){
-				if(lclusterdata.isincluster[is] != lobs.largestclusterid){
-					incluster=false;
-					lobs.laserdim++;
-				}
-			}else{
-				if(lclusterdata.isincluster[is] == lobs.largestclusterid){
-					incluster=true;
-					lobs.laserdim++;
-				}
+			if(incluster==true && lclusterdata.isincluster[is] != lobs.largestclusterid){
+				incluster=false;
+				lobs.laserdim++;
+			}else if(incluster==false && lclusterdata.isincluster[is] == lobs.largestclusterid){
+				incluster=true;
+				lobs.laserdim++;
 			}
 		}
 	}
@@ -693,16 +698,12 @@ void calcObservables(Observablestruct &lobs, Clusterstruct &lclusterdata){
 			incluster=true;
 		for(i2=1;i2<Ns;i2++){
 			is=latmap(i1, i2, i3);
-			if(incluster==true){
-				if(lclusterdata.isincluster[is] != lobs.largestclusterid){
-					incluster=false;
-					lobs.laserdim++;
-				}
-			}else{
-				if(lclusterdata.isincluster[is] == lobs.largestclusterid){
-					incluster=true;
-					lobs.laserdim++;
-				}
+			if(incluster==true && lclusterdata.isincluster[is] != lobs.largestclusterid){
+				incluster=false;
+				lobs.laserdim++;
+			}else if(incluster==false && lclusterdata.isincluster[is] == lobs.largestclusterid){
+				incluster=true;
+				lobs.laserdim++;
 			}
 		}
 	}
@@ -717,19 +718,19 @@ void calcObservables(Observablestruct &lobs, Clusterstruct &lclusterdata){
 			incluster=true;
 		for(i3=1;i3<Ns;i3++){
 			is=latmap(i1, i2, i3);
-			if(incluster==true){
-				if(lclusterdata.isincluster[is] != lobs.largestclusterid){
-					incluster=false;
-					lobs.laserdim++;
-				}
-			}else{
-				if(lclusterdata.isincluster[is] == lobs.largestclusterid){
-					incluster=true;
-					lobs.laserdim++;
-				}
+			if(incluster==true && lclusterdata.isincluster[is] != lobs.largestclusterid){
+				incluster=false;
+				lobs.laserdim++;
+			}else if(incluster==false && lclusterdata.isincluster[is] == lobs.largestclusterid){
+				incluster=true;
+				lobs.laserdim++;
 			}
 		}
 	}
+	// lobs.laserdim=lobs.laserdim/(double)(lclusterdata.clustermembers[lobs.largestclusterid].size());
+	// lobs.laserdim = lobs.laserdim/(double)3; // Mean over all 3 directions
+	// lobs.laserdim = lobs.laserdim/(double)(Nspace); // Mean over all 3 directions
+	lobs.laserdim = lobs.laserdim/(double)(6*Ns*Ns); // Mean over all 3 directions
 }
 
 void writeConfigResultsstdout(Observablestruct &lobs, Clusterstruct &lclusterdata){
