@@ -1,0 +1,31 @@
+set term pdfcairo enhan
+
+load "./gnuplot.settings"
+
+set title "40^3 × N_t, {/Symbol b}=6.20, quenched, 200 configurations"
+
+set output sprintf("clusterweight_all.pdf", f)
+
+set xrange [Trangemin:Trangemax]
+set yrange [-0.05:1.05]
+
+set format x "%.2f"
+set format y "%.2f"
+
+set xlabel "T/T_c"
+set ylabel "Weight of the largest cluster"
+
+set pointsize 0.4
+linew=3
+
+set key right bottom
+
+plot "f0.40/clusterweight.res" u (Ntcrit/$1):2:3 w yerrorlines lw linew t "Cut f=0.40", \
+"f0.35/clusterweight.res" u (Ntcrit/$1):2:3 w yerrorlines lw linew t "Cut f=0.35", \
+"f0.30/clusterweight.res" u (Ntcrit/$1):2:3 w yerrorlines lw linew t "Cut f=0.30", \
+"f0.25/clusterweight.res" u (Ntcrit/$1):2:3 w yerrorlines lw linew t "Cut f=0.25", \
+"f0.20/clusterweight.res" u (Ntcrit/$1):2:3 w yerrorlines lw linew t "Cut f=0.20", \
+"f0.15/clusterweight.res" u (Ntcrit/$1):2:3 w yerrorlines lw linew t "Cut f=0.15", \
+"f0.10/clusterweight.res" u (Ntcrit/$1):2:3 w yerrorlines lw linew t "Cut f=0.10", \
+"f0.05/clusterweight.res" u (Ntcrit/$1):2:3 w yerrorlines lw linew t "Cut f=0.05", \
+"f0.00/clusterweight.res" u (Ntcrit/$1):2:3 w yerrorlines lw linew t "Cut f=0.00", \
