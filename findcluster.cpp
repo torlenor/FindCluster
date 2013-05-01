@@ -72,6 +72,7 @@ Clusterstruct *clusterdata;
 struct Observablestruct{
 	int maxclustersize;
 	int maxclusterid;
+	int maxclustersector;
 	
 	double avgclustersize;
 	double avgclustersizeF;
@@ -119,7 +120,7 @@ void cluster3doutput(Clusterstruct &clusterdata, string f3dname);
 
 int latmap(int i1, int i2, int i3);
 
-double fraction = 1.0;
+double fraction = 0.0;
 double delta0 = M_PI/3.0;
 double delta = delta0*fraction;
 
@@ -518,6 +519,14 @@ void calcExp(){
 
 	cout << endl;
 
+	stringstream fclustersizename;
+	fclustersizename << "clustersize_" << Ns << "x" << Nt << "_f" << fraction << ".res";
+	ofstream fclustersize;
+	fclustersize.open(fclustersizename.str().c_str());
+	fclustersize << "# Ns Nt maxclusterweighterr maxclusterweighterr avgclusterweight avgclusterweighterr avgfortunatoclustersize avgfortunatoclustersizeerr" << endl;
+	fclustersize << Ns << " " << Nt << " " << maxclustersize << " " << maxclustersizeerr << " " << avgclustersize << " " << avgclustersizeerr << " " << avgclustersizeF << " " << avgclustersizeFerr << endl;
+	fclustersize.close();
+
 	// Number of percolating clusters expectation value
 	for(int n=0;n<nmeas;n++){
 		ddata[n]=0;
@@ -530,7 +539,7 @@ void calcExp(){
 	Jackknife(ddata, avgpercc, avgperccerr, nmeas);
 
 	stringstream fnperccname;
-	fnperccname << "npercc_" << Ns << "x" << Nt << ".res";
+	fnperccname << "npercc_" << Ns << "x" << Nt << "_f" << fraction << ".res";
 	ofstream fnpercc;
 	fnpercc.open(fnperccname.str().c_str());
 	fnpercc << Ns << " " << Nt << " " << avgpercc << " " << avgperccerr << endl;
@@ -580,6 +589,7 @@ void calcObservables(Observablestruct &lobs, Clusterstruct &lclusterdata){
 	
 	lobs.maxclustersize = size;
 	lobs.maxclusterid = largestcluster;
+	lobs.maxclustersector = lclusterdata.clustersector[largestcluster];
 	
 	// Calculate average cluster size
 	double avgclustersize=0;

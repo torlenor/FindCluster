@@ -13,7 +13,7 @@ char texthelp[]="Usage: findcluster.x [OPTION] ... [POLLEVCONFIG/POLLEVCONFIGLIS
 		"Mandatory arguments to long options are mandatory for short options too.\n"
 		"  -s, --Ns SSIZE             spatial lattice extent (default = 4)\n"
 		"  -t, --Nt TSIZE             temporal lattice extent (default = 4)\n"
-		"  -f, --fraction FRACTION    fraction (default = 1.0)\n"
+		"  -f, --fraction FRACTION    fraction (default = 0.0)\n"
 		"  -n, --nmeas NMEAS          number of configurations (default = 1)\n"
 		"  -d, --detail               write detailed output for every calculated configuration\n"
 		"  -b, --boxes                performes the box counting calculation (expensive)\n"
@@ -150,7 +150,7 @@ int init(int &argc, char *argv[]){
 	}
 	
 	delta0 = M_PI/3.0;
-	delta = delta0*fraction;
+	delta = delta0*(1.0 - fraction);
 
 	// Prepare for nmeas measurements
 	clusterdata = new Clusterstruct[nmeas];
