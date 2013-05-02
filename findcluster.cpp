@@ -66,7 +66,7 @@ struct Clusterstruct{
 
 	int nsectm1, nsect0, nsectp1;
 
-	vector<double> poll;
+	vector<complex<double> > poll;
 };
 
 Clusterstruct *clusterdata;
@@ -824,16 +824,16 @@ void calcObservables(Observablestruct &lobs, Clusterstruct &lclusterdata){
 	/* Calculation of Polyakov loop expectation value for points which 
 	 * survived the cut. For that loop over all points which are not in 
 	 * sector 2 and calculate the spatial average of |P(x)| */
-	lobs.poll = 0;
+	complex<double> pollsum=0;
 	int pollcnt=0;
 	for(int is=0;is<Nspace;is++){
 		if(lclusterdata.isinsector[is] < 2){
-			lobs.poll += lclusterdata.poll[is];
+			pollsum += lclusterdata.poll[is];
 			pollcnt++;
 		}
 	}
-	// lobs.poll = lobs.poll/(double)pollcnt;
-	lobs.poll = lobs.poll/(double)Nspace;
+	lobs.poll = abs(pollsum)/(double)pollcnt;
+	// lobs.poll = lobs.poll/(double)Nspace;
 	
 }
 
@@ -929,7 +929,7 @@ void fillSectorsAlt(Clusterstruct &lclusterdata, double r){
 				csectm1++;
 			}
 		}
-		lclusterdata.poll[is]=abs(pollev[is][0] + pollev[is][1] + pollev[is][2]);
+		lclusterdata.poll[is]=pollev[is][0] + pollev[is][1] + pollev[is][2];
 	}
 	
 	lclusterdata.nsectm1=csectm1; lclusterdata.nsect0=csect0; lclusterdata.nsectp1=csectp1;
@@ -976,7 +976,7 @@ void fillSectors(Clusterstruct &lclusterdata, double delta){
 			csectm1++;
 		}
 
-		lclusterdata.poll[is]=abs(pollev[is][0] + pollev[is][1] + pollev[is][2]);
+		lclusterdata.poll[is]=pollev[is][0] + pollev[is][1] + pollev[is][2];
 	}
 	
 	lclusterdata.nsectm1=csectm1; lclusterdata.nsect0=csect0; lclusterdata.nsectp1=csectp1;
