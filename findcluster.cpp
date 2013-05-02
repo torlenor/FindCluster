@@ -194,7 +194,7 @@ int main(int argc, char *argv[]){
 
 		sortClusterSize(clusterdata[n]); // Sort clusters per number of members
 
-		clusterRadius(obs[n], clusterdata[n]);
+		// clusterRadius(obs[n], clusterdata[n]);
 
 		if(doboxes)
 			hideInBoxes(obs[n], clusterdata[n]);
@@ -635,7 +635,7 @@ void calcExp(){
 		}
 
 		stringstream fboxcntname;
-		fboxcntname << "boxcnt_" << Ns << "x" << Nt << ".res";
+		fboxcntname << "boxcnt_" << Ns << "x" << Nt << "_f" << fraction << ".res";
 		ofstream fboxcnt;
 		fboxcnt.open(fboxcntname.str().c_str());
 		for(unsigned int size=0; size<boxsize.size(); size++){
@@ -646,7 +646,7 @@ void calcExp(){
 
 	// Write surface area to file
 	stringstream flaserdimname;
-	flaserdimname << "laserdim_" << Ns << "x" << Nt << ".res";
+	flaserdimname << "surface_" << Ns << "x" << Nt << "_f" << fraction << ".res";
 	ofstream flaserdim;
 	flaserdim.open(flaserdimname.str().c_str());
 	flaserdim << Nt << " " << mlaserdim << " " << mlaserdimerr << " " << maxclustersize << " " << maxclustersizeerr << endl;
