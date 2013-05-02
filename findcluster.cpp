@@ -65,6 +65,8 @@ struct Clusterstruct{
 	vector<vector<int> > clusterisperiodic;
 
 	int nsectm1, nsect0, nsectp1;
+
+	vector<double> poll;
 };
 
 Clusterstruct *clusterdata;
@@ -91,6 +93,8 @@ struct Observablestruct{
 	int largestclusterid;
 
 	double laserdim;
+
+	double poll;
 };
 
 Observablestruct *obs;
@@ -562,6 +566,18 @@ void calcExp(){
 		ddata[n] = ddata[n]/(double)(nmeas-1);
 	}
 	Jackknife(ddata, mlaserdim, mlaserdimerr, nmeas);
+	
+	// Polyakov loop expectation value only for points with sector < 22
+	double mpoll, mpollerr;
+	for(int n=0;n<nmeas;n++){
+		ddata[n]=0;
+		for(int j=0;j<nmeas;j++){
+			if(n!=j)
+				ddata[n] += (&obs[j])->poll;
+		}
+		ddata[n] = ddata[n]/(double)(nmeas-1);
+	}
+	Jackknife(ddata, mpoll, mpollerr, nmeas);
 
 	cout << "Expectation values (single eliminitation jackknife): " << endl;
 	cout << "Average cluster size = " << setprecision(14) << avgclustersize << ", Maximum cluster size / V = " << maxclustersize << endl;
@@ -569,6 +585,7 @@ void calcExp(){
 	cout << "Average cluster size Fortunato (1.7) = " << avgclustersizeF << ", Error  = " << avgclustersizeFerr << endl;
 	cout << "Cut = " << cut << " Cut err = " << cuterr << endl;
 	cout << "Laserdim = " << mlaserdim << " Laserdim err = " << mlaserdimerr << endl;
+	cout << "Polyakov loop = " << mpoll << " Polyakov loop err = " << mpollerr << endl;
 
 	cout << endl;
 
@@ -626,11 +643,23 @@ void calcExp(){
 		}
 		fboxcnt.close();
 	}
+
+	// Write surface area to file
 	stringstream flaserdimname;
 	flaserdimname << "laserdim_" << Ns << "x" << Nt << ".res";
 	ofstream flaserdim;
 	flaserdim.open(flaserdimname.str().c_str());
 	flaserdim << Nt << " " << mlaserdim << " " << mlaserdimerr << " " << maxclustersize << " " << maxclustersizeerr << endl;
+	flaserdim.close();
+	
+	// Write Polyakov loop to file
+	stringstream fpollname;
+	fpollname << "poll_" << Ns << "x" << Nt << "_f" << fraction << ".res";
+	ofstream fpoll;
+	fpoll.open(fpollname.str().c_str());
+	fpoll << Nt << " " << setprecision(14) << mpoll << " " << mpollerr << endl;
+	fpoll.close();
+
 }
 
 void calcObservables(Observablestruct &lobs, Clusterstruct &lclusterdata){
@@ -791,6 +820,23 @@ void calcObservables(Observablestruct &lobs, Clusterstruct &lclusterdata){
 	// lobs.laserdim = lobs.laserdim/(double)3; // Mean over all 3 directions
 	// lobs.laserdim = lobs.laserdim/(double)(Nspace); // Mean over all 3 directions
 	lobs.laserdim = lobs.laserdim/(double)(6*Ns*Ns); // Mean over all 3 directions
+
+	/* Calculation of Polyakov loop expectation value for points which 
+	 * survived the cut. For that loop over all points which are not in 
+	 * sector 2 and calculate the spatial average of |P(x)| */
+
+	lobs.poll = 0;
+	unsigned int pollcnt=0;
+	for(unsigned int c=0;c<lclusterdata.clustermembers.size();c++){
+		if( lclusterdata.isinsector[lclusterdata.clustermembers[c][0]] < 2){
+			for(unsigned int member=0;member<lclusterdata.clustermembers[c].size();member++){
+				lobs.poll += lclusterdata.poll[lclusterdata.clustermembers[c][member]];
+				pollcnt++;
+			}
+		}
+	}
+	lobs.poll = lobs.poll/(double)pollcnt;
+	
 }
 
 void writeConfigResultsstdout(Observablestruct &lobs, Clusterstruct &lclusterdata){
@@ -855,6 +901,8 @@ void fillSectorsAlt(Clusterstruct &lclusterdata, double r){
 	cout << "Delta = " << delta << endl;
 	cout << "r = " << r << endl;
 	#endif
+
+	lclusterdata.poll.resize(Nspace);
 	
 	for(int is=0;is<Nspace;is++)
 		lclusterdata.isinsector[is] = 2;
@@ -883,6 +931,7 @@ void fillSectorsAlt(Clusterstruct &lclusterdata, double r){
 				csectm1++;
 			}
 		}
+		lclusterdata.poll[is]=abs(pollev[is][0] + pollev[is][1] + pollev[is][2]);
 	}
 	
 	lclusterdata.nsectm1=csectm1; lclusterdata.nsect0=csect0; lclusterdata.nsectp1=csectp1;
@@ -905,6 +954,8 @@ void fillSectors(Clusterstruct &lclusterdata, double delta){
 	#ifdef DEBUG
 	cout << "Delta = " << delta << endl;
 	#endif
+
+	lclusterdata.poll.resize(Nspace);
 	
 	for(int is=0;is<Nspace;is++)
 		lclusterdata.isinsector[is] = 2;
@@ -926,6 +977,8 @@ void fillSectors(Clusterstruct &lclusterdata, double delta){
 			lclusterdata.isinsector[is]=-1;
 			csectm1++;
 		}
+
+		lclusterdata.poll[is]=abs(pollev[is][0] + pollev[is][1] + pollev[is][2]);
 	}
 	
 	lclusterdata.nsectm1=csectm1; lclusterdata.nsect0=csect0; lclusterdata.nsectp1=csectp1;
