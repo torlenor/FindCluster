@@ -568,7 +568,7 @@ void calcExp(){
 	Jackknife(ddata, mlaserdim, mlaserdimerr, nmeas);
 	
 	// Polyakov loop expectation value only for points with sector < 22
-	double mpoll, mpollerr;
+	double mpoll=0, mpollerr=0;
 	for(int n=0;n<nmeas;n++){
 		ddata[n]=0;
 		for(int j=0;j<nmeas;j++){
@@ -824,18 +824,16 @@ void calcObservables(Observablestruct &lobs, Clusterstruct &lclusterdata){
 	/* Calculation of Polyakov loop expectation value for points which 
 	 * survived the cut. For that loop over all points which are not in 
 	 * sector 2 and calculate the spatial average of |P(x)| */
-
 	lobs.poll = 0;
-	unsigned int pollcnt=0;
-	for(unsigned int c=0;c<lclusterdata.clustermembers.size();c++){
-		if( lclusterdata.isinsector[lclusterdata.clustermembers[c][0]] < 2){
-			for(unsigned int member=0;member<lclusterdata.clustermembers[c].size();member++){
-				lobs.poll += lclusterdata.poll[lclusterdata.clustermembers[c][member]];
-				pollcnt++;
-			}
+	int pollcnt=0;
+	for(int is=0;is<Nspace;is++){
+		if(lclusterdata.isinsector[is] < 2){
+			lobs.poll += lclusterdata.poll[is];
+			pollcnt++;
 		}
 	}
-	lobs.poll = lobs.poll/(double)pollcnt;
+	// lobs.poll = lobs.poll/(double)pollcnt;
+	lobs.poll = lobs.poll/(double)Nspace;
 	
 }
 
