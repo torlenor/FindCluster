@@ -1,0 +1,28 @@
+set term pdfcairo enhan
+
+load "./gnuplot.settings"
+
+set output sprintf("percc_all_2.pdf", f)
+
+set title "40^3 × N_t, {/Symbol b}=6.20, quenched, 100 configurations"
+
+set xrange [Trangemin:Trangemax]
+set yrange [-0.1:1.1]
+
+set format x "%.2f"
+set format y "%.2f"
+
+set xlabel "T/T_c"
+set ylabel "Percolating clusters"
+
+set key right bottom
+
+set pointsize 0.4
+linew=3
+
+plot "f0.402/percc.res" u (Ntcrit/$2):3:4 w yerrorlines lw linew t "Cut f=0.402", \
+"f0.357/percc.res" u (Ntcrit/$2):3:4 w yerrorlines lw linew t "Cut f=0.357", \
+"f0.327/percc.res" u (Ntcrit/$2):3:4 w yerrorlines lw linew t "Cut f=0.327", \
+"f0.300/percc.res" u (Ntcrit/$2):3:4 w yerrorlines lw linew t "Cut f=0.300", \
+"f0.264/percc.res" u (Ntcrit/$2):3:4 w yerrorlines lw linew t "Cut f=0.264", \
+"f0.226/percc.res" u (Ntcrit/$2):3:4 w yerrorlines lw linew t "Cut f=0.226"

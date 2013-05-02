@@ -1,14 +1,29 @@
 set term pdfcairo enhan
-set output "percc_fraction0.8.pdf"
 
-set label 1 "Cut fraction=0.8" at 1,3
+load "./gnuplot.settings"
 
-set xrange [0:5.5]
+set output sprintf("percc_all.pdf", f)
+
+set title "40^3 × N_t, {/Symbol b}=6.20, quenched, 200 (600) configurations"
+
+set xrange [Trangemin:Trangemax]
 set yrange [-0.5:3.5]
 
+set format x "%.2f"
+set format y "%.2f"
+
 set xlabel "T/T_c"
+set ylabel "Percolating clusters"
 
 set pointsize 0.4
 linew=3
 
-plot "./percc.res" u (10/$2):3:4 w yerrorlines lw linew
+plot "f0.40/percc.res" u (Ntcrit/$2):3:4 w yerrorlines lw linew t "Cut f=0.40", \
+"f0.35/percc.res" u (Ntcrit/$2):3:4 w yerrorlines lw linew t "Cut f=0.35", \
+"f0.30/percc.res" u (Ntcrit/$2):3:4 w yerrorlines lw linew t "Cut f=0.30", \
+"f0.25/percc.res" u (Ntcrit/$2):3:4 w yerrorlines lw linew t "Cut f=0.25", \
+"f0.20/percc.res" u (Ntcrit/$2):3:4 w yerrorlines lw linew t "Cut f=0.20", \
+"f0.15/percc.res" u (Ntcrit/$2):3:4 w yerrorlines lw linew t "Cut f=0.15", \
+"f0.10/percc.res" u (Ntcrit/$2):3:4 w yerrorlines lw linew t "Cut f=0.10", \
+"f0.05/percc.res" u (Ntcrit/$2):3:4 w yerrorlines lw linew t "Cut f=0.05", \
+"f0.00/percc.res" u (Ntcrit/$2):3:4 w yerrorlines lw linew t "Cut f=0.00", \
