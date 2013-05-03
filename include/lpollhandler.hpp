@@ -51,7 +51,7 @@ complex<double> calcPoll(int leng1, int leng2, int leng3, int leng4, int matrixd
                 poll += lpollarray[is][0*3 + 0] + lpollarray[is][1*3 + 1] + lpollarray[is][2*3 + 2];
         }   
 
-        poll = poll/((double)matrixdim*leng1*leng2*leng3);
+        poll = poll/((double)leng1*leng2*leng3);
 
         return poll;
 }

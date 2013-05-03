@@ -80,6 +80,20 @@ int main(int argc, char *argv[]){
 
 	checkPollEv(leng1, leng2, leng3, leng4, matrixdim, pollev);
 
+	complex<double> totpoll=0;
+	for(int is=0;is<leng1*leng2*leng3;is++){
+		totpoll += pollev[is][0] + pollev[is][1] + pollev[is][2];
+	}
+	totpoll = totpoll/(double)(leng1*leng2*leng3);
+	cout << "Total Polyakov loop from pollev P = " << totpoll << endl;
+
+	double delta = 1e-10;
+	double err = abs(pollTr - totpoll);
+	cout << "Error = " << err << endl;
+	if(err > delta){
+		cout << "WARNING: Error in Polyakov loop large!!!" << endl;
+	}
+
 	cout << "Writing 3d lattice to disk... " << flush;
 	//writePollEv(fevname);
 	if(writePollEvBinary(fevname) != 0){
