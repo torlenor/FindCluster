@@ -1,0 +1,6 @@
+#ifndef FINDCLUSTER_OBS_HPP
+#define FINDCLUSTER_OBS_HPP
+
+
+
+#endif // FINDCLUSTER_OBS_HPP
