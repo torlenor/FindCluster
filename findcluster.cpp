@@ -534,6 +534,7 @@ void calcExp(){
 		fboxcntname << "boxcnt_" << Ns << "x" << Nt << "_f" << fraction << ".res";
 		ofstream fboxcnt;
 		fboxcnt.open(fboxcntname.str().c_str());
+		fboxcnt << "# boxsize boxcnt boxcnterr" << endl;
 		for(unsigned int size=0; size<boxsize.size(); size++){
 			fboxcnt << boxsize[size] << " " << avgboxcnt[size] << " " << avgboxcnterr[size] << endl;
 		}
