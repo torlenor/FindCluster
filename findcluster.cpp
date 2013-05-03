@@ -2,7 +2,7 @@
    Finds cluster and performs calculations with it.
    Uses Polyakov loop eigenvalues as input.
 
-   v0.0.0 - 2013-03-05 Hans-Peter Schadler
+   v0.3.0 - 2013-05-03 Hans-Peter Schadler
 */
 
 #include <iostream>
@@ -20,6 +20,8 @@ using namespace std;
 #include "include/generic.hpp"
 
 #include "include/jackknife.h"
+
+#include "findcluster.h"
 
 int Ns=4, Nt=4;
 int matrixdim=3, leng1=4, leng2=4, leng3=4, leng4=4, Nspace=4*4*4*4;
@@ -48,81 +50,11 @@ vector<vector<int> > neib;
 vector<int> boxsize;
 vector<int> boxes;
 
-// Vectors to store cluster information
-struct Clusterstruct{
-	vector<int> isinsector;  // lclusterdata.isinsector[is] stores the sector of the lattice point is
-	vector<int> clustersector; // lclusterdata.clustersector[c] stores the sector of the cluster c
-	vector<int> isincluster;  // lclusterdata.isincluster[is] stores the cluster of the lattice point is
-	vector<vector<int> > clustermembers; // lclusterdata.clustermembers[c][i] stores the members/lattice points of the cluster c (0 < i < N_c)
-
-	vector<int> percolatingclusters; // Percolating clusters
-	vector<vector<int> > percolatingdirections;
-	
-	vector<int> sortedcluster;
-	vector<int> sortedrealcluster;
-	vector<int> isinsortedcluster;
-
-	vector<vector<int> > clusterisperiodic;
-
-	int nsectm1, nsect0, nsectp1;
-
-	vector<complex<double> > poll;
-};
-
 Clusterstruct *clusterdata;
-
-struct Observablestruct{
-	int maxclustersize;
-	int maxclusterid;
-	int maxclustersector;
-	
-	double avgclustersize;
-	double avgclustersizeF;
-
-	double cut;
-
-	vector<vector<int> > numberofboxes;
-	
-	vector<vector<double> > centerofmass;
-	vector<double> clusterradius;
-
-	double percc;
-
-	double lcboxcnt;
-
-	int largestclusterid;
-
-	double laserdim;
-
-	double poll;
-};
-
 Observablestruct *obs;
 
 void fillNeib();
 int init(int &argc, char *argv[]);
-
-// Stuff to find and categorize sectors/clusters for one configuration
-void fillSectors(Clusterstruct &lclusterdata, double delta);
-void fillSectorsAlt(Clusterstruct &lclusterdata, double r);
-void findClusters(Clusterstruct &lclusterdata);
-void checkClusters(Clusterstruct &lclusterdata);
-void findPercolatingCluster(Clusterstruct &lclusterdata);
-
-void hideInBoxes(Observablestruct &lobs, Clusterstruct &lclusterdata);
-
-void calcObservables(Observablestruct &lobs, Clusterstruct &lclusterdata);
-
-void writeConfigResultsstdout(Observablestruct &lobs, Clusterstruct &lclusterdata);
-void writeClusterList(Clusterstruct &lclusterdata);
-
-void calcExp();
-
-void sortClusterSize(Clusterstruct &lclusterdata);
-void cluster3doutput(Clusterstruct &clusterdata, string f3dname);
-
-int latmap(int i1, int i2, int i3);
-void getCoords(int is, int &i1, int &i2, int &i3);
 
 double fraction = 0.0;
 double delta0 = M_PI/3.0;
@@ -556,182 +488,6 @@ void calcExp(){
 	fpoll.open(fpollname.str().c_str());
 	fpoll << Nt << " " << setprecision(14) << mpoll << " " << mpollerr << endl;
 	fpoll.close();
-
-}
-
-void calcObservables(Observablestruct &lobs, Clusterstruct &lclusterdata){
-	#ifdef DEBUG	
-	cout << "Calculating observables... " << flush;
-	#endif
-	// Find largest cluster
-	int size=-1, largestcluster=-1;
-	for(unsigned int c=0; c<lclusterdata.clustermembers.size(); c++){
-		if( (int)lclusterdata.clustermembers[c].size() > size && lclusterdata.clustersector[c] < 2){
-			size = lclusterdata.clustermembers[c].size();
-			largestcluster = c;
-		}
-	}
-	
-	lobs.maxclustersize = size;
-	lobs.maxclusterid = largestcluster;
-	lobs.maxclustersector = lclusterdata.clustersector[largestcluster];
-	
-	// Calculate average cluster size
-	double avgclustersize=0;
-	int cnt=0;
-	for(unsigned int c=0; c<lclusterdata.clustermembers.size(); c++){
-		if(lclusterdata.clustersector[c] < 2){
-			avgclustersize += lclusterdata.clustermembers[c].size();
-			cnt++;
-		}
-	}
-	lobs.avgclustersize = avgclustersize/(double)cnt;
-
-	// Calculate average cluster size from Fortunato (1.7)
-	// First calculate the number of clusters of size s per lattice site
-	vector<int> sizes;
-	vector<double> sizedist;
-	int curcsize;
-	int knownsize=0;
-	for(unsigned int c=0; c<lclusterdata.clustermembers.size(); c++){
-		if(lclusterdata.clustersector[c] < 2){
-			curcsize = lclusterdata.clustermembers[c].size();
-			knownsize=0;
-			for(unsigned int s=0; s<sizes.size(); s++){
-				if(sizes[s] == curcsize){
-					knownsize = s;
-					break;
-				}
-			}
-			if(knownsize>0){
-				sizedist[knownsize] += 1.0/(double)Nspace;
-			}else{
-				sizes.push_back(curcsize);
-				sizedist.push_back(1.0/(double)Nspace);
-			}
-		}
-	}
-
-	double norm=0;
-	for(unsigned int size=0; size<sizedist.size(); size++){
-		norm += sizedist[size]*sizes[size];
-	}
-
-	double avgclustersizeF=0;
-	for(unsigned int size=0; size<sizedist.size(); size++){
-		avgclustersizeF += sizedist[size]*pow(sizes[size],2)/norm;
-	}
-
-	lobs.avgclustersizeF = avgclustersizeF;
-
-	// Calculate cut
-	double cut=0;
-	for(unsigned int is=0; is<lclusterdata.isinsector.size(); is++){
-		if(lclusterdata.isinsector[is] == 2)
-			cut = cut + 1;
-	}
-
-	lobs.cut = cut/(double)Nspace;
-	#ifdef DEBUG
-	cout << "done!" << endl;
-	#endif
-
-	// Store number of percolating clusters in a certain direction
-	int pcount=0;
-	for(unsigned int p=0; p<lclusterdata.percolatingclusters.size(); p++){
-		if(lclusterdata.percolatingdirections[p][0] == 1 && lclusterdata.percolatingdirections[p][1] == 1 && lclusterdata.percolatingdirections[p][2] == 1){
-			pcount++;
-		}
-		//if(lclusterdata.percolatingdirections[p][0] == 1){
-		//	pcount++;
-		//}
-	}
-//	lobs.percc=lclusterdata.percolatingclusters.size();
-	lobs.percc=pcount;
-
-	lobs.largestclusterid=lclusterdata.sortedrealcluster[0];
-
-	lobs.laserdim=0;
-
-	int i1=0, i2=0, i3=0, is=0;
-	bool incluster=false;
-	// First direction i1
-	for(i2=0;i2<Ns;i2++)
-	for(i3=0;i3<Ns;i3++){
-		i1=0;
-		is=latmap(i1, i2, i3);
-		if(lclusterdata.isincluster[is]==lobs.largestclusterid)
-			incluster=true;
-		for(i1=1;i1<Ns;i1++){
-			is=latmap(i1, i2, i3);
-			if(incluster==true && lclusterdata.isincluster[is] != lobs.largestclusterid){
-				incluster=false;
-				lobs.laserdim++;
-			}else if(incluster==false && lclusterdata.isincluster[is] == lobs.largestclusterid){
-				incluster=true;
-				lobs.laserdim++;
-			}
-		}
-	}
-	
-	// Second direction i2
-	incluster=false;
-	for(i1=0;i1<Ns;i1++)
-	for(i3=0;i3<Ns;i3++){
-		i2=0;
-		is=latmap(i1, i2, i3);
-		if(lclusterdata.isincluster[is]==lobs.largestclusterid)
-			incluster=true;
-		for(i2=1;i2<Ns;i2++){
-			is=latmap(i1, i2, i3);
-			if(incluster==true && lclusterdata.isincluster[is] != lobs.largestclusterid){
-				incluster=false;
-				lobs.laserdim++;
-			}else if(incluster==false && lclusterdata.isincluster[is] == lobs.largestclusterid){
-				incluster=true;
-				lobs.laserdim++;
-			}
-		}
-	}
-	
-	// Third direction i3
-	incluster=false;
-	for(i1=0;i1<Ns;i1++)
-	for(i2=0;i2<Ns;i2++){
-		i3=0;
-		is=latmap(i1, i2, i3);
-		if(lclusterdata.isincluster[is]==lobs.largestclusterid)
-			incluster=true;
-		for(i3=1;i3<Ns;i3++){
-			is=latmap(i1, i2, i3);
-			if(incluster==true && lclusterdata.isincluster[is] != lobs.largestclusterid){
-				incluster=false;
-				lobs.laserdim++;
-			}else if(incluster==false && lclusterdata.isincluster[is] == lobs.largestclusterid){
-				incluster=true;
-				lobs.laserdim++;
-			}
-		}
-	}
-	// lobs.laserdim=lobs.laserdim/(double)(lclusterdata.clustermembers[lobs.largestclusterid].size());
-	// lobs.laserdim = lobs.laserdim/(double)3; // Mean over all 3 directions
-	// lobs.laserdim = lobs.laserdim/(double)(Nspace); // Mean over all 3 directions
-	lobs.laserdim = lobs.laserdim/(double)(6*Ns*Ns); // Mean over all 3 directions
-
-	/* Calculation of Polyakov loop expectation value for points which 
-	 * survived the cut. For that loop over all points which are not in 
-	 * sector 2 and calculate the spatial average of |P(x)| */
-	complex<double> pollsum=0;
-	int pollcnt=0;
-	for(int is=0;is<Nspace;is++){
-		if(lclusterdata.isinsector[is] < 2){
-			pollsum += lclusterdata.poll[is];
-			pollcnt++;
-		}
-	}
-	lobs.poll = abs(pollsum)/(double)pollcnt;
-	// lobs.poll = lobs.poll/(double)Nspace;
-	
 }
 
 void writeConfigResultsstdout(Observablestruct &lobs, Clusterstruct &lclusterdata){
@@ -752,16 +508,6 @@ void writeConfigResultsstdout(Observablestruct &lobs, Clusterstruct &lclusterdat
 	cout << "Average cluster size Fortunato = " << lobs.avgclustersizeF << endl;
 	cout << "Largest cluster is cluster " << lobs.maxclusterid << " with " << lobs.maxclustersize << " members." << endl;
 			
-/*	if(doboxes){
-		cout << endl << "Boxes:" << endl;
-		for(unsigned int c=0; c<lclusterdata.clustermembers.size(); c++){
-			cout << "Cluster = " << c << " with " << lclusterdata.clustermembers[c].size() << " members:" << endl;
-			for(unsigned int size=0; size<boxsize.size(); size++){
-			cout << lobs.numberofboxes[c][size] << " boxes of size " << boxsize[size] << " needed." << endl;
-			}
-		}
-	} */
-	
 	if(doboxes){
 		cout << endl << "Boxes (Clusters sorted based on # of members):" << endl;
 		for(unsigned int c=0; c<lclusterdata.sortedcluster.size(); c++){
