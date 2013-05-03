@@ -10,6 +10,7 @@ struct Clusterstruct{
 
 	vector<int> percolatingclusters; // Percolating clusters
 	vector<vector<int> > percolatingdirections;
+	vector<int> clusterispercolating;
 	
 	vector<int> sortedcluster;
 	vector<int> sortedrealcluster;
@@ -39,11 +40,10 @@ struct Observablestruct{
 
 	double percc;
 
-	double lcboxcnt;
-
 	int largestclusterid;
 
-	double laserdim;
+	double area;
+	double arealargestnonperccluster;
 
 	double poll;
 };
@@ -55,8 +55,6 @@ void findClusters(Clusterstruct &lclusterdata);
 void checkClusters(Clusterstruct &lclusterdata);
 void findPercolatingCluster(Clusterstruct &lclusterdata);
 
-void hideInBoxes(Observablestruct &lobs, Clusterstruct &lclusterdata);
-
 void writeConfigResultsstdout(Observablestruct &lobs, Clusterstruct &lclusterdata);
 void writeClusterList(Clusterstruct &lclusterdata);
 
@@ -67,5 +65,9 @@ void cluster3doutput(Clusterstruct &clusterdata, string f3dname);
 
 int latmap(int i1, int i2, int i3);
 void getCoords(int is, int &i1, int &i2, int &i3);
+
+void freeMem(Clusterstruct &lclusterdata);
+
+void fillNeib();
 
 #endif // FINDCLUSTER_H

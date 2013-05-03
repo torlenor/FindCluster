@@ -13,6 +13,7 @@
 #include <string>
 #include <algorithm>
 #include <iomanip>
+#include <limits>
 
 using namespace std;
 
@@ -34,6 +35,7 @@ bool do3d=false;
 
 bool detail=false; // Controlls if we want detailed information for every configuration
 bool doboxes=false; // Controlls if we want box counting calculations
+bool doradius=false; // Controlls if we want radius calculation
 
 bool memorysaver=false; // Controlls if we drop the clusterdata arrays after observable calculations
 
@@ -52,9 +54,6 @@ vector<int> boxes;
 
 Clusterstruct *clusterdata;
 Observablestruct *obs;
-
-void fillNeib();
-int init(int &argc, char *argv[]);
 
 double fraction = 0.0;
 double delta0 = M_PI/3.0;
@@ -110,11 +109,13 @@ int main(int argc, char *argv[]){
 		}else{
 			cout << "\r" <<  fevname[n] << "..." << flush;
 		}
+		// Read Polyakov loop eigenvalues file
 		if(readPollEvBinary(leng1, leng2, leng3, leng4, matrixdim, pollev, fevname[n]) != 0){
 			cout << "ERROR: Problems with writePollEvBinary !" << endl;
 			return 1;
 		}
-	
+		
+		// Check Polyakov loop eigenvalues
 		checkPollEv(leng1, leng2, leng3, leng4, matrixdim, pollev);
 		
 		if(usealternativesectors==true){
@@ -122,18 +123,14 @@ int main(int argc, char *argv[]){
 		}else{
 			fillSectors(clusterdata[n], delta); // Categorize lattice points by sectors
 		}
+		
 		findClusters(clusterdata[n]);	// Identify clusters
 		checkClusters(clusterdata[n]); // Check clusters
 		findPercolatingCluster(clusterdata[n]); // Find percolating clusters
 
 		sortClusterSize(clusterdata[n]); // Sort clusters per number of members
 
-		// clusterRadius(obs[n], clusterdata[n]);
-
-		if(doboxes)
-			hideInBoxes(obs[n], clusterdata[n]);
-
-		calcObservables(obs[n], clusterdata[n]);
+		calcObservables(obs[n], clusterdata[n]); // Calculate observables
 		
 		if(detail){
 			cout << endl << "Details for " << fevname[n] << ":" << endl;
@@ -157,24 +154,7 @@ int main(int argc, char *argv[]){
 		}
 
 		if(memorysaver){
-			clusterdata[n].isinsector.resize(0);
-			clusterdata[n].clustersector.resize(0);
-			clusterdata[n].isincluster.resize(0);
-
-			for(unsigned c=0;c<clusterdata[n].clustermembers.size();c++){
-				clusterdata[n].clustermembers[c].resize(0);
-			}
-			clusterdata[n].clustermembers.resize(0);
-
-			clusterdata[n].percolatingclusters.resize(0);
-			for(unsigned p=0; p<clusterdata[n].percolatingdirections.size(); p++){
-				clusterdata[n].percolatingdirections[p].resize(0);
-			}
-			clusterdata[n].percolatingdirections.resize(0);
-		    
-			clusterdata[n].sortedcluster.resize(0);
-			clusterdata[n].sortedrealcluster.resize(0);
-			clusterdata[n].isinsortedcluster.resize(0);
+			freeMem(clusterdata[n]);
 		}
 	}
 
@@ -202,6 +182,27 @@ int main(int argc, char *argv[]){
 	return 0;
 }
 
+void freeMem(Clusterstruct &lclusterdata){
+	lclusterdata.isinsector.resize(0);
+	lclusterdata.clustersector.resize(0);
+	lclusterdata.isincluster.resize(0);
+
+	for(unsigned c=0;c<lclusterdata.clustermembers.size();c++){
+		lclusterdata.clustermembers[c].resize(0);
+	}
+	lclusterdata.clustermembers.resize(0);
+
+	lclusterdata.percolatingclusters.resize(0);
+	for(unsigned p=0; p<lclusterdata.percolatingdirections.size(); p++){
+		lclusterdata.percolatingdirections[p].resize(0);
+	}
+	lclusterdata.percolatingdirections.resize(0);
+    
+	lclusterdata.sortedcluster.resize(0);
+	lclusterdata.sortedrealcluster.resize(0);
+	lclusterdata.isinsortedcluster.resize(0);
+}
+
 void getCoords(int is, int &i1, int &i2, int &i3){
 	i1 = (is % (leng1*leng2) ) % leng1;
 	i2 = (is % (leng1*leng2) ) / leng1;
@@ -209,56 +210,6 @@ void getCoords(int is, int &i1, int &i2, int &i3){
 
 	if(is != i1 + i2*leng1 + i3*leng1*leng2)
 		cout << "ERROR: Problem in getCoords!" << endl;
-}
-
-void hideInBoxes(Observablestruct &lobs, Clusterstruct &lclusterdata){
-	// lobs.numberofboxes.resize(boxsize.size());
-	lobs.numberofboxes.resize(lclusterdata.clustermembers.size());
-	for(unsigned int c=0;c<lobs.numberofboxes.size();c++){
-		lobs.numberofboxes[c].resize(boxsize.size());
-	}
-
-	int boxcnt=0, is, i1, i2, i3;
-	bool clusterinbox=false;
-	for(unsigned int c=0; c<lclusterdata.clustermembers.size();c++){
-		// We should not calculate trivial box sizes!
-		lobs.numberofboxes[c][0]=lclusterdata.clustermembers[c].size();
-		lobs.numberofboxes[c][boxsize.size()-1]=1;
-		for(unsigned int size=1;size<boxsize.size()-1;size++){
-		// for(unsigned int size=0;size<boxsize.size();size++){
-			boxcnt=0;
-			// Loop over all boxes
-			for(int box1=0;box1<boxes[size];box1++)
-			for(int box2=0;box2<boxes[size];box2++)
-			for(int box3=0;box3<boxes[size];box3++){
-				clusterinbox=false;
-				// Loop over all points in box
-				for(int b1=0;b1<boxsize[size];b1++)
-				for(int b2=0;b2<boxsize[size];b2++)
-				for(int b3=0;b3<boxsize[size];b3++){
-					i1 = b1 + box1*boxsize[size];
-					i2 = b2 + box2*boxsize[size];
-					i3 = b3 + box3*boxsize[size];
-					
-					is = latmap(i1, i2, i3);
-
-					if(lclusterdata.isincluster[is] == (int)c)
-						clusterinbox=true;
-				}
-
-				if(clusterinbox==true)
-					boxcnt++;
-
-			} // Boxes in all directions
-			lobs.numberofboxes[c][size]=boxcnt;
-		} // Boxsize
-		if(lobs.numberofboxes[c][0] != (int)lclusterdata.clustermembers[c].size()){
-			cout << "ERROR: Number of boxes for boxsize = 1 has to be equal to number of cluster elements!" << endl;
-		}
-		if(lobs.numberofboxes[c][lobs.numberofboxes[c].size()-1] != 1){
-			cout << "ERROR: Number of boxes for boxsize = Ns has to be equal 1!" << endl;
-		}
-	} // Cluster
 }
 
 void sortClusterSize(Clusterstruct &lclusterdata){
@@ -385,16 +336,39 @@ void calcExp(){
 	}
 	Jackknife(ddata, cut, cuterr, nmeas);
 	
+	// Area expectation value
 	for(int n=0;n<nmeas;n++){
 		ddata[n]=0;
 		for(int j=0;j<nmeas;j++){
 			if(n!=j)
-				ddata[n] += (&obs[j])->laserdim;
+				ddata[n] += (&obs[j])->area;
 		}
 		ddata[n] = ddata[n]/(double)(nmeas-1);
 	}
 	Jackknife(ddata, mlaserdim, mlaserdimerr, nmeas);
 	
+	// Area largest non percolating cluster expectation value
+	double marealargestnonpercc=0, marealargestnonperccerr=0;
+	for(int n=0;n<nmeas;n++){
+		ddata[n]=0;
+		for(int j=0;j<nmeas;j++){
+			if(n!=j)
+				ddata[n] += (&obs[j])->arealargestnonperccluster;
+		}
+		ddata[n] = ddata[n]/(double)(nmeas-1);
+	}
+	Jackknife(ddata, marealargestnonpercc, marealargestnonperccerr, nmeas);
+
+	stringstream fareaname;
+	fareaname << "area_" << Ns << "x" << Nt << "_f" << fraction << ".res";
+	ofstream farea;
+	farea.open(fareaname.str().c_str());
+	farea << "# Nt percclusters percclusterserr" << endl;
+	farea.flags (std::ios::scientific);
+	farea.precision(numeric_limits<double>::digits10 + 1);
+	farea << Nt << " " << mlaserdim << " " << mlaserdimerr << " " << marealargestnonpercc << " " << marealargestnonperccerr << endl;
+	farea.close();
+
 	// Polyakov loop expectation value only for points with sector < 22
 	double mpoll=0, mpollerr=0;
 	for(int n=0;n<nmeas;n++){
@@ -422,6 +396,8 @@ void calcExp(){
 	ofstream fclustersize;
 	fclustersize.open(fclustersizename.str().c_str());
 	fclustersize << "# Ns Nt maxclusterweighterr maxclusterweighterr avgclusterweight avgclusterweighterr avgfortunatoclustersize avgfortunatoclustersizeerr" << endl;
+	fclustersize.flags (std::ios::scientific);
+	fclustersize.precision(numeric_limits<double>::digits10 + 1);
 	fclustersize << Ns << " " << Nt << " " << maxclustersize << " " << maxclustersizeerr << " " << avgclustersize << " " << avgclustersizeerr << " " << avgclustersizeF << " " << avgclustersizeFerr << endl;
 	fclustersize.close();
 
@@ -440,7 +416,10 @@ void calcExp(){
 	fnperccname << "npercc_" << Ns << "x" << Nt << "_f" << fraction << ".res";
 	ofstream fnpercc;
 	fnpercc.open(fnperccname.str().c_str());
-	fnpercc << Ns << " " << Nt << " " << avgpercc << " " << avgperccerr << endl;
+	fnpercc << "# Nt percclusters percclusterserr" << endl;
+	fnpercc.flags (std::ios::scientific);
+	fnpercc.precision(numeric_limits<double>::digits10 + 1);
+	fnpercc << Nt << " " << avgpercc << " " << avgperccerr << endl;
 	fnpercc.close();
 
 	if(doboxes){
@@ -467,6 +446,8 @@ void calcExp(){
 		ofstream fboxcnt;
 		fboxcnt.open(fboxcntname.str().c_str());
 		fboxcnt << "# boxsize boxcnt boxcnterr" << endl;
+		fboxcnt.flags (std::ios::scientific);
+		fboxcnt.precision(numeric_limits<double>::digits10 + 1);
 		for(unsigned int size=0; size<boxsize.size(); size++){
 			fboxcnt << boxsize[size] << " " << avgboxcnt[size] << " " << avgboxcnterr[size] << endl;
 		}
@@ -478,6 +459,9 @@ void calcExp(){
 	flaserdimname << "surface_" << Ns << "x" << Nt << "_f" << fraction << ".res";
 	ofstream flaserdim;
 	flaserdim.open(flaserdimname.str().c_str());
+	flaserdim << "# Nt area areaerr maxclustersize maxclustersizeerr" << endl;
+	flaserdim.flags (std::ios::scientific);
+	flaserdim.precision(numeric_limits<double>::digits10 + 1);
 	flaserdim << Nt << " " << mlaserdim << " " << mlaserdimerr << " " << maxclustersize << " " << maxclustersizeerr << endl;
 	flaserdim.close();
 	
@@ -486,7 +470,10 @@ void calcExp(){
 	fpollname << "poll_" << Ns << "x" << Nt << "_f" << fraction << ".res";
 	ofstream fpoll;
 	fpoll.open(fpollname.str().c_str());
-	fpoll << Nt << " " << setprecision(14) << mpoll << " " << mpollerr << endl;
+	fpoll << "# Nt poll pollerr" << endl;
+	fpoll.flags (std::ios::scientific);
+	fpoll.precision(numeric_limits<double>::digits10 + 1);
+	fpoll << Nt << " " << mpoll << " " << mpollerr << endl;
 	fpoll.close();
 }
 
@@ -637,6 +624,11 @@ void findPercolatingCluster(Clusterstruct &lclusterdata){
 	
 	int cluster=0;
 	
+	lclusterdata.clusterispercolating.resize(lclusterdata.clustermembers.size());
+	for(unsigned int c=0;c<lclusterdata.clustermembers.size();c++){
+		lclusterdata.clusterispercolating[c] = 0;
+	}
+	
 	vector<vector<vector<int> > > members;
 	members.resize(lclusterdata.clustermembers.size());
 	for(unsigned int i=0;i<members.size();i++){
@@ -695,6 +687,8 @@ void findPercolatingCluster(Clusterstruct &lclusterdata){
 				<< lclusterdata.percolatingdirections[percclustercnt][1] << "," 
 				<< lclusterdata.percolatingdirections[percclustercnt][2] << ")." << endl;
 			#endif
+			
+			lclusterdata.clusterispercolating[c]=1;
 		}
 	}
 	#ifdef DBEUG	
