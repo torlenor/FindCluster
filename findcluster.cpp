@@ -696,8 +696,12 @@ void findPercolatingCluster(Clusterstruct &lclusterdata){
 				<< lclusterdata.percolatingdirections[percclustercnt][1] << "," 
 				<< lclusterdata.percolatingdirections[percclustercnt][2] << ")." << endl;
 			#endif
-			
-			lclusterdata.clusterispercolating[c]=1;
+		
+			if(lclusterdata.percolatingdirections[percclustercnt][0] == 1 && 
+			  lclusterdata.percolatingdirections[percclustercnt][1] == 1 &&
+			  lclusterdata.percolatingdirections[percclustercnt][2] == 1){
+				lclusterdata.clusterispercolating[c]=1;
+			}
 		}
 	}
 	#ifdef DBEUG	
