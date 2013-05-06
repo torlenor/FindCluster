@@ -284,13 +284,20 @@ void cluster3doutput(Clusterstruct &lclusterdata, string f3dname){
 
 void calcExp(){
 	double maxclustersize=0, maxclustersizeerr=0;
+
+	double mlargestnpclustersize=0, mlargestnpclustersizeerr=0;
+
 	double avgclustersize=0, avgclustersizeerr=0;
 	double avgclustersizeF=0, avgclustersizeFerr=0;
+
 	double avgpercc=0, avgperccerr=0;
+
 	double cut=0, cuterr=0;
+
 	double mlaserdim=0, mlaserdimerr=0;
 	
 	double ddata[nmeas];
+
 	// Start of Jackknife
 	// Maximal cluster size per volume expectation value
 	for(int n=0;n<nmeas;n++){
@@ -302,6 +309,17 @@ void calcExp(){
 		ddata[n] = ddata[n]/(double)(nmeas-1);
 	}
 	Jackknife(ddata, maxclustersize, maxclustersizeerr, nmeas);
+	
+	// Maximal non percolating cluster size per volume expectation value
+	for(int n=0;n<nmeas;n++){
+		ddata[n]=0;
+		for(int j=0;j<nmeas;j++){
+			if(n!=j)
+				ddata[n] += (&obs[j])->largestnonpercclustersize/(double)Nspace;
+		}
+		ddata[n] = ddata[n]/(double)(nmeas-1);
+	}
+	Jackknife(ddata, mlargestnpclustersize, mlargestnpclustersizeerr, nmeas);
 	
 	// Average cluster size expectation value
 	for(int n=0;n<nmeas;n++){
@@ -359,16 +377,6 @@ void calcExp(){
 	}
 	Jackknife(ddata, marealargestnonpercc, marealargestnonperccerr, nmeas);
 
-	stringstream fareaname;
-	fareaname << "area_" << Ns << "x" << Nt << "_f" << fraction << ".res";
-	ofstream farea;
-	farea.open(fareaname.str().c_str());
-	farea << "# Nt percclusters percclusterserr" << endl;
-	farea.flags (std::ios::scientific);
-	farea.precision(numeric_limits<double>::digits10 + 1);
-	farea << Nt << " " << mlaserdim << " " << mlaserdimerr << " " << marealargestnonpercc << " " << marealargestnonperccerr << endl;
-	farea.close();
-
 	// Polyakov loop expectation value only for points with sector < 22
 	double mpoll=0, mpollerr=0;
 	for(int n=0;n<nmeas;n++){
@@ -395,10 +403,10 @@ void calcExp(){
 	fclustersizename << "clustersize_" << Ns << "x" << Nt << "_f" << fraction << ".res";
 	ofstream fclustersize;
 	fclustersize.open(fclustersizename.str().c_str());
-	fclustersize << "# Nt maxclusterweighterr maxclusterweighterr avgclusterweight avgclusterweighterr avgfortunatoclustersize avgfortunatoclustersizeerr" << endl;
+	fclustersize << "# Nt maxclusterweighterr maxclusterweighterr avgclusterweight avgclusterweighterr avgfortunatoclustersize avgfortunatoclustersizeerr largestnonpercclusterweight largestnonpercclusterweighterr" << endl;
 	fclustersize.flags (std::ios::scientific);
 	fclustersize.precision(numeric_limits<double>::digits10 + 1);
-	fclustersize << Nt << " " << maxclustersize << " " << maxclustersizeerr << " " << avgclustersize << " " << avgclustersizeerr << " " << avgclustersizeF << " " << avgclustersizeFerr << endl;
+	fclustersize << Nt << " " << maxclustersize << " " << maxclustersizeerr << " " << avgclustersize << " " << avgclustersizeerr << " " << avgclustersizeF << " " << avgclustersizeFerr << " " << mlargestnpclustersize << " " << mlargestnpclustersizeerr << endl;
 	fclustersize.close();
 
 	// Number of percolating clusters expectation value
@@ -455,15 +463,16 @@ void calcExp(){
 	}
 
 	// Write surface area to file
-	stringstream flaserdimname;
-	flaserdimname << "surface_" << Ns << "x" << Nt << "_f" << fraction << ".res";
-	ofstream flaserdim;
-	flaserdim.open(flaserdimname.str().c_str());
-	flaserdim << "# Nt area areaerr maxclustersize maxclustersizeerr" << endl;
-	flaserdim.flags (std::ios::scientific);
-	flaserdim.precision(numeric_limits<double>::digits10 + 1);
-	flaserdim << Nt << " " << mlaserdim << " " << mlaserdimerr << " " << maxclustersize << " " << maxclustersizeerr << endl;
-	flaserdim.close();
+	stringstream fareaname;
+	fareaname << "area_" << Ns << "x" << Nt << "_f" << fraction << ".res";
+	ofstream farea;
+	farea.open(fareaname.str().c_str());
+	farea << "# Nt percclusters percclusterserr" << endl;
+	farea.flags (std::ios::scientific);
+	farea.precision(numeric_limits<double>::digits10 + 1);
+	farea << Nt << " " << mlaserdim << " " << mlaserdimerr << " " << marealargestnonpercc << " " << marealargestnonperccerr << " " << maxclustersize << " " << maxclustersizeerr << " " << mlargestnpclustersize << " " << mlargestnpclustersizeerr << endl;
+	farea.close();
+
 	
 	// Write Polyakov loop to file
 	stringstream fpollname;

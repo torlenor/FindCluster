@@ -27,6 +27,10 @@ struct Observablestruct{
 	int maxclustersize;
 	int maxclusterid;
 	int maxclustersector;
+
+        double largestnonpercclustersize;
+	double largestnonpercclusterid;
+	double largetsnonpercclustersector;
 	
 	double avgclustersize;
 	double avgclustersizeF;

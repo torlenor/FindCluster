@@ -5,7 +5,7 @@
 
 void obsLargestCluster(Observablestruct &lobs, Clusterstruct &lclusterdata){
 	// Find largest cluster
-	int size=-1, largestcluster=-1;
+	int size = -1, largestcluster = -1;
 	for(unsigned int c=0; c<lclusterdata.clustermembers.size(); c++){
 		if( (int)lclusterdata.clustermembers[c].size() > size && lclusterdata.clustersector[c] < 2){
 			size = lclusterdata.clustermembers[c].size();
@@ -16,6 +16,21 @@ void obsLargestCluster(Observablestruct &lobs, Clusterstruct &lclusterdata){
 	lobs.maxclustersize = size;
 	lobs.maxclusterid = largestcluster;
 	lobs.maxclustersector = lclusterdata.clustersector[largestcluster];
+	
+	// Find largest non percollating cluster
+	largestcluster = -1;
+	size = -1;
+	for(unsigned int i=0;i<lclusterdata.sortedrealcluster.size();i++){
+		if(lclusterdata.clusterispercolating[lclusterdata.sortedrealcluster[i]] == 0){
+			largestcluster = lclusterdata.sortedrealcluster[i];
+			size = lclusterdata.clustermembers[largestcluster].size();
+			break;
+		}
+	}
+	
+	lobs.largestnonpercclustersize = size;
+	lobs.largestnonpercclusterid = largestcluster;
+	lobs.largetsnonpercclustersector = lclusterdata.clustersector[largestcluster];
 }
 
 void obsAverageClusterSize(Observablestruct &lobs, Clusterstruct &lclusterdata){
