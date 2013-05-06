@@ -1,12 +1,13 @@
 #!/bin/bash
+databasedir="/cl_tmp/07schadh/su3runs/su3pp/bin"
 Ns=40
 Nt="2 3 4 5 6 7 8 9 10 11 12 14 16 18 20"
 meas=200
 
+fraction=0.00
+
 box=0 # 0/1 to disable/enable box counting
 
-databasedir="/cl_tmp/07schadh/su3runs/su3pp/bin"
-fraction=0.00
 for t in $Nt ; do 
 	echo "#\!/bin/bash" > c${Ns}x${t}.sh
         echo "#" >> c${Ns}x${t}.sh
