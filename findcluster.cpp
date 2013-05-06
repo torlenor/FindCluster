@@ -403,7 +403,7 @@ void calcExp(){
 	fclustersizename << "clustersize_" << Ns << "x" << Nt << "_f" << fraction << ".res";
 	ofstream fclustersize;
 	fclustersize.open(fclustersizename.str().c_str());
-	fclustersize << "# Nt maxclusterweighterr maxclusterweighterr avgclusterweight avgclusterweighterr avgfortunatoclustersize avgfortunatoclustersizeerr largestnonpercclusterweight largestnonpercclusterweighterr" << endl;
+	fclustersize << "# Nt largestclusterweight largestclusterweighterr avgclusterweight avgclusterweighterr avgfortunatoclustersize avgfortunatoclustersizeerr largestnonpercclusterweight largestnonpercclusterweighterr" << endl;
 	fclustersize.flags (std::ios::scientific);
 	fclustersize.precision(numeric_limits<double>::digits10 + 1);
 	fclustersize << Nt << " " << maxclustersize << " " << maxclustersizeerr << " " << avgclustersize << " " << avgclustersizeerr << " " << avgclustersizeF << " " << avgclustersizeFerr << " " << mlargestnpclustersize << " " << mlargestnpclustersizeerr << endl;
