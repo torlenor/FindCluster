@@ -1,4 +1,4 @@
-# genres.sh v2.1.0 - 20130503 1339
+# genres.sh v2.2.0 - 20130506 1123
 #!/bin/bash
 
 fraction="0"
@@ -13,7 +13,7 @@ echo "# Ns Nt percprob percproberr" >percc.res
 for t in $Nt ; do cat ${Ns}x${t}/npercc_${Ns}x${t}_f${fraction}.res ; done >> percc.res
 
 rm -f area.res
-echo "# Ns Nt area areaerr area arealargestnonpercc arealargestnonperccerr" > area.res
+echo "# Nt area areaerr arealargestnonpercc arealargestnonperccerr largestclusterweight largestclusterweighterr       largestnonpercclusterweight largestnonpercclusterweighterr" > area.res
 for t in $Nt ; do cat ${Ns}x${t}/area_${Ns}x${t}_f${fraction}.res | grep -v "^#" ; done >> area.res
 
 rm -f cutrate.res_tmp cutrate.res
@@ -36,6 +36,10 @@ echo "# Nt clusterweight clusterweighterr" > clusterweight.res
 join clusterweight_tmp2 clusterweight_err_tmp2 >>  clusterweight.res
 
 rm clusterweight_tmp clusterweight_tmp2 clusterweight_err_tmp clusterweight_err_tmp2
+
+# New cluster weight
+echo "# Nt largestclusterweight largestclusterweighterr avgclusterweight avgclusterweighterr avgfortunatoclustersize avgfortunatoclustersizeerr largestnonpercclusterweight largestnonpercclusterweighterr" > clusterweight_new.res
+for t in $Nt ; do cat ${Ns}x${t}/clustersize_${Ns}x${t}_f${fraction}.res | grep -v "^#" ; done >> clusterweight_new.res
 
 # Polyakov loop results
 rm -f poll.res
