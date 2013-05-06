@@ -8,8 +8,18 @@ fraction=0.00
 
 box=0 # 0/1 to disable/enable box counting
 
+echo
+echo "Settings:"
+echo "Data directory $databasedir"
+echo "Ns = $Ns"
+echo "Nt = $Nt"
+echo "Configurations = $meas"
+echo "Fraction f = $fraction" 
+echo "Boxcounting (0/1) = $box"
+echo
+
 for t in $Nt ; do 
-	echo "#\!/bin/bash" > c${Ns}x${t}.sh
+	echo "#!/bin/bash" > c${Ns}x${t}.sh
         echo "#" >> c${Ns}x${t}.sh
         echo "#$ -cwd" >> c${Ns}x${t}.sh
         echo "#$ -S /bin/csh" >> c${Ns}x${t}.sh
