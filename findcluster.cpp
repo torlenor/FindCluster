@@ -467,7 +467,7 @@ void calcExp(){
 	fareaname << "area_" << Ns << "x" << Nt << "_f" << fraction << ".res";
 	ofstream farea;
 	farea.open(fareaname.str().c_str());
-	farea << "# Nt percclusters percclusterserr" << endl;
+	farea << "# Nt area areaerr arealargestnonpercc arealargestnonperccerr largestclusterweight largestclusterweighterr largestnonpercclusterweight largestnonpercclusterweighterr" << endl;
 	farea.flags (std::ios::scientific);
 	farea.precision(numeric_limits<double>::digits10 + 1);
 	farea << Nt << " " << mlaserdim << " " << mlaserdimerr << " " << marealargestnonpercc << " " << marealargestnonperccerr << " " << maxclustersize << " " << maxclustersizeerr << " " << mlargestnpclustersize << " " << mlargestnpclustersizeerr << endl;
