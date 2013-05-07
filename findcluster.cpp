@@ -289,6 +289,7 @@ void calcExp(){
 
 	double avgclustersize=0, avgclustersizeerr=0;
 	double avgclustersizeF=0, avgclustersizeFerr=0;
+	double avgclustersizenopercc=0, avgclustersizenoperccerr=0;
 
 	double avgpercc=0, avgperccerr=0;
 
@@ -342,6 +343,17 @@ void calcExp(){
 		ddata[n] = ddata[n]/(double)(nmeas-1);
 	}
 	Jackknife(ddata, avgclustersizeF, avgclustersizeFerr, nmeas);
+	
+	// Average cluster size expectation value without percolating clusters
+	for(int n=0;n<nmeas;n++){
+		ddata[n]=0;
+		for(int j=0;j<nmeas;j++){
+			if(n!=j)
+				ddata[n] += (&obs[j])->avgclustersizenopercc;
+		}
+		ddata[n] = ddata[n]/(double)(nmeas-1);
+	}
+	Jackknife(ddata, avgclustersizenopercc, avgclustersizenoperccerr, nmeas);
 	
 	// Cut expectation value
 	for(int n=0;n<nmeas;n++){
@@ -408,6 +420,16 @@ void calcExp(){
 	fclustersize.precision(numeric_limits<double>::digits10 + 1);
 	fclustersize << Nt << " " << maxclustersize << " " << maxclustersizeerr << " " << avgclustersize << " " << avgclustersizeerr << " " << avgclustersizeF << " " << avgclustersizeFerr << " " << mlargestnpclustersize << " " << mlargestnpclustersizeerr << endl;
 	fclustersize.close();
+	
+	stringstream favgclustersizename;
+	favgclustersizename << "clustersize_avg_" << Ns << "x" << Nt << "_f" << fraction << ".res";
+	ofstream favgclustersize;
+	favgclustersize.open(favgclustersizename.str().c_str());
+	favgclustersize << "# Nt avgclusterweight avgclusterweighterr avgfortunatoclustersize avgfortunatoclustersizeerr avgclusterweightnopercc avgclusterweightnoperccerr" << endl;
+	favgclustersize.flags (std::ios::scientific);
+	favgclustersize.precision(numeric_limits<double>::digits10 + 1);
+	favgclustersize << Nt << " " << avgclustersize << " " << avgclustersizeerr << " " << avgclustersizeF << " " << avgclustersizeFerr << " " << avgclustersizenopercc << " " << avgclustersizenoperccerr << endl;
+	favgclustersize.close();
 
 	// Number of percolating clusters expectation value
 	for(int n=0;n<nmeas;n++){

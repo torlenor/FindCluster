@@ -34,6 +34,8 @@ struct Observablestruct{
 	
 	double avgclustersize;
 	double avgclustersizeF;
+	
+	double avgclustersizenopercc;
 
 	double cut;
 

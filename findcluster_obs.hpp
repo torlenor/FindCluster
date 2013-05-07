@@ -85,6 +85,45 @@ void obsAverageClusterSizeFortunato(Observablestruct &lobs, Clusterstruct &lclus
 	lobs.avgclustersizeF = avgclustersizeF;
 }
 
+void obsAverageClusterSizeNoPercc(Observablestruct &lobs, Clusterstruct &lclusterdata){
+	// Calculate average cluster size without percolating clusters
+	// First calculate the number of clusters of size s per lattice site
+	vector<int> sizes;
+	vector<double> sizedist;
+	int curcsize;
+	int knownsize=0;
+	for(unsigned int c=0; c<lclusterdata.clustermembers.size(); c++){
+		if(lclusterdata.clustersector[c] < 2 && lclusterdata.clusterispercolating[c] == 0){
+			curcsize = lclusterdata.clustermembers[c].size();
+			knownsize=0;
+			for(unsigned int s=0; s<sizes.size(); s++){
+				if(sizes[s] == curcsize){
+					knownsize = s;
+					break;
+				}
+			}
+			if(knownsize>0){
+				sizedist[knownsize] += 1.0/(double)Nspace;
+			}else{
+				sizes.push_back(curcsize);
+				sizedist.push_back(1.0/(double)Nspace);
+			}
+		}
+	}
+
+	double norm=0;
+	for(unsigned int size=0; size<sizedist.size(); size++){
+		norm += sizedist[size]*sizes[size];
+	}
+
+	double avgclustersizenopercc=0;
+	for(unsigned int size=0; size<sizedist.size(); size++){
+		avgclustersizenopercc += sizedist[size]*pow(sizes[size],2)/norm;
+	}
+
+	lobs.avgclustersizenopercc = avgclustersizenopercc;
+}
+
 void obsCutPercentage(Observablestruct &lobs, Clusterstruct &lclusterdata){
 	// Calculate cut
 	double cut=0;
@@ -322,6 +361,8 @@ void calcObservables(Observablestruct &lobs, Clusterstruct &lclusterdata){
 	obsAverageClusterSize(lobs, lclusterdata);
 	// lobs.avgclustersizeF
 	obsAverageClusterSizeFortunato(lobs, lclusterdata);
+	// lobs.avgclustersizenopercc
+	obsAverageClusterSizeNoPercc(lobs, lclusterdata);
 	// lobs.cut
 	obsCutPercentage(lobs, lclusterdata);
 	// lobs.largestclusterid
