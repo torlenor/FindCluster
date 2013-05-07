@@ -1,12 +1,12 @@
-# genres.sh v2.2.0 - 20130506 1123
+# genres.sh v2.2.0 - 20130507 0858
 #!/bin/bash
 
 fraction="0"
 
-Ns=40
-Nt="2 3 4 5 6 7 8 9 10 11 12 14 16 18 20"
+Ns=30
+Nt="2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20"
 
-echo "This is genres.sh v2.0.0. Genering results files..." 
+echo "This is genres.sh v2.2.0. Genering results files..." 
 
 rm -f percc.res
 echo "# Ns Nt percprob percproberr" >percc.res
@@ -40,6 +40,10 @@ rm clusterweight_tmp clusterweight_tmp2 clusterweight_err_tmp clusterweight_err_
 # New cluster weight
 echo "# Nt largestclusterweight largestclusterweighterr avgclusterweight avgclusterweighterr avgfortunatoclustersize avgfortunatoclustersizeerr largestnonpercclusterweight largestnonpercclusterweighterr" > clusterweight_new.res
 for t in $Nt ; do cat ${Ns}x${t}/clustersize_${Ns}x${t}_f${fraction}.res | grep -v "^#" ; done >> clusterweight_new.res
+
+# Average cluster weight
+echo "Nt avgclusterweight avgclusterweighterr avgfortunatoclustersize avgfortunatoclustersizeerr avgclusterweightnopercc avgclusterweightnoperccerr" > clusterweight_avg.res
+for t in $Nt ; do cat ${Ns}x${t}/clustersize_avg_${Ns}x${t}_f${fraction}.res | grep -v "^#" ; done >> clusterweight_avg.res
 
 # Polyakov loop results
 rm -f poll.res
