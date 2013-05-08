@@ -482,6 +482,33 @@ void calcExp(){
 			fboxcnt << boxsize[size] << " " << avgboxcnt[size] << " " << avgboxcnterr[size] << endl;
 		}
 		fboxcnt.close();
+		
+		// Box counts for largest cluster which is not percolating
+		for(unsigned int size=0; size<boxsize.size(); size++){
+			avgboxcnt[size]=0;
+			avgboxcnterr[size]=0;
+			for(int n=0;n<nmeas;n++){
+				ddata[n]=0;
+
+				for(int j=0;j<nmeas;j++){
+					if(n!=j)
+					ddata[n] += (&obs[j])->numberofboxes[(&obs[j])->largestnonpercclusterid][size];
+				}
+				ddata[n] = ddata[n]/(double)(nmeas-1);
+			}
+			Jackknife(ddata, avgboxcnt[size], avgboxcnterr[size], nmeas);
+		}
+
+		fboxcntname.str("");
+		fboxcntname << "boxcnt_nonpercc_" << Ns << "x" << Nt << "_f" << fraction << ".res";
+		fboxcnt.open(fboxcntname.str().c_str());
+		fboxcnt << "# boxsize boxcntnonpercc boxcntnonperccerr" << endl;
+		fboxcnt.flags (std::ios::scientific);
+		fboxcnt.precision(numeric_limits<double>::digits10 + 1);
+		for(unsigned int size=0; size<boxsize.size(); size++){
+			fboxcnt << boxsize[size] << " " << avgboxcnt[size] << " " << avgboxcnterr[size] << endl;
+		}
+		fboxcnt.close();
 	}
 
 	// Write surface area to file

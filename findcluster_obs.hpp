@@ -301,6 +301,97 @@ void obsPollAfterCut(Observablestruct &lobs, Clusterstruct &lclusterdata){
 	lobs.poll = abs(pollsum)/(double)pollcnt;
 }
 
+void obsBoxesOnlyLargest(Observablestruct &lobs, Clusterstruct &lclusterdata){
+	lobs.numberofboxes.resize(lclusterdata.clustermembers.size());
+	for(unsigned int c=0;c<lobs.numberofboxes.size();c++){
+		lobs.numberofboxes[c].resize(boxsize.size());
+	}
+
+	int c=0;
+	int boxcnt=0, is, i1, i2, i3;
+	bool clusterinbox=false;
+
+	// Calculation for largestcluster
+	c=lobs.largestclusterid;
+	// We should not calculate trivial box sizes!
+	lobs.numberofboxes[c][0]=lclusterdata.clustermembers[c].size();
+	lobs.numberofboxes[c][boxsize.size()-1]=1;
+	for(unsigned int size=1;size<boxsize.size()-1;size++){
+	// for(unsigned int size=0;size<boxsize.size();size++){
+		boxcnt=0;
+		// Loop over all boxes
+		for(int box1=0;box1<boxes[size];box1++)
+		for(int box2=0;box2<boxes[size];box2++)
+		for(int box3=0;box3<boxes[size];box3++){
+			clusterinbox=false;
+			// Loop over all points in box
+			for(int b1=0;b1<boxsize[size];b1++)
+			for(int b2=0;b2<boxsize[size];b2++)
+			for(int b3=0;b3<boxsize[size];b3++){
+				i1 = b1 + box1*boxsize[size];
+				i2 = b2 + box2*boxsize[size];
+				i3 = b3 + box3*boxsize[size];
+				
+				is = latmap(i1, i2, i3);
+
+				if(lclusterdata.isincluster[is] == (int)c)
+					clusterinbox=true;
+			}
+
+			if(clusterinbox==true)
+				boxcnt++;
+
+		} // Boxes in all directions
+		lobs.numberofboxes[c][size]=boxcnt;
+	} // Boxsize
+	if(lobs.numberofboxes[c][0] != (int)lclusterdata.clustermembers[c].size()){
+		cout << "ERROR: Number of boxes for boxsize = 1 has to be equal to number of cluster elements!" << endl;
+	}
+	if(lobs.numberofboxes[c][lobs.numberofboxes[c].size()-1] != 1){
+		cout << "ERROR: Number of boxes for boxsize = Ns has to be equal 1!" << endl;
+	}
+	
+	// Calculation for largest non percolating cluster
+	c=lobs.largestnonpercclusterid;
+	// We should not calculate trivial box sizes!
+	lobs.numberofboxes[c][0]=lclusterdata.clustermembers[c].size();
+	lobs.numberofboxes[c][boxsize.size()-1]=1;
+	for(unsigned int size=1;size<boxsize.size()-1;size++){
+	// for(unsigned int size=0;size<boxsize.size();size++){
+		boxcnt=0;
+		// Loop over all boxes
+		for(int box1=0;box1<boxes[size];box1++)
+		for(int box2=0;box2<boxes[size];box2++)
+		for(int box3=0;box3<boxes[size];box3++){
+			clusterinbox=false;
+			// Loop over all points in box
+			for(int b1=0;b1<boxsize[size];b1++)
+			for(int b2=0;b2<boxsize[size];b2++)
+			for(int b3=0;b3<boxsize[size];b3++){
+				i1 = b1 + box1*boxsize[size];
+				i2 = b2 + box2*boxsize[size];
+				i3 = b3 + box3*boxsize[size];
+				
+				is = latmap(i1, i2, i3);
+
+				if(lclusterdata.isincluster[is] == (int)c)
+					clusterinbox=true;
+			}
+
+			if(clusterinbox==true)
+				boxcnt++;
+
+		} // Boxes in all directions
+		lobs.numberofboxes[c][size]=boxcnt;
+	} // Boxsize
+	if(lobs.numberofboxes[c][0] != (int)lclusterdata.clustermembers[c].size()){
+		cout << "ERROR: Number of boxes for boxsize = 1 has to be equal to number of cluster elements!" << endl;
+	}
+	if(lobs.numberofboxes[c][lobs.numberofboxes[c].size()-1] != 1){
+		cout << "ERROR: Number of boxes for boxsize = Ns has to be equal 1!" << endl;
+	}
+}
+
 void obsBoxes(Observablestruct &lobs, Clusterstruct &lclusterdata){
 	lobs.numberofboxes.resize(lclusterdata.clustermembers.size());
 	for(unsigned int c=0;c<lobs.numberofboxes.size();c++){
@@ -377,8 +468,11 @@ void calcObservables(Observablestruct &lobs, Clusterstruct &lclusterdata){
 	obsPollAfterCut(lobs, lclusterdata);
 	
 	// lobs.numberofboxes
+	// if(doboxes)
+	// obsBoxes(lobs, lclusterdata);
+	// lobs.numberofboxes
 	if(doboxes)
-		obsBoxes(lobs, lclusterdata);
+		obsBoxesOnlyLargest(lobs, lclusterdata);
 	
 	if(doradius)		
 		clusterRadius(lobs, lclusterdata);
