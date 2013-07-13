@@ -405,20 +405,20 @@ void renderScene(int value){
 	pTime=currentTime;
 
 	if(usedTime > 500){
-		fps=frameCount / (usedTime/(double)500 );
+		fps=2.0*frameCount / (usedTime/(double)500 );
 		char* TempString = (char*)
 		    malloc(512);
 	 
 	 	if(cnt>-1){
 		sprintf(
 		    TempString,
-		    "%f Frames Per Second, File %s selected, Cluster %i selected",
-		    fps, filenames[selconfig].c_str(), cnt );
+		    "%f Frames Per Second, %f ms Per Frame, File %s selected, Cluster %i selected",
+		    fps, usedTime/(double)frameCount, filenames[selconfig].c_str(), cnt );
 		}else{
 		sprintf(
 		    TempString,
-		    "%f Frames Per Second, File %s selected",
-		    fps, filenames[selconfig].c_str() );		
+		    "%f Frames Per Second, %f ms Per Frame, File %s selected",
+		    fps, usedTime/(double)frameCount, filenames[selconfig].c_str() );
 		}
 	 
 		glutSetWindowTitle(TempString);
