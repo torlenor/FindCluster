@@ -35,7 +35,7 @@ bool do3d=false;
 
 bool detail=false; // Controlls if we want detailed information for every configuration
 bool doboxes=false; // Controlls if we want box counting calculations
-bool doradius=false; // Controlls if we want radius calculation
+bool doradius=true; // Controlls if we want radius calculation
 
 bool memorysaver=false; // Controlls if we drop the clusterdata arrays after observable calculations
 
@@ -389,7 +389,7 @@ void calcExp(){
 	}
 	Jackknife(ddata, marealargestnonpercc, marealargestnonperccerr, nmeas);
 
-	// Polyakov loop expectation value only for points with sector < 22
+	// Polyakov loop expectation value only for points with sector < 2
 	double mpoll=0, mpollerr=0;
 	for(int n=0;n<nmeas;n++){
 		ddata[n]=0;
@@ -565,7 +565,9 @@ void writeConfigResultsstdout(Observablestruct &lobs, Clusterstruct &lclusterdat
 
 	cout << endl << "Cluster radius (Fortunato):" << endl;
 	for(unsigned int c=0; c<lclusterdata.sortedcluster.size(); c++){
-		cout << "Cluster ( " << lclusterdata.clustermembers[lclusterdata.sortedcluster[c]].size() << " members ) = " << lclusterdata.sortedcluster[c] << " radius = " << setprecision(5) << lobs.clusterradius[lclusterdata.sortedcluster[c]] << setprecision(2) << ", Center of Mass = (" << lobs.centerofmass[lclusterdata.sortedcluster[c]][0] << "," << lobs.centerofmass[lclusterdata.sortedcluster[c]][1] << "," << lobs.centerofmass[lclusterdata.sortedcluster[c]][2] << ")"  << endl;
+		if( lclusterdata.clustersector[lclusterdata.sortedcluster[c]] < 2){
+			cout << "Cluster ( " << lclusterdata.clustermembers[lclusterdata.sortedcluster[c]].size() << " members ) = " << lclusterdata.sortedcluster[c] << " radius = " << setprecision(5) << lobs.clusterradius[lclusterdata.sortedcluster[c]] << setprecision(2) << ", Center of Mass = (" << lobs.centerofmass[lclusterdata.sortedcluster[c]][0] << "," << lobs.centerofmass[lclusterdata.sortedcluster[c]][1] << "," << lobs.centerofmass[lclusterdata.sortedcluster[c]][2] << ")"  << endl;
+		}
 	}
 }
 

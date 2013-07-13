@@ -48,6 +48,7 @@ void obsAverageClusterSize(Observablestruct &lobs, Clusterstruct &lclusterdata){
 
 void obsAverageClusterSizeFortunato(Observablestruct &lobs, Clusterstruct &lclusterdata){
 	// Calculate average cluster size from Fortunato (1.7)
+	// We consider only non-percolating clusters.
 	// First calculate the number of clusters of size s per lattice site
 	vector<int> sizes;
 	vector<double> sizedist;
