@@ -141,7 +141,7 @@ int main(int argc, char *argv[]){
 				if(clusterdata[0].clusterisperiodic[clusterdata[0].sortedcluster[c]][0]==1 
 				|| clusterdata[0].clusterisperiodic[clusterdata[0].sortedcluster[c]][1]==1 
 				|| clusterdata[0].clusterisperiodic[clusterdata[0].sortedcluster[c]][2]==1){
-					cout << "Cluster (size sorted) " << c << endl;
+					cout << "Cluster (size sorted) " << c << ", real id = " << clusterdata[0].sortedcluster[c] << endl;
 				}
 			}
 		}
@@ -388,6 +388,18 @@ void calcExp(){
 		ddata[n] = ddata[n]/(double)(nmeas-1);
 	}
 	Jackknife(ddata, marealargestnonpercc, marealargestnonperccerr, nmeas);
+	
+	// Radius of largest cluster expectation value
+	double mlargestclusterradius=0, mlargestclusterradiuserr=0;
+	for(int n=0;n<nmeas;n++){
+		ddata[n]=0;
+		for(int j=0;j<nmeas;j++){
+			if(n!=j)
+				ddata[n] += (&obs[j])->largestclusterradius;
+		}
+		ddata[n] = ddata[n]/(double)(nmeas-1);
+	}
+	Jackknife(ddata, mlargestclusterradius, mlargestclusterradiuserr, nmeas);
 
 	// Polyakov loop expectation value only for points with sector < 2
 	double mpoll=0, mpollerr=0;
@@ -405,6 +417,7 @@ void calcExp(){
 	cout << "Average cluster size = " << setprecision(14) << avgclustersize << ", Maximum cluster size / V = " << maxclustersize << endl;
 	cout << "Average cluster err  = " << avgclustersizeerr << ", Maximum cluster / V err  = " << maxclustersizeerr << endl;
 	cout << "Average cluster size Fortunato (1.7) = " << avgclustersizeF << ", Error  = " << avgclustersizeFerr << endl;
+	cout << "Radius of largest cluster = " << mlargestclusterradius << ", Error = " << mlargestclusterradiuserr << endl;
 	cout << "Cut = " << cut << " Cut err = " << cuterr << endl;
 	cout << "Laserdim = " << mlaserdim << " Laserdim err = " << mlaserdimerr << endl;
 	cout << "Polyakov loop = " << mpoll << " Polyakov loop err = " << mpollerr << endl;
@@ -415,10 +428,10 @@ void calcExp(){
 	fclustersizename << "clustersize_" << Ns << "x" << Nt << "_f" << fraction << ".res";
 	ofstream fclustersize;
 	fclustersize.open(fclustersizename.str().c_str());
-	fclustersize << "# Nt largestclusterweight largestclusterweighterr avgclusterweight avgclusterweighterr avgfortunatoclustersize avgfortunatoclustersizeerr largestnonpercclusterweight largestnonpercclusterweighterr" << endl;
+	fclustersize << "# Nt largestclusterweight largestclusterweighterr avgclusterweight avgclusterweighterr avgfortunatoclustersize avgfortunatoclustersizeerr largestnonpercclusterweight largestnonpercclusterweighterr largestclusterradius largestclusterradiuserr" << endl;
 	fclustersize.flags (std::ios::scientific);
 	fclustersize.precision(numeric_limits<double>::digits10 + 1);
-	fclustersize << Nt << " " << maxclustersize << " " << maxclustersizeerr << " " << avgclustersize << " " << avgclustersizeerr << " " << avgclustersizeF << " " << avgclustersizeFerr << " " << mlargestnpclustersize << " " << mlargestnpclustersizeerr << endl;
+	fclustersize << Nt << " " << maxclustersize << " " << maxclustersizeerr << " " << avgclustersize << " " << avgclustersizeerr << " " << avgclustersizeF << " " << avgclustersizeFerr << " " << mlargestnpclustersize << " " << mlargestnpclustersizeerr << " " << mlargestclusterradius << " " << mlargestclusterradiuserr << endl;
 	fclustersize.close();
 	
 	stringstream favgclustersizename;

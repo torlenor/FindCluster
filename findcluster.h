@@ -43,6 +43,7 @@ struct Observablestruct{
 	
 	vector<vector<double> > centerofmass;
 	vector<double> clusterradius;
+	double largestclusterradius;
 
 	double percc;
 

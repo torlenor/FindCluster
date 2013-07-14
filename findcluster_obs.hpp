@@ -476,7 +476,7 @@ void calcObservables(Observablestruct &lobs, Clusterstruct &lclusterdata){
 		obsBoxesOnlyLargest(lobs, lclusterdata);
 	
 	if(doradius)		
-		clusterRadius(lobs, lclusterdata);
+		obsClusterRadius(lobs, lclusterdata);
 	
 	#ifdef DEBUG
 	cout << "done!" << endl;
