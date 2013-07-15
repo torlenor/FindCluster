@@ -25,8 +25,8 @@ void obsClusterRadius(Observablestruct &lobs, Clusterstruct &lclusterdata){
 	lobs.centerofmass.resize(lclusterdata.clustermembers.size());
 
 	for(unsigned int c=0;c<lclusterdata.clustermembers.size();c++){
-		if(lclusterdata.clustermembers[c].size()>1)
-			cout << endl << "Cluster " << c << " with " << lclusterdata.clustermembers[c].size() << " members:" << endl;
+		//if(lclusterdata.clustermembers[c].size()>1)
+		//	cout << endl << "Cluster " << c << " with " << lclusterdata.clustermembers[c].size() << " members:" << endl;
 		radiussquare=0;
 		radiussquaremin=1E30;
 
@@ -67,11 +67,11 @@ void obsClusterRadius(Observablestruct &lobs, Clusterstruct &lclusterdata){
 				centerofmassmin[1]=centerofmass[1];
 				centerofmassmin[2]=centerofmass[2];
 			}
-			if(lclusterdata.clustermembers[c].size()>1)
-				cout << "r = " << radiussquare << endl;
+			// if(lclusterdata.clustermembers[c].size()>1)
+			//	cout << "r = " << radiussquare << endl;
 		}
-		if(lclusterdata.clustermembers[c].size()>1)
-			cout << "r_min = " << radiussquaremin << endl;
+		// if(lclusterdata.clustermembers[c].size()>1)
+		//	cout << "r_min = " << radiussquaremin << endl;
 
 		lobs.centerofmass[c].push_back(centerofmassmin[0]);
 		lobs.centerofmass[c].push_back(centerofmassmin[1]);
@@ -79,7 +79,8 @@ void obsClusterRadius(Observablestruct &lobs, Clusterstruct &lclusterdata){
 			
 		lobs.clusterradius.push_back(radiussquaremin);
 	}
-	lobs.largestclusterradius=lobs.clusterradius[lclusterdata.sortedcluster[0]];
+	// lobs.largestclusterradius=lobs.clusterradius[lclusterdata.sortedcluster[0]];
+	lobs.largestclusterradius=lobs.clusterradius[lobs.maxclusterid];
 }
 
 #endif // FINDCLUSTER_RADIUS_HPP
