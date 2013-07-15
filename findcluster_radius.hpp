@@ -26,12 +26,12 @@ void obsClusterRadius(Observablestruct &lobs, Clusterstruct &lclusterdata){
 
 	lobs.centerofmass.resize(lclusterdata.clustermembers.size());
 
-	// int c = lobs.maxclusterid;
-	// int lclusterradiusid=-1;
-	double radiussquaremax=0;
+	int c = lobs.maxclusterid;
 
-	for(unsigned int c=0;c<lclusterdata.clustermembers.size();c++){
-		if(lclusterdata.clustermembers[c].size()>1 && lclusterdata.clustersector[c] < 2){
+//	double radiussquaremax=0;
+
+//	for(unsigned int c=0;c<lclusterdata.clustermembers.size();c++){
+//		if(lclusterdata.clustermembers[c].size()>1 && lclusterdata.clustersector[c] < 2){
 			// Do it only for clusters with size > 1 in sectors < 2
 
 			//if(lclusterdata.clustermembers[c].size()>1)
@@ -39,57 +39,21 @@ void obsClusterRadius(Observablestruct &lobs, Clusterstruct &lclusterdata){
 			radiussquare=0;
 			radiussquaremin=1E30;
 
-                        if(lclusterdata.clusterisperiodic[c][0]==1 
-                             || lclusterdata.clusterisperiodic[c][1]==1 
-                             || lclusterdata.clusterisperiodic[c][2]==1){
-				// Calculate center of mass
-				for(int s1=0;s1<leng1/2;s1++)
-				for(int s2=0;s2<leng2/2;s2++)
-				for(int s3=0;s3<leng3/2;s3++){
-					shift[0]=s1 + 0.5;
-					shift[1]=s2 + 0.5;
-					shift[2]=s3 + 0.5;
+			// Calculate center of mass
+			for(int s1=0;s1<leng1/2;s1++)
+			for(int s2=0;s2<leng2/2;s2++)
+			for(int s3=0;s3<leng3/2;s3++){
+				shift[0]=s1 + 0.5;
+				shift[1]=s2 + 0.5;
+				shift[2]=s3 + 0.5;
 
-					radiussquare=0;
-
-					centerofmass[0]=0;
-					centerofmass[1]=0;
-					centerofmass[2]=0;
-					for(unsigned int member=0; member<lclusterdata.clustermembers[c].size();member++){
-						getCoordsShift(lclusterdata.clustermembers[c][member], i1, i2, i3, shift);
-						centerofmass[0] += i1;
-						centerofmass[1] += i2; 
-						centerofmass[2] += i3; 
-					}
-
-					centerofmass[0] = centerofmass[0]/(double)lclusterdata.clustermembers[c].size();
-					centerofmass[1] = centerofmass[1]/(double)lclusterdata.clustermembers[c].size();
-					centerofmass[2] = centerofmass[2]/(double)lclusterdata.clustermembers[c].size();
-
-					for(unsigned int member=0; member<lclusterdata.clustermembers[c].size();member++){
-						getCoordsShift(lclusterdata.clustermembers[c][member], i1, i2, i3, shift);
-						radiussquare += (pow(centerofmass[0] - i1, 2)
-								+ pow(centerofmass[1] - i2, 2)
-								+ pow(centerofmass[2] - i3, 2));
-					}
-					radiussquare = sqrt(radiussquare/(double)lclusterdata.clustermembers[c].size());
-					if(radiussquare<radiussquaremin){
-						radiussquaremin=radiussquare;
-						centerofmassmin[0]=centerofmass[0];
-						centerofmassmin[1]=centerofmass[1];
-						centerofmassmin[2]=centerofmass[2];
-					}
-					// if(lclusterdata.clustermembers[c].size()>1)
-					//	cout << "r = " << radiussquare << endl;
-				}
-			}else{
 				radiussquare=0;
 
 				centerofmass[0]=0;
 				centerofmass[1]=0;
 				centerofmass[2]=0;
 				for(unsigned int member=0; member<lclusterdata.clustermembers[c].size();member++){
-					getCoords(lclusterdata.clustermembers[c][member], i1, i2, i3);
+					getCoordsShift(lclusterdata.clustermembers[c][member], i1, i2, i3, shift);
 					centerofmass[0] += i1;
 					centerofmass[1] += i2; 
 					centerofmass[2] += i3; 
@@ -100,7 +64,7 @@ void obsClusterRadius(Observablestruct &lobs, Clusterstruct &lclusterdata){
 				centerofmass[2] = centerofmass[2]/(double)lclusterdata.clustermembers[c].size();
 
 				for(unsigned int member=0; member<lclusterdata.clustermembers[c].size();member++){
-					getCoords(lclusterdata.clustermembers[c][member], i1, i2, i3);
+					getCoordsShift(lclusterdata.clustermembers[c][member], i1, i2, i3, shift);
 					radiussquare += (pow(centerofmass[0] - i1, 2)
 							+ pow(centerofmass[1] - i2, 2)
 							+ pow(centerofmass[2] - i3, 2));
@@ -123,12 +87,13 @@ void obsClusterRadius(Observablestruct &lobs, Clusterstruct &lclusterdata){
 			lobs.centerofmass[c].push_back(centerofmassmin[2]);
 			
 			lobs.clusterradius.push_back(radiussquaremin);
-			if(radiussquaremin>radiussquaremax)
-				radiussquaremax=radiussquaremin;
-		}
-	}
+//			if(radiussquaremin>radiussquaremax)
+//				radiussquaremax=radiussquaremin;
+		// }
+//	}
 	// lobs.largestclusterradius=lobs.clusterradius[lclusterdata.sortedcluster[0]];
-	lobs.largestclusterradius=radiussquaremax;
+	// lobs.largestclusterradius=radiussquaremax;
+	lobs.largestclusterradius=radiussquaremin;
 }
 
 #endif // FINDCLUSTER_RADIUS_HPP

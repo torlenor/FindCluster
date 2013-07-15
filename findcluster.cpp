@@ -137,11 +137,11 @@ int main(int argc, char *argv[]){
 			writeConfigResultsstdout(obs[n], clusterdata[n]);
 
 			cout << endl << "The following clusters are connected over the PBCs: " << endl;
-			for(unsigned int c=0;c<clusterdata[0].clusterisperiodic.size();c++){
-				if(clusterdata[0].clusterisperiodic[clusterdata[0].sortedcluster[c]][0]==1 
-				|| clusterdata[0].clusterisperiodic[clusterdata[0].sortedcluster[c]][1]==1 
-				|| clusterdata[0].clusterisperiodic[clusterdata[0].sortedcluster[c]][2]==1){
-					cout << "Cluster (size sorted) " << c << ", real id = " << clusterdata[0].sortedcluster[c] << endl;
+			for(unsigned int c=0;c<clusterdata[n].clusterisperiodic.size();c++){
+				if(clusterdata[n].clusterisperiodic[clusterdata[n].sortedcluster[c]][0]==1 
+				|| clusterdata[n].clusterisperiodic[clusterdata[n].sortedcluster[c]][1]==1 
+				|| clusterdata[n].clusterisperiodic[clusterdata[n].sortedcluster[c]][2]==1){
+					cout << "Cluster (size sorted) " << c << ", real id = " << clusterdata[n].sortedcluster[c] << endl;
 				}
 			}
 		}
@@ -576,12 +576,12 @@ void writeConfigResultsstdout(Observablestruct &lobs, Clusterstruct &lclusterdat
 		}
 	}
 
-	cout << endl << "Cluster radius (Fortunato):" << endl;
-	for(unsigned int c=0; c<lclusterdata.sortedcluster.size(); c++){
-		if( lclusterdata.clustersector[lclusterdata.sortedcluster[c]] < 2){
-			cout << "Cluster ( " << lclusterdata.clustermembers[lclusterdata.sortedcluster[c]].size() << " members ) = " << lclusterdata.sortedcluster[c] << " radius = " << setprecision(5) << lobs.clusterradius[lclusterdata.sortedcluster[c]] << setprecision(2) << ", Center of Mass = (" << lobs.centerofmass[lclusterdata.sortedcluster[c]][0] << "," << lobs.centerofmass[lclusterdata.sortedcluster[c]][1] << "," << lobs.centerofmass[lclusterdata.sortedcluster[c]][2] << ")"  << endl;
-		}
-	}
+//	cout << endl << "Cluster radius (Fortunato):" << endl;
+//	for(unsigned int c=0; c<lclusterdata.sortedcluster.size(); c++){
+//		if( lclusterdata.clustersector[lclusterdata.sortedcluster[c]] < 2){
+//			cout << "Cluster ( " << lclusterdata.clustermembers[lclusterdata.sortedcluster[c]].size() << " members ) = " << lclusterdata.sortedcluster[c] << " radius = " << setprecision(5) << lobs.clusterradius[lclusterdata.sortedcluster[c]] << setprecision(2) << ", Center of Mass = (" << lobs.centerofmass[lclusterdata.sortedcluster[c]][0] << "," << lobs.centerofmass[lclusterdata.sortedcluster[c]][1] << "," << lobs.centerofmass[lclusterdata.sortedcluster[c]][2] << ")"  << endl;
+//		}
+//	}
 }
 
 void fillSectorsAlt(Clusterstruct &lclusterdata, double r){
