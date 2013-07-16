@@ -8,9 +8,9 @@ int dim=2;
 
 void buildcluster(vector<vector<int> > &l){
 	// lattice[x][y]=1;
-	                                 l[3][0]=1; l[4][0]=1; 
-	                                 l[3][1]=1; l[4][1]=1; 
-	                      l[2][2]=1; l[3][2]=1; l[4][2]=1; l[5][2]=1; 
+	l[0][0]=0;                       l[3][0]=1; l[4][0]=1;                       l[7][0]=0;
+	l[0][1]=1;                       l[3][1]=1; l[4][1]=1;                       l[7][1]=1;
+	l[0][2]=1;            l[2][2]=1; l[3][2]=1; l[4][2]=1; l[5][2]=1;            l[7][2]=1;
 	l[0][3]=1; l[1][3]=1; l[2][3]=1;                       l[5][3]=1; l[6][3]=1; l[7][3]=1;
 	                      l[2][4]=1;                       l[5][4]=1;
 	l[0][5]=1; l[1][5]=1; l[2][5]=1; l[3][5]=1; l[4][5]=1; l[5][5]=1; l[6][5]=1; l[7][5]=1;
@@ -48,7 +48,7 @@ void printclusterperimeter(vector<vector<int> > &lattice, vector<vector<int> > &
 }
 
 void findperimeter(vector<vector<int > > &isperimeter, vector<vector<int> > &lattice, int startx, int starty){
-	cout << "Finding perimeter... " << endl;
+	cout << "Finding perimeter (going left from (" << startx << "," << starty << ")... " << endl;
 
 	// Biased random walk
 	// d is direction: d=(-x,-y,x.y) and goes from 0 to 3
