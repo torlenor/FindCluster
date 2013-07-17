@@ -486,7 +486,7 @@ void obsRootMeanSquareDistance(Observablestruct &lobs, Clusterstruct &lclusterda
 	}
 
 	for(unsigned int size=0; size<sizedist.size(); size++){
-		meansquaredistanceR += sizedist[size]*sizes[size]*radiusavg.at(size);
+		meansquaredistanceR += sizedist[size]*sizes[size]*pow(radiusavg.at(size),2.0);
 	}
 
 	lobs.rootmeansquaredistanceR = sqrt(meansquaredistanceR);
