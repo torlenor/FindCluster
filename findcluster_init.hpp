@@ -17,6 +17,7 @@ char texthelp[]="Usage: findcluster.x [OPTION] ... [POLLEVCONFIG/POLLEVCONFIGLIS
 		"  -n, --nmeas NMEAS          number of configurations (default = 1)\n"
 		"  -d, --detail               write detailed output for every calculated configuration\n"
 		"  -b, --boxes                performes the box counting calculation (expensive)\n"
+		"  -a, --distance             performes the distance traveled calculation (expensive)\n"
 		"  -r, --rsector RADIUS       use alternative sector classification with r = RADIUS\n"
 		"  --3d                       write 3dcluster data files\n"
 		"  -m, --memory               drop clusterdata vectors after calculating the observables\n"
@@ -38,7 +39,6 @@ int init(int &argc, char *argv[]){
 		<< "Finds cluster and performs calculations with it." << endl
 		<< "Uses Polyakov loop eigenvalues as input." << endl << endl;
 
-
 	cout << "Initializing... " << endl;
 
 	if(argc<2){
@@ -59,6 +59,7 @@ int init(int &argc, char *argv[]){
 			{"nmeas", required_argument, 0, 'n'},
 			{"detail", no_argument, 0, 'd'},
 			{"boxes", no_argument, 0, 'b'},
+			{"distance", no_argument, 0, 'a'},
 			{"rsector", required_argument, 0, 'r'},
 			{"3d", no_argument, 0, 0},
 			{"memory", no_argument, 0, 'm'},
@@ -73,7 +74,7 @@ int init(int &argc, char *argv[]){
 		/* getopt_long stores the option index here. */
 		int option_index = 0;
 
-		c = getopt_long (argc, argv, "s:t:f:n:r:hvdbm",
+		c = getopt_long (argc, argv, "s:t:f:n:r:hvdbma",
 		long_options, &option_index);
 
 		/* Detect the end of the options. */
@@ -115,6 +116,10 @@ int init(int &argc, char *argv[]){
 			
 			case 'b':
 				doboxes = true;
+				break;
+			
+			case 'a':
+				dodistance = true;
 				break;
 			
 			case 'r':

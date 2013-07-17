@@ -454,8 +454,9 @@ void obsRootMeanSquareDistance(Observablestruct &lobs, Clusterstruct &lclusterda
 	double meansquaredistanceR=0;
 	int curcsize;
 	int knownsize=0;
+
 	for(unsigned int c=0; c<lclusterdata.clustermembers.size(); c++){
-		if(lclusterdata.clustersector[c] < 2){
+		if(lclusterdata.clustersector[c] < 2 && lclusterdata.clustermembers[c].size() > 1){
 			curcsize = lclusterdata.clustermembers[c].size();
 			knownsize=0;
 			for(unsigned int s=0; s<sizes.size(); s++){
@@ -467,13 +468,13 @@ void obsRootMeanSquareDistance(Observablestruct &lobs, Clusterstruct &lclusterda
 			if(knownsize>0){
 				sizedist[knownsize] += 1.0/(double)Nspace;
 
-				radiusavg[knownsize] += lobs.clusterradius[c];
+				radiusavg[knownsize] += lobs.clusterradius.at(c);
 				radiuscnt[knownsize]++;
 			}else{
 				sizes.push_back(curcsize);
 				sizedist.push_back(1.0/(double)Nspace);
 				
-				radiusavg.push_back(lobs.clusterradius[c]);
+				radiusavg.push_back(lobs.clusterradius.at(c));
 				radiuscnt.push_back(1);
 			}
 		}
@@ -485,7 +486,7 @@ void obsRootMeanSquareDistance(Observablestruct &lobs, Clusterstruct &lclusterda
 	}
 
 	for(unsigned int size=0; size<sizedist.size(); size++){
-		meansquaredistanceR += sizedist[size]*sizes[size]*radiusavg[size];
+		meansquaredistanceR += sizedist[size]*sizes[size]*radiusavg.at(size);
 	}
 
 	lobs.rootmeansquaredistanceR = sqrt(meansquaredistanceR);
@@ -516,6 +517,7 @@ void calcObservables(Observablestruct &lobs, Clusterstruct &lclusterdata){
 	obsAreaLargestNonPercCluster(lobs, lclusterdata);
 	// lobs.poll
 	obsPollAfterCut(lobs, lclusterdata);
+
 	
 	// lobs.numberofboxes
 	// if(doboxes)
@@ -524,9 +526,19 @@ void calcObservables(Observablestruct &lobs, Clusterstruct &lclusterdata){
 	if(doboxes)
 		obsBoxesOnlyLargest(lobs, lclusterdata);
 	
-	if(doradius)		
-		obsClusterRadius(lobs, lclusterdata);
+	if(doradius){
+		if(dodistance){
+			obsClusterRadius(lobs, lclusterdata);
+		}else{
+			obsClusterRadiusOnlyLargest(lobs, lclusterdata);
+		}
+	}
 	
+	// lobs.rootmeansquaredistanceR
+	if(dodistance){
+		obsRootMeanSquareDistance(lobs, lclusterdata);
+	}
+
 	#ifdef DEBUG
 	cout << "done!" << endl;
 	#endif

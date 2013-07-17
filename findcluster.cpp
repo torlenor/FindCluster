@@ -35,6 +35,7 @@ bool do3d=false;
 
 bool detail=false; // Controlls if we want detailed information for every configuration
 bool doboxes=false; // Controlls if we want box counting calculations
+bool dodistance=false; // Controlls if we want box counting calculations
 bool doradius=true; // Controlls if we want radius calculation
 
 bool memorysaver=false; // Controlls if we drop the clusterdata arrays after observable calculations
@@ -356,16 +357,18 @@ void calcExp(){
 	}
 	Jackknife(ddata, avgclustersizenopercc, avgclustersizenoperccerr, nmeas);
 	
-	// Average root mean square distance traveled R
-	for(int n=0;n<nmeas;n++){
-		ddata[n]=0;
-		for(int j=0;j<nmeas;j++){
-			if(n!=j)
-				ddata[n] += (&obs[j])->rootmeansquaredistanceR;
+	if(dodistance){
+		// Average root mean square distance traveled R
+		for(int n=0;n<nmeas;n++){
+			ddata[n]=0;
+			for(int j=0;j<nmeas;j++){
+				if(n!=j)
+					ddata[n] += (&obs[j])->rootmeansquaredistanceR;
+			}
+			ddata[n] = ddata[n]/(double)(nmeas-1);
 		}
-		ddata[n] = ddata[n]/(double)(nmeas-1);
+		Jackknife(ddata, avgrootmeansquaredistanceR, avgrootmeansquaredistanceRerr, nmeas);
 	}
-	Jackknife(ddata, avgrootmeansquaredistanceR, avgrootmeansquaredistanceRerr, nmeas);
 	
 	// Cut expectation value
 	for(int n=0;n<nmeas;n++){
@@ -430,7 +433,9 @@ void calcExp(){
 	cout << "Average cluster err  = " << avgclustersizeerr << ", Maximum cluster / V err  = " << maxclustersizeerr << endl;
 	cout << "Average cluster size Fortunato (1.7) = " << avgclustersizeF << ", Error  = " << avgclustersizeFerr << endl;
 	cout << "Radius of largest cluster = " << mlargestclusterradius << ", Error = " << mlargestclusterradiuserr << endl;
-	cout << "Root mean distance traveled R = " << avgrootmeansquaredistanceR << ", Error = " << avgrootmeansquaredistanceRerr << endl;
+	if(dodistance){
+		cout << "Root mean distance traveled R = " << avgrootmeansquaredistanceR << ", Error = " << avgrootmeansquaredistanceRerr << endl;
+	}
 	cout << "Cut = " << cut << " Cut err = " << cuterr << endl;
 	cout << "Laserdim = " << mlaserdim << " Laserdim err = " << mlaserdimerr << endl;
 	cout << "Polyakov loop = " << mpoll << " Polyakov loop err = " << mpollerr << endl;
