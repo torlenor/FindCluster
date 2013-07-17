@@ -25,6 +25,7 @@ void obsClusterRadius(Observablestruct &lobs, Clusterstruct &lclusterdata){
 	int shift[3];
 
 	lobs.centerofmass.resize(lclusterdata.clustermembers.size());
+	lobs.clusterradius.resize(lclusterdata.clustermembers.size());
 
 	int c = lobs.maxclusterid;
 
@@ -34,8 +35,6 @@ void obsClusterRadius(Observablestruct &lobs, Clusterstruct &lclusterdata){
 //		if(lclusterdata.clustermembers[c].size()>1 && lclusterdata.clustersector[c] < 2){
 			// Do it only for clusters with size > 1 in sectors < 2
 
-			//if(lclusterdata.clustermembers[c].size()>1)
-			//	cout << endl << "Cluster " << c << " with " << lclusterdata.clustermembers[c].size() << " members:" << endl;
 			radiussquare=0;
 			radiussquaremin=1E30;
 
@@ -76,17 +75,13 @@ void obsClusterRadius(Observablestruct &lobs, Clusterstruct &lclusterdata){
 					centerofmassmin[1]=centerofmass[1];
 					centerofmassmin[2]=centerofmass[2];
 				}
-				// if(lclusterdata.clustermembers[c].size()>1)
-				//	cout << "r = " << radiussquare << endl;
 			}
-			// if(lclusterdata.clustermembers[c].size()>1)
-			//	cout << "r_min = " << radiussquaremin << endl;
 
 			lobs.centerofmass[c].push_back(centerofmassmin[0]);
 			lobs.centerofmass[c].push_back(centerofmassmin[1]);
 			lobs.centerofmass[c].push_back(centerofmassmin[2]);
 			
-			lobs.clusterradius.push_back(radiussquaremin);
+			lobs.clusterradius[c]=radiussquaremin;
 //			if(radiussquaremin>radiussquaremax)
 //				radiussquaremax=radiussquaremin;
 		// }

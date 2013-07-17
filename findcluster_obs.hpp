@@ -442,6 +442,55 @@ void obsBoxes(Observablestruct &lobs, Clusterstruct &lclusterdata){
 	} // Cluster
 }
 
+void obsRootMeanSquareDistance(Observablestruct &lobs, Clusterstruct &lclusterdata){
+	// THIS NEEDS THE CLUSTER RADIUS OF ALL CLUSTERS!!!
+	// Calculate root mean square distance traveled R
+	// Stauffer pp.117 eq. 105
+	
+	// First calculate the number of clusters of size s per lattice site
+	vector<int> sizes;
+	vector<double> sizedist;
+	vector<double> radiusavg, radiuscnt;
+	double meansquaredistanceR=0;
+	int curcsize;
+	int knownsize=0;
+	for(unsigned int c=0; c<lclusterdata.clustermembers.size(); c++){
+		if(lclusterdata.clustersector[c] < 2){
+			curcsize = lclusterdata.clustermembers[c].size();
+			knownsize=0;
+			for(unsigned int s=0; s<sizes.size(); s++){
+				if(sizes[s] == curcsize){
+					knownsize = s;
+					break;
+				}
+			}
+			if(knownsize>0){
+				sizedist[knownsize] += 1.0/(double)Nspace;
+
+				radiusavg[knownsize] += lobs.clusterradius[c];
+				radiuscnt[knownsize]++;
+			}else{
+				sizes.push_back(curcsize);
+				sizedist.push_back(1.0/(double)Nspace);
+				
+				radiusavg.push_back(lobs.clusterradius[c]);
+				radiuscnt.push_back(1);
+			}
+		}
+	}
+
+	// Norm of raidusavg
+	for(unsigned int size=0; size<sizedist.size(); size++){
+		radiusavg[size]=radiusavg[size]/(double)radiuscnt[size];
+	}
+
+	for(unsigned int size=0; size<sizedist.size(); size++){
+		meansquaredistanceR += sizedist[size]*sizes[size]*radiusavg[size];
+	}
+
+	lobs.rootmeansquaredistanceR = sqrt(meansquaredistanceR);
+}
+
 void calcObservables(Observablestruct &lobs, Clusterstruct &lclusterdata){
 	#ifdef DEBUG	
 	cout << "Calculating observables... " << flush;
