@@ -529,7 +529,6 @@ void obsPollDomainWalls(Observablestruct &lobs, Clusterstruct &lclusterdata){
 	for(unsigned int c=0; c<lclusterdata.clustermembers.size();c++){
 		if(lclusterdata.isinsector[lclusterdata.clustermembers[c][0]] < 2 && lobs.domainwallpoll[c] == lobs.domainwallpoll[c]){
 			lobs.Adomainwallpoll = lobs.Adomainwallpoll + lobs.domainwallpoll[c];
-			cout << lobs.domainwallpoll[c] << endl;
 			cnt++;
 		}
 	} 
