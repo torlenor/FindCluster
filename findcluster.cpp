@@ -572,10 +572,10 @@ void calcExp(){
 	fpollname << "poll_" << Ns << "x" << Nt << "_f" << fraction << ".res";
 	ofstream fpoll;
 	fpoll.open(fpollname.str().c_str());
-	fpoll << "# Nt poll pollerr" << endl;
+	fpoll << "# Nt poll pollerr domainwallpoll(largest cluster) domainwallpollerr(largest cluster)" << endl;
 	fpoll.flags (std::ios::scientific);
 	fpoll.precision(numeric_limits<double>::digits10 + 1);
-	fpoll << Nt << " " << mpoll << " " << mpollerr << endl;
+	fpoll << Nt << " " << mpoll << " " << mpollerr << " " << mLdomainwallpoll << " " << mLdomainwallpollerr << endl;
 	fpoll.close();
 }
 
