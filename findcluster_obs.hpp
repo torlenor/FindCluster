@@ -497,6 +497,7 @@ void obsPollDomainWalls(Observablestruct &lobs, Clusterstruct &lclusterdata){
 	 + build the wall around a given cluster c */
 	
 	lobs.domainwallpoll.resize(lclusterdata.clustermembers.size());
+	lobs.undefdomainwall.resize(lclusterdata.clustermembers.size());
 	complex<double> pollsum=0;
 	int pollcnt=0;
 
@@ -505,6 +506,7 @@ void obsPollDomainWalls(Observablestruct &lobs, Clusterstruct &lclusterdata){
 	for(unsigned int c=0; c<lclusterdata.clustermembers.size();c++){
 		pollsum=0;
 		pollcnt=0;
+		lobs.undefdomainwall[c]=0;
 		for(int is=0;is<Nspace;is++){
 			for(int mu=0;mu<6;mu++){
 				isneib=neib[is][mu];
@@ -512,12 +514,26 @@ void obsPollDomainWalls(Observablestruct &lobs, Clusterstruct &lclusterdata){
 					// cout << (unsigned)lclusterdata.isincluster[isneib] << " " << c << endl;
 					pollsum += lclusterdata.poll.at(isneib);
 					pollcnt++;
+					if(lclusterdata.isinsector[isneib] > 1)
+						lobs.undefdomainwall[c] = lobs.undefdomainwall[c] + 1.0;
 				}
 			}
 		}
 		lobs.domainwallpoll.at(c) = abs(pollsum)/(double)pollcnt;
+		lobs.undefdomainwall[c] = lobs.undefdomainwall[c]/(double)pollcnt;
 	}
 	lobs.Ldomainwallpoll = lobs.domainwallpoll[lobs.maxclusterid];
+
+	/* double undefdomainwallall=0;
+	int cnt=0;
+	for(unsigned int c=0; c<lclusterdata.clustermembers.size();c++){
+		if(lclusterdata.clustersector[c] < 2){
+			undefdomainwallall = undefdomainwallall + lobs.undefdomainwall[c];
+			cnt++;
+		}
+	}
+	undefdomainwallall=undefdomainwallall/(double)cnt;
+	cout << undefdomainwallall << endl; */
 }
 
 void calcObservables(Observablestruct &lobs, Clusterstruct &lclusterdata){
