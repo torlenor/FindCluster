@@ -428,7 +428,7 @@ void calcExp(){
 	}
 	Jackknife(ddata, mpoll, mpollerr, nmeas);
 	
-	// Polyakov loop expectation value for domain walls
+	// Polyakov loop expectation value for domain walls largest cluster
 	double mLdomainwallpoll=0, mLdomainwallpollerr=0;
 	for(int n=0;n<nmeas;n++){
 		ddata[n]=0;
@@ -439,6 +439,18 @@ void calcExp(){
 		ddata[n] = ddata[n]/(double)(nmeas-1);
 	}
 	Jackknife(ddata, mLdomainwallpoll, mLdomainwallpollerr, nmeas);
+	
+	// Polyakov loop expectation value for domain wall average
+	double mAdomainwallpoll=0, mAdomainwallpollerr=0;
+	for(int n=0;n<nmeas;n++){
+		ddata[n]=0;
+		for(int j=0;j<nmeas;j++){
+			if(n!=j)
+				ddata[n] += (&obs[j])->Adomainwallpoll;
+		}
+		ddata[n] = ddata[n]/(double)(nmeas-1);
+	}
+	Jackknife(ddata, mAdomainwallpoll, mAdomainwallpollerr, nmeas);
 
 	cout << "Expectation values (single eliminitation jackknife): " << endl;
 	cout << "Average cluster size = " << setprecision(14) << avgclustersize << ", Maximum cluster size / V = " << maxclustersize << endl;
@@ -452,6 +464,7 @@ void calcExp(){
 	cout << "Laserdim = " << mlaserdim << " Laserdim err = " << mlaserdimerr << endl;
 	cout << "Polyakov loop = " << mpoll << " Polyakov loop err = " << mpollerr << endl;
 	cout << "Polyakov loop (Domain Wall largest cluster) = " << mLdomainwallpoll << ", Error = " << mLdomainwallpollerr << endl;
+	cout << "Polyakov loop (Domain Wall average) = " << mAdomainwallpoll << ", Error = " << mAdomainwallpollerr << endl;
 
 	cout << endl;
 
@@ -572,10 +585,10 @@ void calcExp(){
 	fpollname << "poll_" << Ns << "x" << Nt << "_f" << fraction << ".res";
 	ofstream fpoll;
 	fpoll.open(fpollname.str().c_str());
-	fpoll << "# Nt poll pollerr domainwallpoll(largest cluster) domainwallpollerr(largest cluster)" << endl;
+	fpoll << "# Nt poll pollerr domainwallpoll(largest cluster) domainwallpollerr(largest cluster) avgdomainwallpoll avgdomainwallpollerr" << endl;
 	fpoll.flags (std::ios::scientific);
 	fpoll.precision(numeric_limits<double>::digits10 + 1);
-	fpoll << Nt << " " << mpoll << " " << mpollerr << " " << mLdomainwallpoll << " " << mLdomainwallpollerr << endl;
+	fpoll << Nt << " " << mpoll << " " << mpollerr << " " << mLdomainwallpoll << " " << mLdomainwallpollerr << " " << mAdomainwallpoll << " " << mAdomainwallpollerr << endl;
 	fpoll.close();
 }
 

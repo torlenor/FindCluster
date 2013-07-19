@@ -57,6 +57,7 @@ struct Observablestruct{
 	double poll;
 	vector<double> domainwallpoll;
 	double Ldomainwallpoll;
+	double Adomainwallpoll;
 	vector<double> undefdomainwall;
 };
 

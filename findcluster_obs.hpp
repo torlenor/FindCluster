@@ -524,6 +524,17 @@ void obsPollDomainWalls(Observablestruct &lobs, Clusterstruct &lclusterdata){
 	}
 	lobs.Ldomainwallpoll = lobs.domainwallpoll[lobs.maxclusterid];
 
+	int cnt=0;
+	lobs.Adomainwallpoll=0;
+	for(unsigned int c=0; c<lclusterdata.clustermembers.size();c++){
+		if(lclusterdata.isinsector[lclusterdata.clustermembers[c][0]] < 2 && lobs.domainwallpoll[c] == lobs.domainwallpoll[c]){
+			lobs.Adomainwallpoll = lobs.Adomainwallpoll + lobs.domainwallpoll[c];
+			cout << lobs.domainwallpoll[c] << endl;
+			cnt++;
+		}
+	} 
+	lobs.Adomainwallpoll = lobs.Adomainwallpoll/(double)cnt;
+
 	/* double undefdomainwallall=0;
 	int cnt=0;
 	for(unsigned int c=0; c<lclusterdata.clustermembers.size();c++){
