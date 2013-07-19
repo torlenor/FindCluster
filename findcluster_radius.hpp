@@ -86,7 +86,7 @@ void obsClusterRadius(Observablestruct &lobs, Clusterstruct &lclusterdata){
 //				radiussquaremax=radiussquaremin;
 		}
 	}
-	lobs.largestclusterradius=lobs.clusterradius[lclusterdata.sortedcluster[0]];
+	lobs.largestclusterradius=lobs.clusterradius[lobs.maxclusterid];
 	// lobs.largestclusterradius=radiussquaremax;
 	// lobs.largestclusterradius=radiussquaremin;
 }

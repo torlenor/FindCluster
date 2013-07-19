@@ -55,6 +55,8 @@ struct Observablestruct{
 	double arealargestnonperccluster;
 
 	double poll;
+	vector<double> domainwallpoll;
+	double Ldomainwallpoll;
 };
 
 // Stuff to find and categorize sectors/clusters for one configuration

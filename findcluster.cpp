@@ -427,6 +427,18 @@ void calcExp(){
 		ddata[n] = ddata[n]/(double)(nmeas-1);
 	}
 	Jackknife(ddata, mpoll, mpollerr, nmeas);
+	
+	// Polyakov loop expectation value for domain walls
+	double mLdomainwallpoll=0, mLdomainwallpollerr=0;
+	for(int n=0;n<nmeas;n++){
+		ddata[n]=0;
+		for(int j=0;j<nmeas;j++){
+			if(n!=j)
+				ddata[n] += (&obs[j])->Ldomainwallpoll;
+		}
+		ddata[n] = ddata[n]/(double)(nmeas-1);
+	}
+	Jackknife(ddata, mLdomainwallpoll, mLdomainwallpollerr, nmeas);
 
 	cout << "Expectation values (single eliminitation jackknife): " << endl;
 	cout << "Average cluster size = " << setprecision(14) << avgclustersize << ", Maximum cluster size / V = " << maxclustersize << endl;
@@ -439,6 +451,7 @@ void calcExp(){
 	cout << "Cut = " << cut << " Cut err = " << cuterr << endl;
 	cout << "Laserdim = " << mlaserdim << " Laserdim err = " << mlaserdimerr << endl;
 	cout << "Polyakov loop = " << mpoll << " Polyakov loop err = " << mpollerr << endl;
+	cout << "Polyakov loop (Domain Wall largest cluster) = " << mLdomainwallpoll << ", Error = " << mLdomainwallpollerr << endl;
 
 	cout << endl;
 

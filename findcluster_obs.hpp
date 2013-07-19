@@ -492,6 +492,34 @@ void obsRootMeanSquareDistance(Observablestruct &lobs, Clusterstruct &lclusterda
 	lobs.rootmeansquaredistanceR = sqrt(meansquaredistanceR);
 }
 
+void obsPollDomainWalls(Observablestruct &lobs, Clusterstruct &lclusterdata){
+	/* Calculation of Polyakov loop expectation value for points which 
+	 + build the wall around a given cluster c */
+	
+	lobs.domainwallpoll.resize(lclusterdata.clustermembers.size());
+	complex<double> pollsum=0;
+	int pollcnt=0;
+
+	int isneib=0;
+
+	for(unsigned int c=0; c<lclusterdata.clustermembers.size();c++){
+		pollsum=0;
+		pollcnt=0;
+		for(int is=0;is<Nspace;is++){
+			for(int mu=0;mu<6;mu++){
+				isneib=neib[is][mu];
+				if((unsigned)lclusterdata.isincluster[isneib] != c ){
+					// cout << (unsigned)lclusterdata.isincluster[isneib] << " " << c << endl;
+					pollsum += lclusterdata.poll.at(isneib);
+					pollcnt++;
+				}
+			}
+		}
+		lobs.domainwallpoll.at(c) = abs(pollsum)/(double)pollcnt;
+	}
+	lobs.Ldomainwallpoll = lobs.domainwallpoll[lobs.maxclusterid];
+}
+
 void calcObservables(Observablestruct &lobs, Clusterstruct &lclusterdata){
 	#ifdef DEBUG	
 	cout << "Calculating observables... " << flush;
@@ -517,6 +545,8 @@ void calcObservables(Observablestruct &lobs, Clusterstruct &lclusterdata){
 	obsAreaLargestNonPercCluster(lobs, lclusterdata);
 	// lobs.poll
 	obsPollAfterCut(lobs, lclusterdata);
+	// lobs.domainwallpoll
+	obsPollDomainWalls(lobs, lclusterdata);
 
 	
 	// lobs.numberofboxes
