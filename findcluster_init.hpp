@@ -35,7 +35,7 @@ char texthelp[]="Usage: findcluster.x [OPTION] ... [POLLEVCONFIG/POLLEVCONFIGLIS
 int init(int &argc, char *argv[]){
 
 	cout << endl;
-	cout << "findcluster.x " << MAJOR_VERSION << "." << MINOR_VERSION << "." << REVISION_VERSION << endl
+	cout << "findcluster.x " << MAJOR_VERSION << "." << MINOR_VERSION << "." << REVISION_VERSION << " ~ " << __DATE__ << " " << __TIME__ << endl << endl
 		<< "Finds cluster and performs calculations with it." << endl
 		<< "Uses Polyakov loop eigenvalues as input." << endl << endl;
 

@@ -61,6 +61,25 @@ struct Observablestruct{
 	vector<double> undefdomainwall;
 };
 
+struct Resultstruct{
+	double maxclustersize, maxclustersizeerr;
+	double maxnonpercclustersize, maxnonpercclustersizeerr;
+	double avgclustersize, avgclustersizeerr;
+	double avgclusersizeFortunato, avgclusersizeFortunatoerr;
+	double avgnonpercclustersize, avgnonpercclustersizeerr;
+	double avgrootmeansquaredistance, avgrootmeansquaredistanceerr;
+	double cut, cuterr;
+	double totalperimeter, totalperimetererr;
+	double largestnonpercperimeter, largestnonpercperimetererr;
+	double largestclusterradius, largestclusterradiuserr;
+	double polyakovloopaftercut, polyakovloopaftercuterr;
+	double largestclusterdomainwallpoll, largestclusterdomainwallpollerr;
+	double avgdomainwallpoll, avgdomainwallpollerr;
+	double avgperccluster, avgpercclustererr;
+	vector<double> largestclusterboxcount, largestclusterboxcounterr;
+	vector<double> largestnonpercboxcount, largestnonpercboxcounterr;
+};
+
 // Stuff to find and categorize sectors/clusters for one configuration
 void fillSectors(Clusterstruct &lclusterdata, double delta);
 void fillSectorsAlt(Clusterstruct &lclusterdata, double r);

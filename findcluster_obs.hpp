@@ -600,4 +600,259 @@ void calcObservables(Observablestruct &lobs, Clusterstruct &lclusterdata){
 	#endif
 }
 
+void calcExp(){
+	double maxclustersize=0, maxclustersizeerr=0;
+
+	double mlargestnpclustersize=0, mlargestnpclustersizeerr=0;
+
+	double avgclustersize=0, avgclustersizeerr=0;
+	double avgclustersizeF=0, avgclustersizeFerr=0;
+	double avgclustersizenopercc=0, avgclustersizenoperccerr=0;
+	double avgrootmeansquaredistanceR=0, avgrootmeansquaredistanceRerr=0;
+
+	double avgpercc=0, avgperccerr=0;
+
+	double cut=0, cuterr=0;
+
+	double mlaserdim=0, mlaserdimerr=0;
+	
+	double ddata[nmeas];
+
+	// Start of Jackknife
+	// Maximal cluster size per volume expectation value
+	for(int n=0;n<nmeas;n++){
+		ddata[n]=0;
+		for(int j=0;j<nmeas;j++){
+			if(n!=j)
+				ddata[n] += (&obs[j])->maxclustersize/(double)Nspace;
+		}
+		ddata[n] = ddata[n]/(double)(nmeas-1);
+	}
+	Jackknife(ddata, maxclustersize, maxclustersizeerr, nmeas);
+	results.maxclustersize=maxclustersize;
+	results.maxclustersizeerr=maxclustersizeerr;
+	
+	// Maximal non percolating cluster size per volume expectation value
+	for(int n=0;n<nmeas;n++){
+		ddata[n]=0;
+		for(int j=0;j<nmeas;j++){
+			if(n!=j)
+				ddata[n] += (&obs[j])->largestnonpercclustersize/(double)Nspace;
+		}
+		ddata[n] = ddata[n]/(double)(nmeas-1);
+	}
+	Jackknife(ddata, mlargestnpclustersize, mlargestnpclustersizeerr, nmeas);
+	results.maxnonpercclustersize=mlargestnpclustersize;
+	results.maxnonpercclustersizeerr=mlargestnpclustersizeerr;
+	
+	// Average cluster size expectation value
+	for(int n=0;n<nmeas;n++){
+		ddata[n]=0;
+		for(int j=0;j<nmeas;j++){
+			if(n!=j)
+				ddata[n] += (&obs[j])->avgclustersize;
+		}
+		ddata[n] = ddata[n]/(double)(nmeas-1);
+	}
+	Jackknife(ddata, avgclustersize, avgclustersizeerr, nmeas);
+	results.avgclustersize=avgclustersize;
+	results.avgclustersizeerr=avgclustersizeerr;
+	
+	// Average cluster size expectation value (Fortunato (1.7))
+	for(int n=0;n<nmeas;n++){
+		ddata[n]=0;
+		for(int j=0;j<nmeas;j++){
+			if(n!=j)
+				ddata[n] += (&obs[j])->avgclustersizeF;
+		}
+		ddata[n] = ddata[n]/(double)(nmeas-1);
+	}
+	Jackknife(ddata, avgclustersizeF, avgclustersizeFerr, nmeas);
+	results.avgclusersizeFortunato=avgclustersizeF;
+	results.avgclusersizeFortunatoerr=avgclustersizeFerr;
+	
+	// Average cluster size expectation value without percolating clusters
+	for(int n=0;n<nmeas;n++){
+		ddata[n]=0;
+		for(int j=0;j<nmeas;j++){
+			if(n!=j)
+				ddata[n] += (&obs[j])->avgclustersizenopercc;
+		}
+		ddata[n] = ddata[n]/(double)(nmeas-1);
+	}
+	Jackknife(ddata, avgclustersizenopercc, avgclustersizenoperccerr, nmeas);
+	results.avgnonpercclustersize=avgclustersizenopercc;
+	results.avgnonpercclustersizeerr=avgclustersizenoperccerr;
+	
+	if(dodistance){
+		// Average root mean square distance traveled R
+		for(int n=0;n<nmeas;n++){
+			ddata[n]=0;
+			for(int j=0;j<nmeas;j++){
+				if(n!=j)
+					ddata[n] += (&obs[j])->rootmeansquaredistanceR;
+			}
+			ddata[n] = ddata[n]/(double)(nmeas-1);
+		}
+		Jackknife(ddata, avgrootmeansquaredistanceR, avgrootmeansquaredistanceRerr, nmeas);
+		results.avgrootmeansquaredistance=avgrootmeansquaredistanceR;
+		results.avgrootmeansquaredistanceerr=avgrootmeansquaredistanceRerr;
+	}
+	
+	// Cut expectation value
+	for(int n=0;n<nmeas;n++){
+		ddata[n]=0;
+		for(int j=0;j<nmeas;j++){
+			if(n!=j)
+				ddata[n] += (&obs[j])->cut;
+		}
+		ddata[n] = ddata[n]/(double)(nmeas-1);
+	}
+	Jackknife(ddata, cut, cuterr, nmeas);
+	results.cut=cut;
+	results.cuterr=cuterr;
+	
+	// Perimeter expectation value
+	for(int n=0;n<nmeas;n++){
+		ddata[n]=0;
+		for(int j=0;j<nmeas;j++){
+			if(n!=j)
+				ddata[n] += (&obs[j])->area;
+		}
+		ddata[n] = ddata[n]/(double)(nmeas-1);
+	}
+	Jackknife(ddata, mlaserdim, mlaserdimerr, nmeas);
+	results.totalperimeter=mlaserdim;
+	results.totalperimetererr=mlaserdimerr;
+	
+	// Perimeter largest non percolating cluster expectation value
+	double marealargestnonpercc=0, marealargestnonperccerr=0;
+	for(int n=0;n<nmeas;n++){
+		ddata[n]=0;
+		for(int j=0;j<nmeas;j++){
+			if(n!=j)
+				ddata[n] += (&obs[j])->arealargestnonperccluster;
+		}
+		ddata[n] = ddata[n]/(double)(nmeas-1);
+	}
+	Jackknife(ddata, marealargestnonpercc, marealargestnonperccerr, nmeas);
+	results.largestnonpercperimeter=marealargestnonpercc;
+	results.largestnonpercperimetererr=marealargestnonperccerr;
+	
+	// Radius of largest cluster expectation value
+	double mlargestclusterradius=0, mlargestclusterradiuserr=0;
+	for(int n=0;n<nmeas;n++){
+		ddata[n]=0;
+		for(int j=0;j<nmeas;j++){
+			if(n!=j)
+				ddata[n] += (&obs[j])->largestclusterradius;
+		}
+		ddata[n] = ddata[n]/(double)(nmeas-1);
+	}
+	Jackknife(ddata, mlargestclusterradius, mlargestclusterradiuserr, nmeas);
+	results.largestclusterradius=mlargestclusterradius;
+	results.largestclusterradiuserr=mlargestclusterradiuserr;
+
+	// Polyakov loop expectation value only for points with sector < 2
+	double mpoll=0, mpollerr=0;
+	for(int n=0;n<nmeas;n++){
+		ddata[n]=0;
+		for(int j=0;j<nmeas;j++){
+			if(n!=j)
+				ddata[n] += (&obs[j])->poll;
+		}
+		ddata[n] = ddata[n]/(double)(nmeas-1);
+	}
+	Jackknife(ddata, mpoll, mpollerr, nmeas);
+	results.polyakovloopaftercut=mpoll;
+	results.polyakovloopaftercuterr=mpollerr;
+	
+	// Polyakov loop expectation value for domain walls largest cluster
+	double mLdomainwallpoll=0, mLdomainwallpollerr=0;
+	for(int n=0;n<nmeas;n++){
+		ddata[n]=0;
+		for(int j=0;j<nmeas;j++){
+			if(n!=j)
+				ddata[n] += (&obs[j])->Ldomainwallpoll;
+		}
+		ddata[n] = ddata[n]/(double)(nmeas-1);
+	}
+	Jackknife(ddata, mLdomainwallpoll, mLdomainwallpollerr, nmeas);
+	results.largestclusterdomainwallpoll=mLdomainwallpoll;
+	results.largestclusterdomainwallpollerr=mLdomainwallpollerr;
+	
+	// Polyakov loop expectation value for domain wall average
+	double mAdomainwallpoll=0, mAdomainwallpollerr=0;
+	for(int n=0;n<nmeas;n++){
+		ddata[n]=0;
+		for(int j=0;j<nmeas;j++){
+			if(n!=j)
+				ddata[n] += (&obs[j])->Adomainwallpoll;
+		}
+		ddata[n] = ddata[n]/(double)(nmeas-1);
+	}
+	Jackknife(ddata, mAdomainwallpoll, mAdomainwallpollerr, nmeas);
+	results.avgdomainwallpoll=mAdomainwallpoll;
+	results.avgdomainwallpollerr=mAdomainwallpollerr;
+	
+	// Number of percolating clusters expectation value
+	for(int n=0;n<nmeas;n++){
+		ddata[n]=0;
+		for(int j=0;j<nmeas;j++){
+			if(n!=j)
+				ddata[n] += (&obs[j])->percc;
+		}
+		ddata[n] = ddata[n]/(double)(nmeas-1);
+	}
+	Jackknife(ddata, avgpercc, avgperccerr, nmeas);
+	results.avgperccluster=avgpercc;
+	results.avgpercclustererr=avgperccerr;
+
+	if(doboxes){
+		// Box counts for largest cluster which is not in sector 2
+		vector<double> avgboxcnt, avgboxcnterr;
+		avgboxcnt.resize(boxsize.size());
+		avgboxcnterr.resize(boxsize.size());
+		
+		results.largestclusterboxcount.resize(boxsize.size());
+		results.largestclusterboxcounterr.resize(boxsize.size());
+		
+		results.largestnonpercboxcount.resize(boxsize.size());
+		results.largestnonpercboxcounterr.resize(boxsize.size());
+		
+		for(unsigned int size=0; size<boxsize.size(); size++){
+			for(int n=0;n<nmeas;n++){
+				ddata[n]=0;
+
+				for(int j=0;j<nmeas;j++){
+					if(n!=j)
+					ddata[n] += (&obs[j])->numberofboxes[(&obs[j])->largestclusterid][size];
+				}
+				ddata[n] = ddata[n]/(double)(nmeas-1);
+			}
+			Jackknife(ddata, avgboxcnt[size], avgboxcnterr[size], nmeas);
+			results.largestclusterboxcount[size]=avgboxcnt[size];
+			results.largestclusterboxcounterr[size]=avgboxcnterr[size];
+		}
+		
+		// Box counts for largest cluster which is not percolating
+		for(unsigned int size=0; size<boxsize.size(); size++){
+			avgboxcnt[size]=0;
+			avgboxcnterr[size]=0;
+			for(int n=0;n<nmeas;n++){
+				ddata[n]=0;
+
+				for(int j=0;j<nmeas;j++){
+					if(n!=j)
+					ddata[n] += (&obs[j])->numberofboxes[(&obs[j])->largestnonpercclusterid][size];
+				}
+				ddata[n] = ddata[n]/(double)(nmeas-1);
+			}
+			Jackknife(ddata, avgboxcnt[size], avgboxcnterr[size], nmeas);
+			results.largestnonpercboxcount[size]=avgboxcnt[size];
+			results.largestnonpercboxcounterr[size]=avgboxcnterr[size];
+		}
+	}
+}
+
 #endif // FINDCLUSTER_OBS_HPP
