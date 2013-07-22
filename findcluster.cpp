@@ -150,7 +150,7 @@ int main(int argc, char *argv[]){
 	cout << endl;
 	cout << "------------------------------------------------------------------------------" << endl;
 
-	
+	// Calculate the expectation values and write the results to file and stdout
 	calcExp();
 	writeresultsstdout();
 	writeresults();
