@@ -53,6 +53,18 @@ void printclusterperimeter(vector<vector<int> > &lattice, vector<vector<int> > &
 	cout << endl;
 }
 
+void findperimeterbruteforce(vector<vector<int > > &isperimeter, vector<vector<int> > &lattice){
+	for(int i=0;i<Ns;i++){
+		for(int j=0;j<Ns;j++){
+			isperimeter[j][i]=0;
+			if(lattice[j][i]==1){
+				if(lattice[j+1][i]==0 || lattice[j-1][i]==0 || lattice[j][i+1]==0 || lattice[j][i-1]==0)
+					isperimeter[j][i]=1;
+			}
+		}
+	}
+}
+
 void findperimeter(vector<vector<int > > &isperimeter, vector<vector<int> > &lattice, int startx, int starty){
 	/* --------------------------------- LEFT ----------------------------------------- */
 	cout << "Finding perimeter (going left from (" << startx << "," << starty << ")... " << endl;
@@ -187,6 +199,12 @@ int main(){
 		}
 	}
 	findperimeter(isperimeter, lattice, startx, starty);
+
+	printclusterperimeter(lattice, isperimeter);
+	
+	cout << endl << "---------------------------------------------------------------------------" << endl
+		<< " Brute force method (finds also internal perimeters " << endl << endl;
+	findperimeterbruteforce(isperimeter, lattice);
 
 	printclusterperimeter(lattice, isperimeter);
 
