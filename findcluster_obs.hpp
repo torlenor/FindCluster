@@ -752,6 +752,48 @@ void calcExp(){
 	Jackknife(ddata, mlargestclusterradius, mlargestclusterradiuserr, nmeas);
 	results.largestclusterradius=mlargestclusterradius;
 	results.largestclusterradiuserr=mlargestclusterradiuserr;
+	
+	// Radius of largest non-perc. cluster expectation value
+	double mlargestnpclusterradius=0, mlargestnpclusterradiuserr=0;
+	for(int n=0;n<nmeas;n++){
+		ddata[n]=0;
+		for(int j=0;j<nmeas;j++){
+			if(n!=j)
+				ddata[n] += (&obs[j])->largestnpclusterradius;
+		}
+		ddata[n] = ddata[n]/(double)(nmeas-1);
+	}
+	Jackknife(ddata, mlargestnpclusterradius, mlargestnpclusterradiuserr, nmeas);
+	results.largestnpclusterradius=mlargestnpclusterradius;
+	results.largestnpclusterradiuserr=mlargestnpclusterradiuserr;
+	
+	// Avg. radius of cluster
+	double mavgclusterradius=0, mavgclusterradiuserr=0;
+	for(int n=0;n<nmeas;n++){
+		ddata[n]=0;
+		for(int j=0;j<nmeas;j++){
+			if(n!=j)
+				ddata[n] += (&obs[j])->avgclusterradius;
+		}
+		ddata[n] = ddata[n]/(double)(nmeas-1);
+	}
+	Jackknife(ddata, mavgclusterradius, mavgclusterradiuserr, nmeas);
+	results.avgclusterradius=mavgclusterradius;
+	results.avgclusterradiuserr=mavgclusterradiuserr;
+	
+	// Avg. radius of non-perc. clusters
+	double mavgnpclusterradius=0, mavgnpclusterradiuserr=0;
+	for(int n=0;n<nmeas;n++){
+		ddata[n]=0;
+		for(int j=0;j<nmeas;j++){
+			if(n!=j)
+				ddata[n] += (&obs[j])->avgnpclusterradius;
+		}
+		ddata[n] = ddata[n]/(double)(nmeas-1);
+	}
+	Jackknife(ddata, mavgnpclusterradius, mavgnpclusterradiuserr, nmeas);
+	results.avgnpclusterradius=mavgnpclusterradius;
+	results.avgnpclusterradiuserr=mavgnpclusterradiuserr;
 
 	// Polyakov loop expectation value only for points with sector < 2
 	double mpoll=0, mpollerr=0;

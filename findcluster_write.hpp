@@ -21,6 +21,21 @@ void writeresults(){
 	favgclustersize.precision(numeric_limits<double>::digits10 + 1);
 	favgclustersize << Nt << " " << results.avgclustersize << " " << results.avgclustersizeerr << " " << results.avgclusersizeFortunato << " " << results.avgclusersizeFortunatoerr << " " << results.avgnonpercclustersize << " " << results.avgnonpercclustersizeerr << endl;
 	favgclustersize.close();
+	
+	stringstream fclusterradiusname;
+	fclusterradiusname << "clusterradius_" << Ns << "x" << Nt << "_f" << fraction << ".res";
+	ofstream fclusterradius;
+	fclusterradius.open(fclusterradiusname.str().c_str());
+	fclusterradius << "# Nt largestclusterradius largestclusterradiuserr largestnpclusterradius largestnpclusterradiuserr avgclusterradius avgclusterradiuserr avgnpcluterradius avgnpclusterradiuserr rootmeansquaredistanceR rootmeansquaredistanceR " << endl;
+	fclusterradius.flags (std::ios::scientific);
+	fclusterradius.precision(numeric_limits<double>::digits10 + 1);
+	fclusterradius << Nt << " " << results.largestclusterradius << " " << results.largestclusterradiuserr << " "
+			<< results.largestnpclusterradius << " " << results.largestnpclusterradiuserr << " "
+			<< results.avgclusterradius << " " << results.avgclusterradiuserr << " " 
+			<< results.avgnpclusterradius << " " << results.avgnpclusterradiuserr << " "
+			<< results.avgrootmeansquaredistance << " " << results.avgrootmeansquaredistanceerr 
+			<< endl;
+	fclusterradius.close();
 
 	stringstream fnperccname;
 	fnperccname << "npercc_" << Ns << "x" << Nt << "_f" << fraction << ".res";

@@ -46,6 +46,9 @@ struct Observablestruct{
 	vector<vector<double> > centerofmass;
 	vector<double> clusterradius;
 	double largestclusterradius;
+	double largestnpclusterradius;
+	double avgclusterradius;
+	double avgnpclusterradius;
 
 	double percc;
 
@@ -72,6 +75,9 @@ struct Resultstruct{
 	double totalperimeter, totalperimetererr;
 	double largestnonpercperimeter, largestnonpercperimetererr;
 	double largestclusterradius, largestclusterradiuserr;
+	double largestnpclusterradius, largestnpclusterradiuserr;
+	double avgclusterradius, avgclusterradiuserr;
+	double avgnpclusterradius, avgnpclusterradiuserr;
 	double polyakovloopaftercut, polyakovloopaftercuterr;
 	double largestclusterdomainwallpoll, largestclusterdomainwallpollerr;
 	double avgdomainwallpoll, avgdomainwallpollerr;

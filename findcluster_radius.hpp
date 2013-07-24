@@ -89,11 +89,32 @@ void obsClusterRadius(Observablestruct &lobs, Clusterstruct &lclusterdata){
 	lobs.largestclusterradius=lobs.clusterradius[lobs.maxclusterid];
 	// lobs.largestclusterradius=radiussquaremax;
 	// lobs.largestclusterradius=radiussquaremin;
+
+	// Additional radius observables
+	// Radius largest non-percolating cluster
+	lobs.largestnpclusterradius=lobs.clusterradius[lobs.largestnonpercclusterid];
+
+	int cnt=0, cntnp=0;
+	lobs.avgclusterradius=0;
+	lobs.avgnpclusterradius=0;
+	for(unsigned int c=0;c<lclusterdata.clustermembers.size();c++){
+		if(lclusterdata.clustersector[c]<2){
+			lobs.avgclusterradius += lobs.clusterradius[c];
+			cnt++;
+			if(lclusterdata.clusterispercolating[c] == 0){
+				lobs.avgnpclusterradius += lobs.clusterradius[c];
+				cntnp++;
+			}
+		}
+	}
+
+	lobs.avgclusterradius = lobs.avgclusterradius/(double)cnt;
+	lobs.avgnpclusterradius = lobs.avgnpclusterradius/(double)cntnp;
 }
 
 void obsClusterRadiusOnlyLargest(Observablestruct &lobs, Clusterstruct &lclusterdata){
 	// Calculation of the cluster radius. We save the largest cluster (in terms
-	// of the cluster radius).
+	// of the cluster weight).
 	double centerofmass[3], radiussquare, radiussquaremin, centerofmassmin[3];
 	int i1, i2, i3;
 
