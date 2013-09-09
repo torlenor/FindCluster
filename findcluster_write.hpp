@@ -26,14 +26,19 @@ void writeresults(){
 	fclusterradiusname << "clusterradius_" << Ns << "x" << Nt << "_f" << fraction << ".res";
 	ofstream fclusterradius;
 	fclusterradius.open(fclusterradiusname.str().c_str());
-	fclusterradius << "# Nt largestclusterradius largestclusterradiuserr largestnpclusterradius largestnpclusterradiuserr avgclusterradius avgclusterradiuserr avgnpcluterradius avgnpclusterradiuserr rootmeansquaredistanceR rootmeansquaredistanceR " << endl;
+	fclusterradius << "# Nt largestclusterradius largestclusterradiuserr largestnpclusterradius largestnpclusterradiuserr avgclusterradius avgclusterradiuserr avgnpcluterradius avgnpclusterradiuserr rootmeansquaredistanceR rootmeansquaredistanceRerr maxclustersize maxclustersizeerr maxnonpercclustersize maxnonpercclustersizeerr avgclustersize avgclustersizeerr avgclusersizeFortunato avgclusersizeFortunatoerr avgnonpercclustersize avgnonpercclustersizeerr" << endl;
 	fclusterradius.flags (std::ios::scientific);
 	fclusterradius.precision(numeric_limits<double>::digits10 + 1);
 	fclusterradius << Nt << " " << results.largestclusterradius << " " << results.largestclusterradiuserr << " "
 			<< results.largestnpclusterradius << " " << results.largestnpclusterradiuserr << " "
 			<< results.avgclusterradius << " " << results.avgclusterradiuserr << " " 
 			<< results.avgnpclusterradius << " " << results.avgnpclusterradiuserr << " "
-			<< results.avgrootmeansquaredistance << " " << results.avgrootmeansquaredistanceerr 
+			<< results.avgrootmeansquaredistance << " " << results.avgrootmeansquaredistanceerr << " "
+      << results.maxclustersize << " " << results.maxclustersizeerr << " "
+      << results.maxnonpercclustersize << " " << results.maxnonpercclustersizeerr << " "
+      << results.avgclustersize << " " << results.avgclustersizeerr << " "
+      << results.avgclusersizeFortunato << " " << results.avgclusersizeFortunatoerr << " "
+      << results.avgnonpercclustersize << " " << results.avgnonpercclustersizeerr
 			<< endl;
 	fclusterradius.close();
 
