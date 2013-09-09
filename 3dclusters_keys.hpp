@@ -87,13 +87,13 @@ void processNormalKeys(unsigned char key, int x, int y){
 	}else if(key == '+'){
 		int mod = glutGetModifiers();
 		if (mod == GLUT_ACTIVE_ALT){
-			 alpha += 0.1;
+			 alpha += 0.05;
 			 if(alpha > 1.0)
 			 	alpha=1.0;
 		}
 		else{
-			sphereradius += 0.1;
-			pointsize += 1.0;
+			sphereradius += 0.05;
+			pointsize += 0.5;
 			if(sphereradius > 1.0)
 				sphereradius = 1.0;
 		}
@@ -101,13 +101,13 @@ void processNormalKeys(unsigned char key, int x, int y){
 	}else if(key == '-'){
 		int mod = glutGetModifiers();
 		if (mod == GLUT_ACTIVE_ALT){
-			 alpha -= 0.1;
+			 alpha -= 0.05;
 			 if(alpha < 0.0)
 			 	alpha=0;
 		}
 		else{
-			sphereradius -= 0.1;
-			pointsize -= 1.0;
+			sphereradius -= 0.05;
+			pointsize -= 0.5;
 			if(pointsize < 0.0)
 				pointsize = 1.0;
 			if(sphereradius < 0.0)
