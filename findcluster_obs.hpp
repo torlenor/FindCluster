@@ -587,6 +587,7 @@ void calcObservables(Observablestruct &lobs, Clusterstruct &lclusterdata){
 			obsClusterRadius(lobs, lclusterdata);
 		}else{
 			obsClusterRadiusOnlyLargest(lobs, lclusterdata);
+      obsClusterRadiusOnlyLargestNP(lobs, lclusterdata);
 		}
 	}
 	
