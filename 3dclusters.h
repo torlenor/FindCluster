@@ -11,19 +11,20 @@ string f3dlistname;
 bool showboxes=false;
 
 // angle for rotation for the camera direction
-float anglex = 0.0f;float angley = 0.0f;
+// float anglex = 0.0f;float angley = 0.0f;
+float anglex = 0.0f;float angley = -45.0f;
 
 // actual vector representing the camera's direction
 float lx=0.0f,lz=-1.0f, ly = 0.0f;
 
 // Initial XZ position of the camera
-float x=0.0f, z=(double)Ns+20, y = 0.00f;
+float x=0.0f, z=(double)Ns+30, y = 0.00f;
 
 // FPS counter and frame limiter stuff
 unsigned frameCount = 0;
 double usedTime=0;
 double pTime=0;
-const double FREQ=60; // Hz
+const double FREQ=10; // Hz
 const double TIMERMSECS=1000*1/(double)FREQ;
 const double dt = TIMERMSECS/1000;
 
@@ -33,12 +34,12 @@ int xOrigin = -1; int yOrigin = -1;
 
 // Stuff which define sphere properties
 double sphereradius=0.35; // Sphere radius
-const int sphereSlices=16; // Sphere slices around Z axis
-const int sphereStacks=16; //Sphere stacks/slices along the z axis
+const int sphereSlices=8; // Sphere slices around Z axis
+const int sphereStacks=8; //Sphere stacks/slices along the z axis
 
-double pointsize=10; // Sphere radius
+double pointsize=8.5; // Sphere radius
 
-double alpha=1; // alpha value used for the sphere/points
+double alpha=0.1; // alpha value used for the sphere/points
 
 // Size of the scene/box around the scene 
 double minx=-Ns - 0.5, maxx=Ns + 0.5,

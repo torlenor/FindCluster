@@ -195,6 +195,9 @@ void calcSphereColor(double &red, double &green, double &blue, int cluster){
 			red=v; green=p; blue=q;
 			break;
 	}
+  // red = red*0.8+0.1;
+  // green = green/0.8+0.1;
+  // blue = blue/0.8+0.1;
 }
 
 void drawSquare(){
@@ -348,8 +351,8 @@ void drawLattice() {
        		}
        		
        		is = i1 + i2*leng1 + i3*leng1*leng2;
-       		if(red[is]>0 || green[is]>0 || blue[is]>0){
-       		if(isinsector[is]<2){
+       if(red[is]>0 || green[is]>0 || blue[is]>0){
+       if(isinsector[is]<2){
        			if(red[is]==1 && green[is]==1 && blue[is]==1){
        				// The white points are always solid
        				glDepthMask(GL_TRUE);
@@ -393,6 +396,7 @@ void renderScene(int value){
 	                glutPostRedisplay();
         }
 
+   angley -= 0.10;
 	// Rotate the camera
 	glRotatef(anglex, 1.0f, 0.0f, 0.0f);
 	glRotatef(angley, 0.0f, 1.0f, 0.0f);
@@ -430,6 +434,15 @@ void renderScene(int value){
 	}
 	
 	glutSwapBuffers();
+
+  if ( angley < -90.0 - 45.0 ) {
+    angley = angley + 90.0 ;
+    selconfig++;
+    if(selconfig==nconfig)
+      selconfig=0;
+    cout << "Loading configuration " << selconfig << " ..." << endl;
+    cluster3input(selconfig);
+  }
 	
 	uTime = glutGet(GLUT_ELAPSED_TIME) - currentTime;
 	if(uTime>TIMERMSECS){
@@ -437,6 +450,7 @@ void renderScene(int value){
 	}
 	
 	glutTimerFunc(TIMERMSECS-uTime, renderScene, 1);
+	// glutTimerFunc(0, renderScene, 1);
 }
 
 void changeSize(int w, int h){
@@ -502,6 +516,8 @@ int openglInit(){
 	glEnable(GL_SMOOTH);
 	glShadeModel(GL_SMOOTH);
 
+  glEnable(GL_MULTISAMPLE_ARB);
+
 	// glutIgnoreKeyRepeat(1);
 	// Register callbacks
  	// glutDisplayFunc(renderScene);
@@ -550,9 +566,11 @@ int init(){;
 int main(int argc, char **argv){
 	// Init GLUT and create window
 	glutInit(&argc, argv);
-	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
-	glutInitWindowPosition(100,100);
-	glutInitWindowSize(640,640);
+	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA | GLUT_MULTISAMPLE);
+	glutInitWindowPosition(10,10);
+  int xsize=720; //1920;
+  int ysize=720;;
+	glutInitWindowSize(xsize,ysize);
 	mainWindow = glutCreateWindow("3d clusters");
 	
 	if(parameterInit(argc, argv)!=0){
