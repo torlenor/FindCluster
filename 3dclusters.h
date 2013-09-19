@@ -26,7 +26,7 @@ double usedTime=0;
 double pTime=0;
 const double FREQ=10; // Hz
 const double TIMERMSECS=1000*1/(double)FREQ;
-const double dt = TIMERMSECS/1000;
+const double dt = TIMERMSECS/(double)1000;
 
 float deltaAnglex = 0.0f;float deltaAngley = 0.0f;
 float deltaMove = 0;
@@ -38,7 +38,7 @@ const int sphereSlices=6; // Sphere slices around Z axis
 const int sphereStacks=6; //Sphere stacks/slices along the z axis
 
 // double pointsize=8.5; // Sphere radius
-double pointsize=3.0; // Sphere radius
+double pointsize=4.0; // Sphere radius
 
 // double alpha=0.1; // alpha value used for the sphere/points
 double alpha=0.45; // alpha value used for the sphere/points

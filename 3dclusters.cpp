@@ -97,6 +97,7 @@ void cluster3input(int config){
   // Modify temperature string
   double T=197.0/(cleng4*0.0677);
   sprintf(tempstring, "T = %0.1f MeV",T);;
+  // sprintf(tempstring, "T = %0.1e °C",T*1.16045e10);;
 }
 
 void mouseMove(int x, int y) {
@@ -364,8 +365,9 @@ void drawLattice() {
        if(isinsector[is]<2){
        			if(red[is]==1 && green[is]==1 && blue[is]==1){
        				// The white points are always solid
-       				//glDepthMask(GL_TRUE);
-				glColor4f(red[is], green[is], blue[is], alpha*2);
+       				glDepthMask(GL_TRUE);
+				      // glColor4f(red[is], green[is], blue[is], alpha*2);
+				      glColor4f(red[is], green[is], blue[is], 1);
 			}else{
 				glColor4f(red[is], green[is], blue[is], alpha);
 			}
@@ -380,6 +382,8 @@ void drawLattice() {
 	if(usespheres==false)
 		glEnd(); // GL_POINTS
 }
+
+int firstframe=4;
 
 // Simple render function
 void renderScene(int value){
@@ -416,15 +420,18 @@ void renderScene(int value){
 	                glutSetWindow(mainWindow);
 	                glutPostRedisplay();
         }
-
-  angley -= 0.30;
+  if( firstframe >= 1 ){
+    angley -= 0.0;
+    firstframe--;
+  }else{
+    angley -= 0.40;
+  }
 	// Rotate the camera
 	glRotatef(anglex, 1.0f, 0.0f, 0.0f);
 	glRotatef(angley, 0.0f, 1.0f, 0.0f);
 
 	// Render function
 	drawLattice();
-  
 
 	// FPS stuff
 	usedTime += currentTime-pTime;
@@ -458,7 +465,8 @@ void renderScene(int value){
 
 	glutSwapBuffers();
 
-  if ( angley < -90.0 - 45.0 ) {
+  if ( angley < - 45.0 - 90.0 ) {
+  if ( angley < - 45.0 - 90.0 ) {
     angley = angley + 90.0 ;
     selconfig++;
     if(selconfig==nconfig){
@@ -474,7 +482,6 @@ void renderScene(int value){
 		uTime=TIMERMSECS;
 	}
   
-	
 	glutTimerFunc(TIMERMSECS-uTime, renderScene, 1);
 	// glutTimerFunc(0, renderScene, 1);
 }
