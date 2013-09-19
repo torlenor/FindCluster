@@ -466,7 +466,6 @@ void renderScene(int value){
 	glutSwapBuffers();
 
   if ( angley < - 45.0 - 90.0 ) {
-  if ( angley < - 45.0 - 90.0 ) {
     angley = angley + 90.0 ;
     selconfig++;
     if(selconfig==nconfig){
