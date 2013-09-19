@@ -18,7 +18,7 @@ float anglex = 0.0f;float angley = -45.0f;
 float lx=0.0f,lz=-1.0f, ly = 0.0f;
 
 // Initial XZ position of the camera
-float x=0.0f, z=(double)Ns+30, y = 0.00f;
+float x=0.0f, z=(double)Ns+25, y = 0.00f;
 
 // FPS counter and frame limiter stuff
 unsigned frameCount = 0;
@@ -34,12 +34,14 @@ int xOrigin = -1; int yOrigin = -1;
 
 // Stuff which define sphere properties
 double sphereradius=0.35; // Sphere radius
-const int sphereSlices=8; // Sphere slices around Z axis
-const int sphereStacks=8; //Sphere stacks/slices along the z axis
+const int sphereSlices=6; // Sphere slices around Z axis
+const int sphereStacks=6; //Sphere stacks/slices along the z axis
 
-double pointsize=8.5; // Sphere radius
+// double pointsize=8.5; // Sphere radius
+double pointsize=3.0; // Sphere radius
 
-double alpha=0.1; // alpha value used for the sphere/points
+// double alpha=0.1; // alpha value used for the sphere/points
+double alpha=0.45; // alpha value used for the sphere/points
 
 // Size of the scene/box around the scene 
 double minx=-Ns - 0.5, maxx=Ns + 0.5,
@@ -47,7 +49,7 @@ double minx=-Ns - 0.5, maxx=Ns + 0.5,
 	minz=-Ns - 0.5,maxz=Ns + 0.5;
 
 // The currently highlighted cluster
-int cnt=-1;
+int cnt=0;
 
 void cluster3input(int config);
 

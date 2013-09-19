@@ -2,6 +2,7 @@
 	#include <GLUT/glut.h>
 #else
 	#include <GL/glut.h>
+	#include <GL/freeglut.h>
 #endif
 
 #include <cmath>
@@ -14,9 +15,13 @@
 using namespace std;
 
 bool usespheres=false;
+char tempstring[128];
 
 #include "3dclusters.h"
 #include "3dclusters_init.hpp"
+
+int xsize=1080; //1920;
+int ysize=1080;;
 
 int mainWindow;
 
@@ -88,6 +93,10 @@ void cluster3input(int config){
 	}else{
 		cnt=-1;	
 	}
+
+  // Modify temperature string
+  double T=197.0/(cleng4*0.0677);
+  sprintf(tempstring, "T = %0.1f MeV",T);;
 }
 
 void mouseMove(int x, int y) {
@@ -355,8 +364,8 @@ void drawLattice() {
        if(isinsector[is]<2){
        			if(red[is]==1 && green[is]==1 && blue[is]==1){
        				// The white points are always solid
-       				glDepthMask(GL_TRUE);
-				glColor4f(red[is], green[is], blue[is], 1);
+       				//glDepthMask(GL_TRUE);
+				glColor4f(red[is], green[is], blue[is], alpha*2);
 			}else{
 				glColor4f(red[is], green[is], blue[is], alpha);
 			}
@@ -383,12 +392,24 @@ void renderScene(int value){
 
 	// Reset transformations
 	glLoadIdentity();
-
+  
 	// Set the camera
         gluLookAt(x, y, z,
                  x + lx,y + ly,z + lz, 
                  0.0f,1.0f,0.0f);
+	if(usespheres==true){
+		glDisable(GL_LIGHT0);
+		glDisable(GL_LIGHTING);
+	}
 
+  glColor3f(1.0,1.0,1.0);
+  glRasterPos3f(-31,31,5);
+  glutBitmapString(GLUT_BITMAP_TIMES_ROMAN_24, (unsigned char*)(tempstring));
+
+	if(usespheres==true){
+		glEnable(GL_LIGHT0);
+		glEnable(GL_LIGHTING);
+	}
 	// Compute movement and rotation of the camera
         if(deltaMove || deltaAnglex || deltaAngley) {
 	                computePos(deltaMove);
@@ -396,13 +417,14 @@ void renderScene(int value){
 	                glutPostRedisplay();
         }
 
-   angley -= 0.10;
+  angley -= 0.30;
 	// Rotate the camera
 	glRotatef(anglex, 1.0f, 0.0f, 0.0f);
 	glRotatef(angley, 0.0f, 1.0f, 0.0f);
 
 	// Render function
 	drawLattice();
+  
 
 	// FPS stuff
 	usedTime += currentTime-pTime;
@@ -432,14 +454,17 @@ void renderScene(int value){
 	}else{
 		frameCount++;
 	}
-	
+  
+
 	glutSwapBuffers();
 
   if ( angley < -90.0 - 45.0 ) {
     angley = angley + 90.0 ;
     selconfig++;
-    if(selconfig==nconfig)
+    if(selconfig==nconfig){
       selconfig=0;
+      exit(0);
+    }
     cout << "Loading configuration " << selconfig << " ..." << endl;
     cluster3input(selconfig);
   }
@@ -448,6 +473,7 @@ void renderScene(int value){
 	if(uTime>TIMERMSECS){
 		uTime=TIMERMSECS;
 	}
+  
 	
 	glutTimerFunc(TIMERMSECS-uTime, renderScene, 1);
 	// glutTimerFunc(0, renderScene, 1);
@@ -568,8 +594,6 @@ int main(int argc, char **argv){
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA | GLUT_MULTISAMPLE);
 	glutInitWindowPosition(10,10);
-  int xsize=720; //1920;
-  int ysize=720;;
 	glutInitWindowSize(xsize,ysize);
 	mainWindow = glutCreateWindow("3d clusters");
 	

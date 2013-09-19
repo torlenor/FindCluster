@@ -97,7 +97,7 @@ void processNormalKeys(unsigned char key, int x, int y){
 			if(sphereradius > 1.0)
 				sphereradius = 1.0;
 		}
-		cout << "Radius = " << pointsize << " Alpha = "  << alpha << endl;
+		cout << "Radius = " << pointsize << " Alpha = "  << alpha << " Sphereradius = " << sphereradius << endl;
 	}else if(key == '-'){
 		int mod = glutGetModifiers();
 		if (mod == GLUT_ACTIVE_ALT){
