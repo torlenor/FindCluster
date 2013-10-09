@@ -138,8 +138,8 @@ void pressKey(int key, int x, int y){
         switch (key) {
                 case GLUT_KEY_UP : deltaMove = 5.0f; break;
                 case GLUT_KEY_DOWN : deltaMove = -5.0f; break;
-                case GLUT_KEY_LEFT : deltaAngley = 1.5f; break;
-                case GLUT_KEY_RIGHT : deltaAngley = -1.5f; break;                
+                case GLUT_KEY_LEFT : deltaAngley = -1.5f; break;
+                case GLUT_KEY_RIGHT : deltaAngley = 1.5f; break;                
         }   
         glutSetWindow(mainWindow);
         glutPostRedisplay();
@@ -421,10 +421,11 @@ void renderScene(int value){
 	                glutPostRedisplay();
         }
   if( firstframe >= 1 ){
-    angley -= 0.0;
+    angley += 0.0;
     firstframe--;
   }else{
-    angley -= 0.40;
+    angley += 0.40;
+    // angley += 2.40;
   }
 	// Rotate the camera
 	glRotatef(anglex, 1.0f, 0.0f, 0.0f);
@@ -461,12 +462,13 @@ void renderScene(int value){
 	}else{
 		frameCount++;
 	}
-  
 
 	glutSwapBuffers();
 
-  if ( angley < - 45.0 - 90.0 ) {
-    angley = angley + 90.0 ;
+  static int counter=1;
+
+  if ( angley > + 45.0 + counter*90.0 ) {
+    counter++;
     selconfig++;
     if(selconfig==nconfig){
       selconfig=0;
@@ -474,6 +476,11 @@ void renderScene(int value){
     }
     cout << "Loading configuration " << selconfig << " ..." << endl;
     cluster3input(selconfig);
+  }
+  
+  if(angley>360) {
+    angley -= 360;
+    counter=0;
   }
 	
 	uTime = glutGet(GLUT_ELAPSED_TIME) - currentTime;

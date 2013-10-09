@@ -81,10 +81,10 @@ void writeresults(){
 	fareaname << "area_" << Ns << "x" << Nt << "_f" << fraction << ".res";
 	ofstream farea;
 	farea.open(fareaname.str().c_str());
-	farea << "# Nt area areaerr arealargestnonpercc arealargestnonperccerr largestclusterweight largestclusterweighterr largestnonpercclusterweight largestnonpercclusterweighterr" << endl;
+	farea << "# Nt area areaerr arealargestnonpercc arealargestnonperccerr largestclusterweight largestclusterweighterr largestnonpercclusterweight largestnonpercclusterweighterr areaavgnonpercc areaavgnonperccerr" << endl;
 	farea.flags (std::ios::scientific);
 	farea.precision(numeric_limits<double>::digits10 + 1);
-	farea << Nt << " " << results.totalperimeter << " " << results.totalperimetererr << " " << results.largestnonpercperimeter << " " << results.largestnonpercperimetererr << " " << results.maxclustersize << " " << results.maxclustersizeerr << " " << results.maxnonpercclustersize << " " << results.maxnonpercclustersizeerr << endl;
+	farea << Nt << " " << results.totalperimeter << " " << results.totalperimetererr << " " << results.largestnonpercperimeter << " " << results.largestnonpercperimetererr << " " << results.maxclustersize << " " << results.maxclustersizeerr << " " << results.maxnonpercclustersize << " " << results.maxnonpercclustersizeerr <<  " " << results.avgnonpercperimeter << " " << results.avgnonpercperimetererr << endl;
 	farea.close();
 	
 	stringstream fpollname;

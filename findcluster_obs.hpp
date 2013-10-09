@@ -276,6 +276,82 @@ void obsAreaLargestNonPercCluster(Observablestruct &lobs, Clusterstruct &lcluste
 	lobs.arealargestnonperccluster = lobs.arealargestnonperccluster/(double)(6*Ns*Ns); // Mean over all 3 directions
 }
 
+void obsAreaAvgNonPercCluster(Observablestruct &lobs, Clusterstruct &lclusterdata){
+	lobs.arealargestnonperccluster=0;
+	int i1=0, i2=0, i3=0, is=0;
+	bool incluster=false;
+	
+	int clusters=0;
+	
+  for(int cluster=0; cluster<(int)lclusterdata.clustermembers.size(); cluster++){
+		if(lclusterdata.clustersector[cluster] < 2 && lclusterdata.clusterispercolating[cluster] == 0){
+      clusters++;
+      incluster=false;
+    
+      // First direction i1
+      for(i2=0;i2<Ns;i2++)
+      for(i3=0;i3<Ns;i3++){
+        i1=0;
+        is=latmap(i1, i2, i3);
+        if(lclusterdata.isincluster[is]==cluster)
+          incluster=true;
+        for(i1=1;i1<Ns;i1++){
+          is=latmap(i1, i2, i3);
+          if(incluster==true && lclusterdata.isincluster[is] != cluster){
+            incluster=false;
+            lobs.areaavgnonperccluster++;
+          }else if(incluster==false && lclusterdata.isincluster[is] == cluster){
+            incluster=true;
+            lobs.areaavgnonperccluster++;
+          }
+        }
+      }
+      
+      // Second direction i2
+      incluster=false;
+      for(i1=0;i1<Ns;i1++)
+      for(i3=0;i3<Ns;i3++){
+        i2=0;
+        is=latmap(i1, i2, i3);
+        if(lclusterdata.isincluster[is]==cluster)
+          incluster=true;
+        for(i2=1;i2<Ns;i2++){
+          is=latmap(i1, i2, i3);
+          if(incluster==true && lclusterdata.isincluster[is] != cluster){
+            incluster=false;
+            lobs.areaavgnonperccluster++;
+          }else if(incluster==false && lclusterdata.isincluster[is] == cluster){
+            incluster=true;
+            lobs.areaavgnonperccluster++;
+          }
+        }
+      }
+      
+      // Third direction i3
+      incluster=false;
+      for(i1=0;i1<Ns;i1++)
+      for(i2=0;i2<Ns;i2++){
+        i3=0;
+        is=latmap(i1, i2, i3);
+        if(lclusterdata.isincluster[is]==cluster)
+          incluster=true;
+        for(i3=1;i3<Ns;i3++){
+          is=latmap(i1, i2, i3);
+          if(incluster==true && lclusterdata.isincluster[is] != cluster){
+            incluster=false;
+            lobs.areaavgnonperccluster++;
+          }else if(incluster==false && lclusterdata.isincluster[is] == cluster){
+            incluster=true;
+            lobs.areaavgnonperccluster++;
+          }
+        }
+      }
+    }
+  }
+    
+  lobs.areaavgnonperccluster = lobs.areaavgnonperccluster/(double)(6*Ns*Ns*clusters); // Mean over all 3 directions
+}
+
 void obsNumberOfPercClusters(Observablestruct &lobs, Clusterstruct &lclusterdata){
 	// Number of percolating clusters
 	int pcount=0;
@@ -569,6 +645,8 @@ void calcObservables(Observablestruct &lobs, Clusterstruct &lclusterdata){
 	obsArea(lobs, lclusterdata);
 	// lobs.arealargestnonperccluster
 	obsAreaLargestNonPercCluster(lobs, lclusterdata);
+	// lobs.areaavgnonperccluster
+	obsAreaAvgNonPercCluster(lobs, lclusterdata);
 	// lobs.poll
 	obsPollAfterCut(lobs, lclusterdata);
 	// lobs.domainwallpoll
@@ -739,6 +817,20 @@ void calcExp(){
 	Jackknife(ddata, marealargestnonpercc, marealargestnonperccerr, nmeas);
 	results.largestnonpercperimeter=marealargestnonpercc;
 	results.largestnonpercperimetererr=marealargestnonperccerr;
+	
+  // Perimeter avg non percolating cluster expectation value
+	double mareaavgnonpercc=0, mareaavgnonperccerr=0;
+	for(int n=0;n<nmeas;n++){
+		ddata[n]=0;
+		for(int j=0;j<nmeas;j++){
+			if(n!=j)
+				ddata[n] += (&obs[j])->areaavgnonperccluster;
+		}
+		ddata[n] = ddata[n]/(double)(nmeas-1);
+	}
+	Jackknife(ddata, mareaavgnonpercc, mareaavgnonperccerr, nmeas);
+	results.avgnonpercperimeter=mareaavgnonpercc;
+	results.avgnonpercperimetererr=mareaavgnonperccerr;
 	
 	// Radius of largest cluster expectation value
 	double mlargestclusterradius=0, mlargestclusterradiuserr=0;

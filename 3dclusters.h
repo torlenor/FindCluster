@@ -12,7 +12,7 @@ bool showboxes=false;
 
 // angle for rotation for the camera direction
 // float anglex = 0.0f;float angley = 0.0f;
-float anglex = 0.0f;float angley = -45.0f;
+float anglex = 0.0f;float angley = 45.0f;
 
 // actual vector representing the camera's direction
 float lx=0.0f,lz=-1.0f, ly = 0.0f;
@@ -24,7 +24,8 @@ float x=0.0f, z=(double)Ns+25, y = 0.00f;
 unsigned frameCount = 0;
 double usedTime=0;
 double pTime=0;
-const double FREQ=10; // Hz
+// const double FREQ=10; // Hz
+const double FREQ=60; // Hz
 const double TIMERMSECS=1000*1/(double)FREQ;
 const double dt = TIMERMSECS/(double)1000;
 
