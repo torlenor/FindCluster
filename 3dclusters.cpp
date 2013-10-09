@@ -20,8 +20,8 @@ char tempstring[128];
 #include "3dclusters.h"
 #include "3dclusters_init.hpp"
 
-int xsize=1080; //1920;
-int ysize=1080;;
+int xsize=1020; //1920;
+int ysize=1020;
 
 int mainWindow;
 
@@ -364,8 +364,8 @@ void drawLattice() {
        if(isinsector[is]<2){
        			if(red[is]==1 && green[is]==1 && blue[is]==1){
        				// The white points are always solid
-       				//glDepthMask(GL_TRUE);
-				glColor4f(red[is], green[is], blue[is], alpha*2);
+       				glDepthMask(GL_TRUE);
+				      glColor3f(red[is], green[is], blue[is]);
 			}else{
 				glColor4f(red[is], green[is], blue[is], alpha);
 			}
@@ -417,7 +417,7 @@ void renderScene(int value){
 	                glutPostRedisplay();
         }
 
-  angley -= 0.30;
+  angley -= 0.35;
 	// Rotate the camera
 	glRotatef(anglex, 1.0f, 0.0f, 0.0f);
 	glRotatef(angley, 0.0f, 1.0f, 0.0f);
@@ -593,7 +593,7 @@ int main(int argc, char **argv){
 	// Init GLUT and create window
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA | GLUT_MULTISAMPLE);
-	glutInitWindowPosition(10,10);
+	glutInitWindowPosition(0,0);
 	glutInitWindowSize(xsize,ysize);
 	mainWindow = glutCreateWindow("3d clusters");
 	
