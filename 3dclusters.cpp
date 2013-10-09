@@ -20,8 +20,8 @@ char tempstring[128];
 #include "3dclusters.h"
 #include "3dclusters_init.hpp"
 
-int xsize=1020; //1920;
-int ysize=1020;
+int xsize=1080; //1920;
+int ysize=1080;;
 
 int mainWindow;
 
@@ -97,6 +97,7 @@ void cluster3input(int config){
   // Modify temperature string
   double T=197.0/(cleng4*0.0677);
   sprintf(tempstring, "T = %0.1f MeV",T);;
+  // sprintf(tempstring, "T = %0.1e °C",T*1.16045e10);;
 }
 
 void mouseMove(int x, int y) {
@@ -137,8 +138,8 @@ void pressKey(int key, int x, int y){
         switch (key) {
                 case GLUT_KEY_UP : deltaMove = 5.0f; break;
                 case GLUT_KEY_DOWN : deltaMove = -5.0f; break;
-                case GLUT_KEY_LEFT : deltaAngley = 1.5f; break;
-                case GLUT_KEY_RIGHT : deltaAngley = -1.5f; break;                
+                case GLUT_KEY_LEFT : deltaAngley = -1.5f; break;
+                case GLUT_KEY_RIGHT : deltaAngley = 1.5f; break;                
         }   
         glutSetWindow(mainWindow);
         glutPostRedisplay();
@@ -365,7 +366,8 @@ void drawLattice() {
        			if(red[is]==1 && green[is]==1 && blue[is]==1){
        				// The white points are always solid
        				glDepthMask(GL_TRUE);
-				      glColor3f(red[is], green[is], blue[is]);
+				      // glColor4f(red[is], green[is], blue[is], alpha*2);
+				      glColor4f(red[is], green[is], blue[is], 1);
 			}else{
 				glColor4f(red[is], green[is], blue[is], alpha);
 			}
@@ -380,6 +382,8 @@ void drawLattice() {
 	if(usespheres==false)
 		glEnd(); // GL_POINTS
 }
+
+int firstframe=4;
 
 // Simple render function
 void renderScene(int value){
@@ -416,15 +420,19 @@ void renderScene(int value){
 	                glutSetWindow(mainWindow);
 	                glutPostRedisplay();
         }
-
-  angley -= 0.35;
+  if( firstframe >= 1 ){
+    angley += 0.0;
+    firstframe--;
+  }else{
+    angley += 0.40;
+    // angley += 2.40;
+  }
 	// Rotate the camera
 	glRotatef(anglex, 1.0f, 0.0f, 0.0f);
 	glRotatef(angley, 0.0f, 1.0f, 0.0f);
 
 	// Render function
 	drawLattice();
-  
 
 	// FPS stuff
 	usedTime += currentTime-pTime;
@@ -454,12 +462,13 @@ void renderScene(int value){
 	}else{
 		frameCount++;
 	}
-  
 
 	glutSwapBuffers();
 
-  if ( angley < -90.0 - 45.0 ) {
-    angley = angley + 90.0 ;
+  static int counter=1;
+
+  if ( angley > + 45.0 + counter*90.0 ) {
+    counter++;
     selconfig++;
     if(selconfig==nconfig){
       selconfig=0;
@@ -468,13 +477,17 @@ void renderScene(int value){
     cout << "Loading configuration " << selconfig << " ..." << endl;
     cluster3input(selconfig);
   }
+  
+  if(angley>360) {
+    angley -= 360;
+    counter=0;
+  }
 	
 	uTime = glutGet(GLUT_ELAPSED_TIME) - currentTime;
 	if(uTime>TIMERMSECS){
 		uTime=TIMERMSECS;
 	}
   
-	
 	glutTimerFunc(TIMERMSECS-uTime, renderScene, 1);
 	// glutTimerFunc(0, renderScene, 1);
 }
@@ -593,7 +606,7 @@ int main(int argc, char **argv){
 	// Init GLUT and create window
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA | GLUT_MULTISAMPLE);
-	glutInitWindowPosition(0,0);
+	glutInitWindowPosition(10,10);
 	glutInitWindowSize(xsize,ysize);
 	mainWindow = glutCreateWindow("3d clusters");
 	

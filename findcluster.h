@@ -28,7 +28,7 @@ struct Observablestruct{
 	int maxclusterid;
 	int maxclustersector;
 
-        double largestnonpercclustersize;
+  double largestnonpercclustersize;
 	double largestnonpercclusterid;
 	double largetsnonpercclustersector;
 	
@@ -56,6 +56,7 @@ struct Observablestruct{
 
 	double area;
 	double arealargestnonperccluster;
+	double areaavgnonperccluster;
 
 	double poll;
 	vector<double> domainwallpoll;
@@ -74,6 +75,7 @@ struct Resultstruct{
 	double cut, cuterr;
 	double totalperimeter, totalperimetererr;
 	double largestnonpercperimeter, largestnonpercperimetererr;
+	double avgnonpercperimeter, avgnonpercperimetererr;
 	double largestclusterradius, largestclusterradiuserr;
 	double largestnpclusterradius, largestnpclusterradiuserr;
 	double avgclusterradius, avgclusterradiuserr;
