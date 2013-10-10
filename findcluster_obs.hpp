@@ -44,6 +44,17 @@ void obsAverageClusterSize(Observablestruct &lobs, Clusterstruct &lclusterdata){
 		}
 	}
 	lobs.avgclustersize = avgclustersize/(double)cnt;
+	
+	// Calculate average cluster size non percolating
+	avgclustersize=0;
+	cnt=0;
+	for(unsigned int c=0; c<lclusterdata.clustermembers.size(); c++){
+		if(lclusterdata.clustersector[c] < 2 && lclusterdata.clusterispercolating[c] == 0){
+			avgclustersize += lclusterdata.clustermembers[c].size();
+			cnt++;
+		}
+	}
+	lobs.avgclustersizenp = avgclustersize/(double)cnt;
 }
 
 void obsAverageClusterSizeFortunato(Observablestruct &lobs, Clusterstruct &lclusterdata){
@@ -122,7 +133,7 @@ void obsAverageClusterSizeNoPercc(Observablestruct &lobs, Clusterstruct &lcluste
 		avgclustersizenopercc += sizedist[size]*pow(sizes[size],2)/norm;
 	}
 
-	lobs.avgclustersizenopercc = avgclustersizenopercc;
+	lobs.avgclustersizeFnp = avgclustersizenopercc;
 }
 
 void obsCutPercentage(Observablestruct &lobs, Clusterstruct &lclusterdata){
@@ -277,7 +288,7 @@ void obsAreaLargestNonPercCluster(Observablestruct &lobs, Clusterstruct &lcluste
 }
 
 void obsAreaAvgNonPercCluster(Observablestruct &lobs, Clusterstruct &lclusterdata){
-	lobs.arealargestnonperccluster=0;
+	lobs.areaavgnonperccluster=0;
 	int i1=0, i2=0, i3=0, is=0;
 	bool incluster=false;
 	
@@ -685,8 +696,9 @@ void calcExp(){
 	double mlargestnpclustersize=0, mlargestnpclustersizeerr=0;
 
 	double avgclustersize=0, avgclustersizeerr=0;
+	double avgclustersizenp=0, avgclustersizenperr=0;
 	double avgclustersizeF=0, avgclustersizeFerr=0;
-	double avgclustersizenopercc=0, avgclustersizenoperccerr=0;
+	double avgclustersizeFnp=0, avgclustersizeFnperr=0;
 	double avgrootmeansquaredistanceR=0, avgrootmeansquaredistanceRerr=0;
 
 	double avgpercc=0, avgperccerr=0;
@@ -750,18 +762,31 @@ void calcExp(){
 	results.avgclusersizeFortunato=avgclustersizeF;
 	results.avgclusersizeFortunatoerr=avgclustersizeFerr;
 	
+	// Average cluster size expectation value without percolating clusters Fortunato
+	for(int n=0;n<nmeas;n++){
+		ddata[n]=0;
+		for(int j=0;j<nmeas;j++){
+			if(n!=j)
+				ddata[n] += (&obs[j])->avgclustersizeFnp;
+		}
+		ddata[n] = ddata[n]/(double)(nmeas-1);
+	}
+	Jackknife(ddata, avgclustersizeFnp, avgclustersizeFnperr, nmeas);
+	results.avgclustersizeFnp=avgclustersizeFnp;
+	results.avgclustersizeFnperr=avgclustersizeFnperr;
+	
 	// Average cluster size expectation value without percolating clusters
 	for(int n=0;n<nmeas;n++){
 		ddata[n]=0;
 		for(int j=0;j<nmeas;j++){
 			if(n!=j)
-				ddata[n] += (&obs[j])->avgclustersizenopercc;
+				ddata[n] += (&obs[j])->avgclustersizenp;
 		}
 		ddata[n] = ddata[n]/(double)(nmeas-1);
 	}
-	Jackknife(ddata, avgclustersizenopercc, avgclustersizenoperccerr, nmeas);
-	results.avgnonpercclustersize=avgclustersizenopercc;
-	results.avgnonpercclustersizeerr=avgclustersizenoperccerr;
+	Jackknife(ddata, avgclustersizenp, avgclustersizenperr, nmeas);
+	results.avgclustersizenp=avgclustersizenp;
+	results.avgclustersizenperr=avgclustersizenperr;
 	
 	if(dodistance){
 		// Average root mean square distance traveled R

@@ -16,30 +16,37 @@ void writeresults(){
 	favgclustersizename << "clustersize_avg_" << Ns << "x" << Nt << "_f" << fraction << ".res";
 	ofstream favgclustersize;
 	favgclustersize.open(favgclustersizename.str().c_str());
-	favgclustersize << "# Nt avgclusterweight avgclusterweighterr avgfortunatoclustersize avgfortunatoclustersizeerr avgclusterweightnopercc avgclusterweightnoperccerr" << endl;
+	favgclustersize << "# Nt avgclusterweight avgclusterweighterr avgfortunatoclustersize avgfortunatoclustersizeerr avgclusterweightFnp avgclusterweightFnperr avgclusterweightnp avgclusterweightnperr avgnpclusterradius avgnpclusterradiuserr avgnpclusterarea avgnpclusterareaerr" << endl;
 	favgclustersize.flags (std::ios::scientific);
 	favgclustersize.precision(numeric_limits<double>::digits10 + 1);
-	favgclustersize << Nt << " " << results.avgclustersize << " " << results.avgclustersizeerr << " " << results.avgclusersizeFortunato << " " << results.avgclusersizeFortunatoerr << " " << results.avgnonpercclustersize << " " << results.avgnonpercclustersizeerr << endl;
+	favgclustersize << Nt << " " 
+	<< results.avgclustersize << " " << results.avgclustersizeerr << " " 
+	<< results.avgclusersizeFortunato << " " << results.avgclusersizeFortunatoerr << " " 
+	<< results.avgclustersizenp << " " << results.avgclustersizenperr << " " 
+	<< results.avgclustersizeFnp << " " << results.avgclustersizeFnperr << " " 
+	<< results.avgnpclusterradius << " " << results.avgnpclusterradiuserr << " "
+	<< results.avgnonpercperimeter << " " << results.avgnonpercperimetererr <<  " "
+	<< endl;
 	favgclustersize.close();
 	
 	stringstream fclusterradiusname;
 	fclusterradiusname << "clusterradius_" << Ns << "x" << Nt << "_f" << fraction << ".res";
 	ofstream fclusterradius;
 	fclusterradius.open(fclusterradiusname.str().c_str());
-	fclusterradius << "# Nt largestclusterradius largestclusterradiuserr largestnpclusterradius largestnpclusterradiuserr avgclusterradius avgclusterradiuserr avgnpcluterradius avgnpclusterradiuserr rootmeansquaredistanceR rootmeansquaredistanceRerr maxclustersize maxclustersizeerr maxnonpercclustersize maxnonpercclustersizeerr avgclustersize avgclustersizeerr avgclusersizeFortunato avgclusersizeFortunatoerr avgnonpercclustersize avgnonpercclustersizeerr" << endl;
+	fclusterradius << "# Nt largestclusterradius largestclusterradiuserr largestnpclusterradius largestnpclusterradiuserr avgclusterradius avgclusterradiuserr avgnpcluterradius avgnpclusterradiuserr rootmeansquaredistanceR rootmeansquaredistanceRerr maxclustersize maxclustersizeerr maxnonpercclustersize maxnonpercclustersizeerr avgclustersize avgclustersizeerr avgclusersizeFortunato avgclusersizeFortunatoerr avgclustersizeFnp avgclustersizeFnperr" << endl;
 	fclusterradius.flags (std::ios::scientific);
 	fclusterradius.precision(numeric_limits<double>::digits10 + 1);
 	fclusterradius << Nt << " " << results.largestclusterradius << " " << results.largestclusterradiuserr << " "
-			<< results.largestnpclusterradius << " " << results.largestnpclusterradiuserr << " "
-			<< results.avgclusterradius << " " << results.avgclusterradiuserr << " " 
-			<< results.avgnpclusterradius << " " << results.avgnpclusterradiuserr << " "
-			<< results.avgrootmeansquaredistance << " " << results.avgrootmeansquaredistanceerr << " "
-      << results.maxclustersize << " " << results.maxclustersizeerr << " "
-      << results.maxnonpercclustersize << " " << results.maxnonpercclustersizeerr << " "
-      << results.avgclustersize << " " << results.avgclustersizeerr << " "
-      << results.avgclusersizeFortunato << " " << results.avgclusersizeFortunatoerr << " "
-      << results.avgnonpercclustersize << " " << results.avgnonpercclustersizeerr
-			<< endl;
+	<< results.largestnpclusterradius << " " << results.largestnpclusterradiuserr << " "
+	<< results.avgclusterradius << " " << results.avgclusterradiuserr << " " 
+	<< results.avgnpclusterradius << " " << results.avgnpclusterradiuserr << " "
+	<< results.avgrootmeansquaredistance << " " << results.avgrootmeansquaredistanceerr << " "
+      	<< results.maxclustersize << " " << results.maxclustersizeerr << " "
+      	<< results.maxnonpercclustersize << " " << results.maxnonpercclustersizeerr << " "
+      	<< results.avgclustersize << " " << results.avgclustersizeerr << " "
+      	<< results.avgclusersizeFortunato << " " << results.avgclusersizeFortunatoerr << " "
+      	<< results.avgclustersizeFnp << " " << results.avgclustersizeFnperr
+	<< endl;
 	fclusterradius.close();
 
 	stringstream fnperccname;
@@ -81,10 +88,17 @@ void writeresults(){
 	fareaname << "area_" << Ns << "x" << Nt << "_f" << fraction << ".res";
 	ofstream farea;
 	farea.open(fareaname.str().c_str());
-	farea << "# Nt area areaerr arealargestnonpercc arealargestnonperccerr largestclusterweight largestclusterweighterr largestnonpercclusterweight largestnonpercclusterweighterr areaavgnonpercc areaavgnonperccerr" << endl;
+	farea << "# Nt area areaerr arealargestnonpercc arealargestnonperccerr largestclusterweight largestclusterweighterr largestnonpercclusterweight largestnonpercclusterweighterr areaavgnonpercc areaavgnonperccerr avgclusersizeFnp avgclusersizeFnperr" << endl;
 	farea.flags (std::ios::scientific);
 	farea.precision(numeric_limits<double>::digits10 + 1);
-	farea << Nt << " " << results.totalperimeter << " " << results.totalperimetererr << " " << results.largestnonpercperimeter << " " << results.largestnonpercperimetererr << " " << results.maxclustersize << " " << results.maxclustersizeerr << " " << results.maxnonpercclustersize << " " << results.maxnonpercclustersizeerr <<  " " << results.avgnonpercperimeter << " " << results.avgnonpercperimetererr << endl;
+	farea << Nt << " " 
+	<< results.totalperimeter << " " << results.totalperimetererr << " " 
+	<< results.largestnonpercperimeter << " " << results.largestnonpercperimetererr << " " 
+	<< results.maxclustersize << " " << results.maxclustersizeerr << " " 
+	<< results.maxnonpercclustersize << " " << results.maxnonpercclustersizeerr <<  " " 
+	<< results.avgnonpercperimeter << " " << results.avgnonpercperimetererr <<  " "
+	<< results.avgclustersizeFnp << " " << results.avgclustersizeFnperr << " "
+	<< endl;
 	farea.close();
 	
 	stringstream fpollname;

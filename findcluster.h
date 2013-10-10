@@ -37,7 +37,8 @@ struct Observablestruct{
 
 	double rootmeansquaredistanceR;
 	
-	double avgclustersizenopercc;
+	double avgclustersizenp;
+	double avgclustersizeFnp;
 
 	double cut;
 
@@ -70,7 +71,8 @@ struct Resultstruct{
 	double maxnonpercclustersize, maxnonpercclustersizeerr;
 	double avgclustersize, avgclustersizeerr;
 	double avgclusersizeFortunato, avgclusersizeFortunatoerr;
-	double avgnonpercclustersize, avgnonpercclustersizeerr;
+	double avgclustersizenp, avgclustersizenperr;
+	double avgclustersizeFnp, avgclustersizeFnperr;
 	double avgrootmeansquaredistance, avgrootmeansquaredistanceerr;
 	double cut, cuterr;
 	double totalperimeter, totalperimetererr;
