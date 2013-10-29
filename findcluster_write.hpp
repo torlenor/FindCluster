@@ -59,6 +59,16 @@ void writeresults(){
 	fnpercc << Nt << " " << results.avgperccluster << " " << results.avgpercclustererr << endl;
 	fnpercc.close();
 	
+  stringstream ffreepathname;
+	ffreepathname << "freepath_" << Ns << "x" << Nt << "_f" << fraction << ".res";
+	ofstream ffreepath;
+	ffreepath.open(ffreepathname.str().c_str());
+	ffreepath << "# Nt largestclustermeanfreepath largestclustermeanfreepatherr" << endl;
+	ffreepath.flags (std::ios::scientific);
+	ffreepath.precision(numeric_limits<double>::digits10 + 1);
+	ffreepath << Nt << " " << results.largestclustermeanfreepath << " " << results.largestclustermeanfreepatherr << endl;
+	ffreepath.close();
+	
 	if(doboxes){
 		stringstream fboxcntname;
 		fboxcntname << "boxcnt_" << Ns << "x" << Nt << "_f" << fraction << ".res";

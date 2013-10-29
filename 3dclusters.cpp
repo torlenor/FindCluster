@@ -472,8 +472,8 @@ void renderScene(int value){
     selconfig++;
     if(selconfig==nconfig){
       selconfig=0;
-      exit(0);
-    }
+     // exit(0);
+    } 
     cout << "Loading configuration " << selconfig << " ..." << endl;
     cluster3input(selconfig);
   }

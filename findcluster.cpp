@@ -67,6 +67,7 @@ double r = 0;
 #include "findcluster_helper.hpp"
 #include "findcluster_cluster.hpp"
 #include "findcluster_radius.hpp"
+#include "findcluster_path.hpp"
 #include "findcluster_obs.hpp"
 #include "findcluster_write.hpp"
 

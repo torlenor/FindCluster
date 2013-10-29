@@ -679,6 +679,8 @@ void calcObservables(Observablestruct &lobs, Clusterstruct &lclusterdata){
       obsClusterRadiusOnlyLargestNP(lobs, lclusterdata);
 		}
 	}
+
+  obsClusterMeanFreePathLargest(lobs, lclusterdata);
 	
 	// lobs.rootmeansquaredistanceR
 	if(dodistance){
@@ -967,6 +969,20 @@ void calcExp(){
 	Jackknife(ddata, avgpercc, avgperccerr, nmeas);
 	results.avgperccluster=avgpercc;
 	results.avgpercclustererr=avgperccerr;
+	
+  // Mean free path of largest cluster expectation value
+	double mlargestclustermeanfreepath=0, mlargestclustermeanfreepatherr=0;
+	for(int n=0;n<nmeas;n++){
+		ddata[n]=0;
+		for(int j=0;j<nmeas;j++){
+			if(n!=j)
+				ddata[n] += (&obs[j])->largestclustermeanfreepath;
+		}
+		ddata[n] = ddata[n]/(double)(nmeas-1);
+	}
+	Jackknife(ddata, mlargestclustermeanfreepath, mlargestclustermeanfreepatherr, nmeas);
+	results.largestclustermeanfreepath=mlargestclustermeanfreepath;
+	results.largestclustermeanfreepatherr=mlargestclustermeanfreepatherr;
 
 	if(doboxes){
 		// Box counts for largest cluster which is not in sector 2

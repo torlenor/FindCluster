@@ -64,6 +64,9 @@ struct Observablestruct{
 	double Ldomainwallpoll;
 	double Adomainwallpoll;
 	vector<double> undefdomainwall;
+  
+  vector<double> meanfreepath;
+  double largestclustermeanfreepath;
 };
 
 struct Resultstruct{
@@ -88,6 +91,8 @@ struct Resultstruct{
 	double avgperccluster, avgpercclustererr;
 	vector<double> largestclusterboxcount, largestclusterboxcounterr;
 	vector<double> largestnonpercboxcount, largestnonpercboxcounterr;
+  
+  double largestclustermeanfreepath, largestclustermeanfreepatherr;;
 };
 
 // Stuff to find and categorize sectors/clusters for one configuration
