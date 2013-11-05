@@ -681,6 +681,7 @@ void calcObservables(Observablestruct &lobs, Clusterstruct &lclusterdata){
 	}
 
   obsClusterMeanFreePathLargest(lobs, lclusterdata);
+  // obsClusterMeanFreePath(lobs, lclusterdata);
 	
 	// lobs.rootmeansquaredistanceR
 	if(dodistance){
