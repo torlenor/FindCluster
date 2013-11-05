@@ -156,7 +156,6 @@ void obsClusterMeanFreePathLargest(Observablestruct &lobs, Clusterstruct &lclust
 
   lobs.meanfreepath[c]=(path1+path2+path3)/(double)3.0;
   lobs.largestclustermeanfreepath=(path1+path2+path3)/(double)3.0;
-  cout << "Total path = " << lobs.largestclustermeanfreepath << endl;
 }
 
 void obsClusterMeanFreePath(Observablestruct &lobs, Clusterstruct &lclusterdata){
@@ -312,7 +311,6 @@ void obsClusterMeanFreePath(Observablestruct &lobs, Clusterstruct &lclusterdata)
       // END 3nd direction
 
       lobs.meanfreepath[c]=(path1+path2+path3)/(double)3.0;
-      cout << lobs.meanfreepath[c] << endl;
   } // cluster if
   } // cluster loop
   
