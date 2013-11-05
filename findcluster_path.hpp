@@ -10,164 +10,151 @@ void obsClusterMeanFreePathLargest(Observablestruct &lobs, Clusterstruct &lclust
   double path1=0, path2=0, path3=0;
   int paths=0;
 
-  int i1=0, i2=0, i3=0, startpoint=0;
+  int i1=0, i2=0, i3=0, startpoint=0, ii=0;
 
-  vector<int> istagged3;
-  istagged3.resize(leng3);
+  vector<int> istagged;
+  istagged.resize(leng3);
 
   // First direction
   paths=0;
+  path1=0;
   for (i1=0; i1<leng1; i1++) {
   for (i2=0; i2<leng2; i2++) {
-    i3=0;
-    // go through i3 until we hit a point in the cluster or i3=leng1-1
-    for( int ii=0; ii<leng3; ii++) {
-      istagged3[ii] = 0;
+    for( int ij=0; ij<leng3; ij++) {
+      istagged[ij] = 0;
     }
+    for (i3=0; i3<leng3; i3++) {
+      // go through i3 until we hit a point in the cluster or i3=leng1-1
 
-    while (i3<leng1 && lclusterdata.isincluster[latmap(i1, i2, i3)] != c) {
-      i3++;
-    }
+      if (lclusterdata.isincluster[latmap(i1, i2, i3)] == c && istagged[i3] == 0) {
+        paths++;
 
-    if(i3 >= leng3)
-      continue;
-    if(istagged3[i3] == 1) {
-      continue;
-    }
-
-    // go through the cluster part and count the paths and path++ onces until we hit a point not
-    // in the cluster anymore or we hit the start point (percolating over this direction)
-    paths++;
-    startpoint = i3;
-    // Go in +3 direction
-    do {
-      path1 = path1 + 1.0;
-      istagged3[i3] = 1;
-      i3++;
-      if(i3 == leng3)
-        i3 = i3 - leng3;
-    } while ( lclusterdata.isincluster[latmap(i1, i2, i3)] == c && i3 != startpoint);
-    
-    // Go in -3 direction
-    i3 = startpoint;
-    do {
-      if( istagged3[i3] == 0) {
-        path1 = path1 + 1.0;
-        istagged3[i3] = 1;
+        // Go in +3 direction
+        startpoint = i3;
+        ii = startpoint;
+        do {
+          if (istagged[ii] == 1) {
+            cout << "WTF!" << endl;
+          }
+          path1 = path1 + 1.0;
+          istagged[ii] = 1;
+          ii++;
+          if(ii == leng3)
+            ii = ii - leng3;
+        } while ( lclusterdata.isincluster[latmap(i1, i2, ii)] == c && ii != startpoint);
+      
+        // Go in -3 direction
+        ii = startpoint;
+        do {
+          if( istagged[ii] == 0) {
+            path1 = path1 + 1.0;
+            istagged[ii] = 1;
+          }
+          ii--;
+          if(ii == -1)
+            ii = ii + leng3;
+        } while ( lclusterdata.isincluster.at(latmap(i1, i2, ii)) == c && ii != startpoint);
+        
       }
-      i3--;
-      if(i3 == -1)
-        i3 = i3 + leng3;
-    } while ( lclusterdata.isincluster.at(latmap(i1, i2, i3)) == c && i3 != startpoint);
-    
-    i3 = startpoint + 1;
+    }
   }
   }
   path1=path1/(double)paths;
+  cout << path1 << endl;
   // END 1st direction
   
   // 2nd direction
   paths=0;
   for (i1=0; i1<leng1; i1++) {
   for (i3=0; i3<leng3; i3++) {
-    i2=0;
-    // go through i3 until we hit a point in the cluster or i3=leng1-1
-    for( int ii=0; ii<leng2; ii++) {
-      istagged3[ii] = 0;
+    for( int ij=0; ij<leng2; ij++) {
+      istagged[ij] = 0;
     }
+    for (i2=0; i2<leng2; i2++) {
+      // go through i2 until we hit a point in the cluster or i3=leng1-1
 
-    while (i2<leng2 && lclusterdata.isincluster[latmap(i1, i2, i3)] != c) {
-      i2++;
-    }
+      if (lclusterdata.isincluster[latmap(i1, i2, i3)] == c && istagged[i2] == 0) {
+        paths++;
 
-    if(i2 >= leng2)
-      continue;
-    if(istagged3[i2] == 1) {
-      continue;
-    }
-
-    // go through the cluster part and count the paths and path++ onces until we hit a point not
-    // in the cluster anymore or we hit the start point (percolating over this direction)
-    paths++;
-    startpoint = i2;
-    // Go in +3 direction
-    do {
-      path2 = path2 + 1.0;
-      istagged3[i2] = 1;
-      i2++;
-      if(i2 == leng2)
-        i2 = i2 - leng2;
-    } while ( lclusterdata.isincluster[latmap(i1, i2, i3)] == c && i2 != startpoint);
-
-    
-    // Go in -3 direction
-    i2 = startpoint;
-    do {
-      if( istagged3[i2] == 0) {
-        path2 = path2 + 1.0;
-        istagged3[i2] = 1;
+        // Go in +2 direction
+        startpoint = i2;
+        ii = startpoint;
+        do {
+          if (istagged[ii] == 1) {
+            cout << "WTF!" << endl;
+          }
+          path2 = path2 + 1.0;
+          istagged[ii] = 1;
+          ii++;
+          if(ii == leng2)
+            ii = ii - leng2;
+        } while ( lclusterdata.isincluster[latmap(i1, ii, i3)] == c && ii != startpoint);
+      
+        // Go in -2 direction
+        ii = startpoint;
+        do {
+          if( istagged[ii] == 0) {
+            path2 = path2 + 1.0;
+            istagged[ii] = 1;
+          }
+          ii--;
+          if(ii == -1)
+            ii = ii + leng2;
+        } while ( lclusterdata.isincluster.at(latmap(i1, ii, i3)) == c && ii != startpoint);
+        
       }
-      i2--;
-      if(i2 == -1)
-        i2 = i2 + leng2;
-    } while ( lclusterdata.isincluster.at(latmap(i1, i2, i3)) == c && i2 != startpoint);
-    
-    i2 = startpoint + 1;
+    }
   }
   }
   path2=path2/(double)paths;
+  cout << path2 << endl;
   // END 2nd direction
   
   // 3rd direction
   paths=0;
   for (i2=0; i2<leng2; i2++) {
   for (i3=0; i3<leng3; i3++) {
-    i1=0;
-    // go through i3 until we hit a point in the cluster or i3=leng1-1
-    for( int ii=0; ii<leng1; ii++) {
-      istagged3[ii] = 0;
+    for( int ij=0; ij<leng1; ij++) {
+      istagged[ij] = 0;
     }
+    for (i1=0; i1<leng1; i1++) {
+      // go through i1 until we hit a point in the cluster or i1=leng1-1
 
-    while (i1<leng1 && lclusterdata.isincluster[latmap(i1, i2, i3)] != c) {
-      i1++;
-    }
+      if (lclusterdata.isincluster[latmap(i1, i2, i3)] == c && istagged[i1] == 0) {
+        paths++;
 
-    if(i1 >= leng1)
-      continue;
-    if(istagged3[i1] == 1) {
-      continue;
-    }
-
-    // go through the cluster part and count the paths and path++ onces until we hit a point not
-    // in the cluster anymore or we hit the start point (percolating over this direction)
-    paths++;
-    startpoint = i1;
-    // Go in +3 direction
-    do {
-      path3 = path3 + 1.0;
-      istagged3[i1] = 1;
-      i1++;
-      if(i1 == leng1)
-        i1 = i1 - leng1;
-    } while ( lclusterdata.isincluster[latmap(i1, i2, i3)] == c && i1 != startpoint);
-    
-    // Go in -3 direction
-    i1 = startpoint;
-    do {
-      if( istagged3[i1] == 0) {
-        path3 = path3 + 1.0;
-        istagged3[i1] = 1;
+        // Go in +1 direction
+        startpoint = i1;
+        ii = startpoint;
+        do {
+          if (istagged[ii] == 1) {
+            cout << "WTF!" << endl;
+          }
+          path3 = path3 + 1.0;
+          istagged[ii] = 1;
+          ii++;
+          if(ii == leng1)
+            ii = ii - leng1;
+        } while ( lclusterdata.isincluster[latmap(ii, i2, i3)] == c && ii != startpoint);
+      
+        // Go in -1 direction
+        ii = startpoint;
+        do {
+          if( istagged[ii] == 0) {
+            path3 = path3 + 1.0;
+            istagged[ii] = 1;
+          }
+          ii--;
+          if(ii == -1)
+            ii = ii + leng1;
+        } while ( lclusterdata.isincluster.at(latmap(ii, i2, i3)) == c && ii != startpoint);
       }
-      i1--;
-      if(i1 == -1)
-        i1 = i1 + leng1;
-    } while ( lclusterdata.isincluster.at(latmap(i1, i2, i3)) == c && i1 != startpoint);
-    
-    i1 = startpoint + 1;
+    }
   }
   }
   path3=path3/(double)paths;
-  // END 2nd direction
+  cout << path3 << endl;
+  // END 3nd direction
 
 
   lobs.meanfreepath[c]=(path1+path2+path3)/(double)3.0;
