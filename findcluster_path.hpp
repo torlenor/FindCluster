@@ -315,6 +315,28 @@ void obsClusterMeanFreePath(Observablestruct &lobs, Clusterstruct &lclusterdata)
   } // cluster loop
   
   lobs.largestclustermeanfreepath=lobs.meanfreepath[lobs.maxclusterid];
+
+  // Calculate average over all clusters
+  double avgclustermeanfreepath=0;
+  int cnt=0;
+  for(unsigned int c=0; c<lclusterdata.clustermembers.size(); c++){
+    if(lclusterdata.clustersector[c] < 2){
+      avgclustermeanfreepath += lobs.meanfreepath[c];
+      cnt++;
+    }    
+  }
+  lobs.avgclustermeanfreepath = avgclustermeanfreepath/(double)cnt;
+  
+  // Calculate average cluster size non percolating
+  avgclustermeanfreepath=0;
+  cnt=0;
+  for(unsigned int c=0; c<lclusterdata.clustermembers.size(); c++){
+    if(lclusterdata.clustersector[c] < 2 && lclusterdata.clusterispercolating[c] == 0){
+      avgclustermeanfreepath += lobs.meanfreepath[c];
+      cnt++;
+    }    
+  }
+  lobs.avgnpclustermeanfreepath = avgclustermeanfreepath/(double)cnt;
 }
 
 #endif // FINDCLUSTER_PATH_HPP

@@ -680,8 +680,8 @@ void calcObservables(Observablestruct &lobs, Clusterstruct &lclusterdata){
 		}
 	}
 
-  obsClusterMeanFreePathLargest(lobs, lclusterdata);
-  // obsClusterMeanFreePath(lobs, lclusterdata);
+  // obsClusterMeanFreePathLargest(lobs, lclusterdata);
+  obsClusterMeanFreePath(lobs, lclusterdata);
 	
 	// lobs.rootmeansquaredistanceR
 	if(dodistance){
@@ -984,6 +984,34 @@ void calcExp(){
 	Jackknife(ddata, mlargestclustermeanfreepath, mlargestclustermeanfreepatherr, nmeas);
 	results.largestclustermeanfreepath=mlargestclustermeanfreepath;
 	results.largestclustermeanfreepatherr=mlargestclustermeanfreepatherr;
+  
+  // Mean free path of avg cluster expectation value
+	double mavgclustermeanfreepath=0, mavgclustermeanfreepatherr=0;
+	for(int n=0;n<nmeas;n++){
+		ddata[n]=0;
+		for(int j=0;j<nmeas;j++){
+			if(n!=j)
+				ddata[n] += (&obs[j])->avgclustermeanfreepath;
+		}
+		ddata[n] = ddata[n]/(double)(nmeas-1);
+	}
+	Jackknife(ddata, mavgclustermeanfreepath, mavgclustermeanfreepatherr, nmeas);
+	results.avgclustermeanfreepath=mavgclustermeanfreepath;
+	results.avgclustermeanfreepatherr=mavgclustermeanfreepatherr;
+  
+  // Mean free path of avg non-perc. cluster expectation value
+	double mavgnpclustermeanfreepath=0, mavgnpclustermeanfreepatherr=0;
+	for(int n=0;n<nmeas;n++){
+		ddata[n]=0;
+		for(int j=0;j<nmeas;j++){
+			if(n!=j)
+				ddata[n] += (&obs[j])->avgnpclustermeanfreepath;
+		}
+		ddata[n] = ddata[n]/(double)(nmeas-1);
+	}
+	Jackknife(ddata, mavgnpclustermeanfreepath, mavgnpclustermeanfreepatherr, nmeas);
+	results.avgnpclustermeanfreepath=mavgnpclustermeanfreepath;
+	results.avgnpclustermeanfreepatherr=mavgnpclustermeanfreepatherr;
 
 	if(doboxes){
 		// Box counts for largest cluster which is not in sector 2

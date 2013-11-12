@@ -37,10 +37,10 @@ void writeresults(){
 	fclusterradius.flags (std::ios::scientific);
 	fclusterradius.precision(numeric_limits<double>::digits10 + 1);
 	fclusterradius << Nt << " " << results.largestclusterradius << " " << results.largestclusterradiuserr << " "
-	<< results.largestnpclusterradius << " " << results.largestnpclusterradiuserr << " "
-	<< results.avgclusterradius << " " << results.avgclusterradiuserr << " " 
-	<< results.avgnpclusterradius << " " << results.avgnpclusterradiuserr << " "
-	<< results.avgrootmeansquaredistance << " " << results.avgrootmeansquaredistanceerr << " "
+        << results.largestnpclusterradius << " " << results.largestnpclusterradiuserr << " "
+        << results.avgclusterradius << " " << results.avgclusterradiuserr << " " 
+        << results.avgnpclusterradius << " " << results.avgnpclusterradiuserr << " "
+        << results.avgrootmeansquaredistance << " " << results.avgrootmeansquaredistanceerr << " "
       	<< results.maxclustersize << " " << results.maxclustersizeerr << " "
       	<< results.maxnonpercclustersize << " " << results.maxnonpercclustersizeerr << " "
       	<< results.avgclustersize << " " << results.avgclustersizeerr << " "
@@ -66,7 +66,11 @@ void writeresults(){
 	ffreepath << "# Nt largestclustermeanfreepath largestclustermeanfreepatherr" << endl;
 	ffreepath.flags (std::ios::scientific);
 	ffreepath.precision(numeric_limits<double>::digits10 + 1);
-	ffreepath << Nt << " " << results.largestclustermeanfreepath << " " << results.largestclustermeanfreepatherr << endl;
+	ffreepath << Nt << " " 
+      << results.largestclustermeanfreepath << " " << results.largestclustermeanfreepatherr << " " 
+      << results.avgclustermeanfreepath << " " << results.avgclustermeanfreepatherr << " " 
+      << results.avgnpclustermeanfreepath << " " << results.avgnpclustermeanfreepatherr
+  << endl;
 	ffreepath.close();
 	
 	if(doboxes){
