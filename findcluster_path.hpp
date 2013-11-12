@@ -44,7 +44,7 @@ void obsClusterMeanFreePathLargest(Observablestruct &lobs, Clusterstruct &lclust
         } while ( lclusterdata.isincluster[latmap(i1, i2, ii)] == c && ii != startpoint);
       
         // Go in -3 direction
-        ii = startpoint;
+        /* ii = startpoint;
         do {
           if( istagged[ii] == 0) {
             path1 = path1 + 1.0;
@@ -54,7 +54,7 @@ void obsClusterMeanFreePathLargest(Observablestruct &lobs, Clusterstruct &lclust
           if(ii == -1)
             ii = ii + leng3;
         } while ( lclusterdata.isincluster.at(latmap(i1, i2, ii)) == c && ii != startpoint);
-        
+        */
       }
     }
   }
@@ -90,7 +90,7 @@ void obsClusterMeanFreePathLargest(Observablestruct &lobs, Clusterstruct &lclust
         } while ( lclusterdata.isincluster[latmap(i1, ii, i3)] == c && ii != startpoint);
       
         // Go in -2 direction
-        ii = startpoint;
+       /* ii = startpoint;
         do {
           if( istagged[ii] == 0) {
             path2 = path2 + 1.0;
@@ -100,7 +100,7 @@ void obsClusterMeanFreePathLargest(Observablestruct &lobs, Clusterstruct &lclust
           if(ii == -1)
             ii = ii + leng2;
         } while ( lclusterdata.isincluster.at(latmap(i1, ii, i3)) == c && ii != startpoint);
-        
+        */
       }
     }
   }
@@ -136,7 +136,7 @@ void obsClusterMeanFreePathLargest(Observablestruct &lobs, Clusterstruct &lclust
         } while ( lclusterdata.isincluster[latmap(ii, i2, i3)] == c && ii != startpoint);
       
         // Go in -1 direction
-        ii = startpoint;
+        /*ii = startpoint;
         do {
           if( istagged[ii] == 0) {
             path3 = path3 + 1.0;
@@ -146,6 +146,7 @@ void obsClusterMeanFreePathLargest(Observablestruct &lobs, Clusterstruct &lclust
           if(ii == -1)
             ii = ii + leng1;
         } while ( lclusterdata.isincluster.at(latmap(ii, i2, i3)) == c && ii != startpoint);
+        */
       }
     }
   }
