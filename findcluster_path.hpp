@@ -185,7 +185,7 @@ void obsClusterMeanFreePath(Observablestruct &lobs, Clusterstruct &lclusterdata)
           istagged[ij] = 0;
         }
         for (i3=0; i3<leng3; i3++) {
-          // go through i3 until we hit a point in the cluster or i3=leng1-1
+          // go through i3 until we hit a point in the cluster or i3=leng3-1
 
           if (lclusterdata.isincluster[latmap(i1, i2, i3)] == c && istagged[i3] == 0) {
             paths++;
@@ -237,7 +237,7 @@ void obsClusterMeanFreePath(Observablestruct &lobs, Clusterstruct &lclusterdata)
           istagged[ij] = 0;
         }
         for (i2=0; i2<leng2; i2++) {
-          // go through i2 until we hit a point in the cluster or i3=leng1-1
+          // go through i2 until we hit a point in the cluster or i2=leng2-1
 
           if (lclusterdata.isincluster[latmap(i1, i2, i3)] == c && istagged[i2] == 0) {
             paths++;
@@ -277,7 +277,7 @@ void obsClusterMeanFreePath(Observablestruct &lobs, Clusterstruct &lclusterdata)
       path2=path2/(double)paths;
       // END 2nd direction
       if ( (totalcount - (int)lclusterdata.clustermembers[c].size()) != 0) {
-        cout << "ERROR: Something wrong in path calculation, direction 3. Number of counted cluster members != clustermembers" << endl;
+        cout << "ERROR: Something wrong in path calculation, direction 2. Number of counted cluster members != clustermembers" << endl;
       }
 
       // 3rd direction
@@ -330,7 +330,7 @@ void obsClusterMeanFreePath(Observablestruct &lobs, Clusterstruct &lclusterdata)
       // END 3nd direction
       
       if ( (totalcount - (int)lclusterdata.clustermembers[c].size()) != 0) {
-        cout << "ERROR: Something wrong in path calculation, direction 3. Number of counted cluster members != clustermembers" << endl;
+        cout << "ERROR: Something wrong in path calculation, direction 1. Number of counted cluster members != clustermembers" << endl;
       }
 
       lobs.meanfreepath[c]=(path1+path2+path3)/(double)3.0;
