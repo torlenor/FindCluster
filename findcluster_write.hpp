@@ -63,11 +63,12 @@ void writeresults(){
 	ffreepathname << "freepath_" << Ns << "x" << Nt << "_f" << fraction << ".res";
 	ofstream ffreepath;
 	ffreepath.open(ffreepathname.str().c_str());
-	ffreepath << "# Nt largestclustermeanfreepath largestclustermeanfreepatherr" << endl;
+	ffreepath << "# Nt largestcluster largestclustererr largestnpcluster largestnpclustererr avgcluster avgclustererr avgnpcluster avgnpclustererr" << endl;
 	ffreepath.flags (std::ios::scientific);
 	ffreepath.precision(numeric_limits<double>::digits10 + 1);
 	ffreepath << Nt << " " 
       << results.largestclustermeanfreepath << " " << results.largestclustermeanfreepatherr << " " 
+      << results.largestnpclustermeanfreepath << " " << results.largestnpclustermeanfreepatherr << " " 
       << results.avgclustermeanfreepath << " " << results.avgclustermeanfreepatherr << " " 
       << results.avgnpclustermeanfreepath << " " << results.avgnpclustermeanfreepatherr
   << endl;

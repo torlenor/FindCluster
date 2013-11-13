@@ -163,8 +163,11 @@ void obsClusterMeanFreePath(Observablestruct &lobs, Clusterstruct &lclusterdata)
   // Calculates the mean free path of all clusters
 	lobs.meanfreepath.resize(lclusterdata.clustermembers.size());
 
+  int totalcount=0;
+
 	for (int c=0; c<(int)lclusterdata.clustermembers.size(); c++) {
 		if (lclusterdata.clustersector[c] < 2) {
+      totalcount=0;
       double path1=0, path2=0, path3=0;
       int paths=0;
 
@@ -196,6 +199,7 @@ void obsClusterMeanFreePath(Observablestruct &lobs, Clusterstruct &lclusterdata)
               }
               path1 = path1 + 1.0;
               istagged[ii] = 1;
+              totalcount++;
               ii++;
               if(ii == leng3)
                 ii = ii - leng3;
@@ -207,6 +211,7 @@ void obsClusterMeanFreePath(Observablestruct &lobs, Clusterstruct &lclusterdata)
               if( istagged[ii] == 0) {
                 path1 = path1 + 1.0;
                 istagged[ii] = 1;
+                totalcount++;
               }
               ii--;
               if(ii == -1)
@@ -219,9 +224,13 @@ void obsClusterMeanFreePath(Observablestruct &lobs, Clusterstruct &lclusterdata)
       }
       path1=path1/(double)paths;
       // END 1st direction
+      if ( (totalcount - (int)lclusterdata.clustermembers[c].size()) != 0) {
+        cout << "ERROR: Something wrong in path calculation, direction 3. Number of counted cluster members != clustermembers" << endl;
+      }
 
       // 2nd direction
       paths=0;
+      totalcount=0;
       for (i1=0; i1<leng1; i1++) {
       for (i3=0; i3<leng3; i3++) {
         for( int ij=0; ij<leng2; ij++) {
@@ -242,6 +251,7 @@ void obsClusterMeanFreePath(Observablestruct &lobs, Clusterstruct &lclusterdata)
               }
               path2 = path2 + 1.0;
               istagged[ii] = 1;
+              totalcount++;
               ii++;
               if(ii == leng2)
                 ii = ii - leng2;
@@ -252,6 +262,7 @@ void obsClusterMeanFreePath(Observablestruct &lobs, Clusterstruct &lclusterdata)
             do {
               if( istagged[ii] == 0) {
                 path2 = path2 + 1.0;
+                totalcount++;
                 istagged[ii] = 1;
               }
               ii--;
@@ -265,9 +276,13 @@ void obsClusterMeanFreePath(Observablestruct &lobs, Clusterstruct &lclusterdata)
       }
       path2=path2/(double)paths;
       // END 2nd direction
+      if ( (totalcount - (int)lclusterdata.clustermembers[c].size()) != 0) {
+        cout << "ERROR: Something wrong in path calculation, direction 3. Number of counted cluster members != clustermembers" << endl;
+      }
 
       // 3rd direction
       paths=0;
+      totalcount=0;
       for (i2=0; i2<leng2; i2++) {
       for (i3=0; i3<leng3; i3++) {
         for( int ij=0; ij<leng1; ij++) {
@@ -288,6 +303,7 @@ void obsClusterMeanFreePath(Observablestruct &lobs, Clusterstruct &lclusterdata)
               }
               path3 = path3 + 1.0;
               istagged[ii] = 1;
+              totalcount++;
               ii++;
               if(ii == leng1)
                 ii = ii - leng1;
@@ -298,6 +314,7 @@ void obsClusterMeanFreePath(Observablestruct &lobs, Clusterstruct &lclusterdata)
             do {
               if( istagged[ii] == 0) {
                 path3 = path3 + 1.0;
+                totalcount++;
                 istagged[ii] = 1;
               }
               ii--;
@@ -311,12 +328,17 @@ void obsClusterMeanFreePath(Observablestruct &lobs, Clusterstruct &lclusterdata)
       }
       path3=path3/(double)paths;
       // END 3nd direction
+      
+      if ( (totalcount - (int)lclusterdata.clustermembers[c].size()) != 0) {
+        cout << "ERROR: Something wrong in path calculation, direction 3. Number of counted cluster members != clustermembers" << endl;
+      }
 
       lobs.meanfreepath[c]=(path1+path2+path3)/(double)3.0;
   } // cluster if
   } // cluster loop
   
   lobs.largestclustermeanfreepath=lobs.meanfreepath[lobs.maxclusterid];
+  lobs.largestnpclustermeanfreepath=lobs.meanfreepath[lobs.largestnonpercclusterid];
 
   // Calculate average over all clusters
   double avgclustermeanfreepath=0;

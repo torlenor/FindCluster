@@ -67,6 +67,7 @@ struct Observablestruct{
   
   vector<double> meanfreepath;
   double largestclustermeanfreepath;
+  double largestnpclustermeanfreepath;
   double avgclustermeanfreepath;
   double avgnpclustermeanfreepath;
 };
@@ -95,6 +96,7 @@ struct Resultstruct{
 	vector<double> largestnonpercboxcount, largestnonpercboxcounterr;
   
   double largestclustermeanfreepath, largestclustermeanfreepatherr;
+  double largestnpclustermeanfreepath, largestnpclustermeanfreepatherr;
   double avgclustermeanfreepath, avgclustermeanfreepatherr;
   double avgnpclustermeanfreepath, avgnpclustermeanfreepatherr;
 };

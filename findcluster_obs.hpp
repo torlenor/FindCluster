@@ -985,6 +985,20 @@ void calcExp(){
 	results.largestclustermeanfreepath=mlargestclustermeanfreepath;
 	results.largestclustermeanfreepatherr=mlargestclustermeanfreepatherr;
   
+  // Mean free path of largest non-perc. cluster expectation value
+	double mlargestnpclustermeanfreepath=0, mlargestnpclustermeanfreepatherr=0;
+	for(int n=0;n<nmeas;n++){
+		ddata[n]=0;
+		for(int j=0;j<nmeas;j++){
+			if(n!=j)
+				ddata[n] += (&obs[j])->largestnpclustermeanfreepath;
+		}
+		ddata[n] = ddata[n]/(double)(nmeas-1);
+	}
+	Jackknife(ddata, mlargestnpclustermeanfreepath, mlargestnpclustermeanfreepatherr, nmeas);
+	results.largestnpclustermeanfreepath=mlargestnpclustermeanfreepath;
+	results.largestnpclustermeanfreepatherr=mlargestnpclustermeanfreepatherr;
+  
   // Mean free path of avg cluster expectation value
 	double mavgclustermeanfreepath=0, mavgclustermeanfreepatherr=0;
 	for(int n=0;n<nmeas;n++){
