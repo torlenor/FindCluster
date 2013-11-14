@@ -361,6 +361,14 @@ void obsClusterMeanFreePath(Observablestruct &lobs, Clusterstruct &lclusterdata)
     }    
   }
   lobs.avgnpclustermeanfreepath = avgclustermeanfreepath/(double)cnt;
+
+  // Write a list of clusterweight and meanfreepath to stdout
+  /* for(unsigned int c=0; c<lclusterdata.sortedrealcluster.size(); c++){
+    if(lclusterdata.clustersector[lclusterdata.sortedrealcluster[c]] < 2){
+      cout << lclusterdata.clustermembers[lclusterdata.sortedrealcluster[c]].size() << " " << lobs.meanfreepath[lclusterdata.sortedrealcluster[c]] << endl;
+    }
+  } */
+
 }
 
 #endif // FINDCLUSTER_PATH_HPP
