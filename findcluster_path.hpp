@@ -625,12 +625,19 @@ void obsAverageMeanfreepathNew(Observablestruct &lobs, Clusterstruct &lclusterda
 	for(unsigned int size=0; size<sizedist.size(); size++){
 		pathavg[size]=pathavg[size]/(double)pathcnt[size];
 	}
+  
+  // Norm	
+  double norm=0;
+	for(unsigned int size=0; size<sizedist.size(); size++){
+		norm += sizedist[size]*sizes[size];
+	}
+
 
 	for(unsigned int size=0; size<sizedist.size(); size++){
 		avgFclustermeanfreepathnew += sizedist[size]*sizes[size]*pathavg.at(size);
 	}
 
-	lobs.avgFclustermeanfreepathnew = avgFclustermeanfreepathnew;
+	lobs.avgFclustermeanfreepathnew = avgFclustermeanfreepathnew/(double)norm;
 	
 	// --------------------------------------------------------------------- //
   // Fortunato/Stauffer average over all clusters (non-perc.)
@@ -673,12 +680,18 @@ void obsAverageMeanfreepathNew(Observablestruct &lobs, Clusterstruct &lclusterda
 	for(unsigned int size=0; size<sizedist.size(); size++){
 		pathavg[size]=pathavg[size]/(double)pathcnt[size];
 	}
+	
+	// Norm	
+  norm=0;
+	for(unsigned int size=0; size<sizedist.size(); size++){
+		norm += sizedist[size]*sizes[size];
+	}
 
 	for(unsigned int size=0; size<sizedist.size(); size++){
 		avgFnpclustermeanfreepathnew += sizedist[size]*sizes[size]*pathavg.at(size);
 	}
 
-	lobs.avgFnpclustermeanfreepathnew = avgFnpclustermeanfreepathnew;
+	lobs.avgFnpclustermeanfreepathnew = avgFnpclustermeanfreepathnew/(double)norm;
 }
 
 
