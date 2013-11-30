@@ -74,6 +74,21 @@ void writeresults(){
   << endl;
 	ffreepath.close();
 	
+	// NEW DEFINITION OF MEAN FREE PATH
+	stringstream ffreepathnewname;
+	ffreepathnewname << "meanfreepath_new_" << Ns << "x" << Nt << "_f" << fraction << ".res";
+	ofstream ffreepathnew;
+	ffreepathnew.open(ffreepathnewname.str().c_str());
+	ffreepathnew << "# Nt largestcluster largestclustererr largestnpcluster largestnpclustererr avgcluster avgclustererr avgnpcluster avgnpclustererr" << endl;
+	ffreepathnew.flags (std::ios::scientific);
+	ffreepathnew.precision(numeric_limits<double>::digits10 + 1);
+	ffreepathnew << Nt << " " 
+      << results.largestclustermeanfreepathnew << " " << results.largestclustermeanfreepathnewerr << " " 
+      << results.largestnpclustermeanfreepathnew << " " << results.largestnpclustermeanfreepathnewerr
+  << endl;
+	ffreepathnew.close();
+	// END NEW DEFINITION OF MEAN FREE PATH
+	
 	if(doboxes){
 		stringstream fboxcntname;
 		fboxcntname << "boxcnt_" << Ns << "x" << Nt << "_f" << fraction << ".res";
@@ -123,7 +138,7 @@ void writeresults(){
 	fpoll << "# Nt poll pollerr domainwallpoll(largest cluster) domainwallpollerr(largest cluster) avgdomainwallpoll avgdomainwallpollerr" << endl;
 	fpoll.flags (std::ios::scientific);
 	fpoll.precision(numeric_limits<double>::digits10 + 1);
-	fpoll << Nt << " " << results.polyakovloopaftercut << " " << results.polyakovloopaftercuterr << " " << results.largestclusterdomainwallpoll << " " << results.largestclusterdomainwallpollerr << " " << results.avgdomainwallpoll << " " << results.avgdomainwallpollerr << endl;
+	fpoll << Nt << " " << results.polyakovloopaftercut << " " << results.polyakovloopaftercuterr << endl;
 	fpoll.close();
 }
 
@@ -139,8 +154,6 @@ void writeresultsstdout(){
 	cout << "Cut = " << results.cut << " Cut err = " << results.cuterr << endl;
 	cout << "Laserdim = " << results.totalperimeter << " Laserdim err = " << results.totalperimetererr << endl;
 	cout << "Polyakov loop = " << results.polyakovloopaftercut << " Polyakov loop err = " << results.polyakovloopaftercuterr << endl;
-	cout << "Polyakov loop (Domain Wall largest cluster) = " << results.largestclusterdomainwallpoll << ", Error = " << results.largestclusterdomainwallpollerr << endl;
-	cout << "Polyakov loop (Domain Wall average) = " << results.avgdomainwallpoll << ", Error = " << results.avgdomainwallpollerr << endl;
 
 	cout << endl;
 }

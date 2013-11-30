@@ -579,60 +579,6 @@ void obsRootMeanSquareDistance(Observablestruct &lobs, Clusterstruct &lclusterda
 	lobs.rootmeansquaredistanceR = sqrt(meansquaredistanceR);
 }
 
-void obsPollDomainWalls(Observablestruct &lobs, Clusterstruct &lclusterdata){
-	/* Calculation of Polyakov loop expectation value for points which 
-	 + build the wall around a given cluster c */
-	
-	lobs.domainwallpoll.resize(lclusterdata.clustermembers.size());
-	lobs.undefdomainwall.resize(lclusterdata.clustermembers.size());
-	complex<double> pollsum=0;
-	int pollcnt=0;
-
-	int isneib=0;
-
-	for(unsigned int c=0; c<lclusterdata.clustermembers.size();c++){
-		pollsum=0;
-		pollcnt=0;
-		lobs.undefdomainwall[c]=0;
-		for(int is=0;is<Nspace;is++){
-			for(int mu=0;mu<6;mu++){
-				isneib=neib[is][mu];
-				if((unsigned)lclusterdata.isincluster[isneib] != c ){
-					// cout << (unsigned)lclusterdata.isincluster[isneib] << " " << c << endl;
-					pollsum += lclusterdata.poll.at(isneib);
-					pollcnt++;
-					if(lclusterdata.isinsector[isneib] > 1)
-						lobs.undefdomainwall[c] = lobs.undefdomainwall[c] + 1.0;
-				}
-			}
-		}
-		lobs.domainwallpoll.at(c) = abs(pollsum)/(double)pollcnt;
-		lobs.undefdomainwall[c] = lobs.undefdomainwall[c]/(double)pollcnt;
-	}
-	lobs.Ldomainwallpoll = lobs.domainwallpoll[lobs.maxclusterid];
-
-	int cnt=0;
-	lobs.Adomainwallpoll=0;
-	for(unsigned int c=0; c<lclusterdata.clustermembers.size();c++){
-		if(lclusterdata.isinsector[lclusterdata.clustermembers[c][0]] < 2 && lobs.domainwallpoll[c] == lobs.domainwallpoll[c]){
-			lobs.Adomainwallpoll = lobs.Adomainwallpoll + lobs.domainwallpoll[c];
-			cnt++;
-		}
-	} 
-	lobs.Adomainwallpoll = lobs.Adomainwallpoll/(double)cnt;
-
-	/* double undefdomainwallall=0;
-	int cnt=0;
-	for(unsigned int c=0; c<lclusterdata.clustermembers.size();c++){
-		if(lclusterdata.clustersector[c] < 2){
-			undefdomainwallall = undefdomainwallall + lobs.undefdomainwall[c];
-			cnt++;
-		}
-	}
-	undefdomainwallall=undefdomainwallall/(double)cnt;
-	cout << undefdomainwallall << endl; */
-}
-
 void calcObservables(Observablestruct &lobs, Clusterstruct &lclusterdata){
 	#ifdef DEBUG	
 	cout << "Calculating observables... " << flush;
@@ -660,8 +606,6 @@ void calcObservables(Observablestruct &lobs, Clusterstruct &lclusterdata){
 	obsAreaAvgNonPercCluster(lobs, lclusterdata);
 	// lobs.poll
 	obsPollAfterCut(lobs, lclusterdata);
-	// lobs.domainwallpoll
-	obsPollDomainWalls(lobs, lclusterdata);
 
 	
 	// lobs.numberofboxes
@@ -682,6 +626,7 @@ void calcObservables(Observablestruct &lobs, Clusterstruct &lclusterdata){
 
   // obsClusterMeanFreePathLargest(lobs, lclusterdata);
   obsClusterMeanFreePath(lobs, lclusterdata);
+  obsClusterMeanFreePathNew(lobs, lclusterdata);
 	
 	// lobs.rootmeansquaredistanceR
 	if(dodistance){
@@ -930,34 +875,6 @@ void calcExp(){
 	results.polyakovloopaftercut=mpoll;
 	results.polyakovloopaftercuterr=mpollerr;
 	
-	// Polyakov loop expectation value for domain walls largest cluster
-	double mLdomainwallpoll=0, mLdomainwallpollerr=0;
-	for(int n=0;n<nmeas;n++){
-		ddata[n]=0;
-		for(int j=0;j<nmeas;j++){
-			if(n!=j)
-				ddata[n] += (&obs[j])->Ldomainwallpoll;
-		}
-		ddata[n] = ddata[n]/(double)(nmeas-1);
-	}
-	Jackknife(ddata, mLdomainwallpoll, mLdomainwallpollerr, nmeas);
-	results.largestclusterdomainwallpoll=mLdomainwallpoll;
-	results.largestclusterdomainwallpollerr=mLdomainwallpollerr;
-	
-	// Polyakov loop expectation value for domain wall average
-	double mAdomainwallpoll=0, mAdomainwallpollerr=0;
-	for(int n=0;n<nmeas;n++){
-		ddata[n]=0;
-		for(int j=0;j<nmeas;j++){
-			if(n!=j)
-				ddata[n] += (&obs[j])->Adomainwallpoll;
-		}
-		ddata[n] = ddata[n]/(double)(nmeas-1);
-	}
-	Jackknife(ddata, mAdomainwallpoll, mAdomainwallpollerr, nmeas);
-	results.avgdomainwallpoll=mAdomainwallpoll;
-	results.avgdomainwallpollerr=mAdomainwallpollerr;
-	
 	// Number of percolating clusters expectation value
 	for(int n=0;n<nmeas;n++){
 		ddata[n]=0;
@@ -1026,6 +943,36 @@ void calcExp(){
 	Jackknife(ddata, mavgnpclustermeanfreepath, mavgnpclustermeanfreepatherr, nmeas);
 	results.avgnpclustermeanfreepath=mavgnpclustermeanfreepath;
 	results.avgnpclustermeanfreepatherr=mavgnpclustermeanfreepatherr;
+
+  // NEW DEFINITION OF MEAN FREE PATH
+  // Mean free path of largest cluster expectation value (NEW)
+	double mlargestclustermeanfreepathnew=0, mlargestclustermeanfreepathnewerr=0;
+	for(int n=0;n<nmeas;n++){
+		ddata[n]=0;
+		for(int j=0;j<nmeas;j++){
+			if(n!=j)
+				ddata[n] += (&obs[j])->largestclustermeanfreepathnew;
+		}
+		ddata[n] = ddata[n]/(double)(nmeas-1);
+	}
+	Jackknife(ddata, mlargestclustermeanfreepathnew, mlargestclustermeanfreepathnewerr, nmeas);
+	results.largestclustermeanfreepathnew=mlargestclustermeanfreepathnew;
+	results.largestclustermeanfreepathnewerr=mlargestclustermeanfreepathnewerr;
+  
+  // Mean free path of largest non-perc. cluster expectation value (NEW)
+	double mlargestnpclustermeanfreepathnew=0, mlargestnpclustermeanfreepathnewerr=0;
+	for(int n=0;n<nmeas;n++){
+		ddata[n]=0;
+		for(int j=0;j<nmeas;j++){
+			if(n!=j)
+				ddata[n] += (&obs[j])->largestnpclustermeanfreepathnew;
+		}
+		ddata[n] = ddata[n]/(double)(nmeas-1);
+	}
+	Jackknife(ddata, mlargestnpclustermeanfreepathnew, mlargestnpclustermeanfreepathnewerr, nmeas);
+	results.largestnpclustermeanfreepathnew=mlargestnpclustermeanfreepathnew;
+	results.largestnpclustermeanfreepathnewerr=mlargestnpclustermeanfreepathnewerr;
+	// END NEW DEFINITION OF MEAN FREE PATH
 
 	if(doboxes){
 		// Box counts for largest cluster which is not in sector 2

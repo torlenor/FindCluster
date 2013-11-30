@@ -60,16 +60,17 @@ struct Observablestruct{
 	double areaavgnonperccluster;
 
 	double poll;
-	vector<double> domainwallpoll;
-	double Ldomainwallpoll;
-	double Adomainwallpoll;
-	vector<double> undefdomainwall;
   
   vector<double> meanfreepath;
   double largestclustermeanfreepath;
   double largestnpclustermeanfreepath;
   double avgclustermeanfreepath;
   double avgnpclustermeanfreepath;
+  
+  vector<double> meanfreepathnew;
+  double largestclustermeanfreepathnew;
+  double largestnpclustermeanfreepathnew;
+  
 };
 
 struct Resultstruct{
@@ -89,8 +90,6 @@ struct Resultstruct{
 	double avgclusterradius, avgclusterradiuserr;
 	double avgnpclusterradius, avgnpclusterradiuserr;
 	double polyakovloopaftercut, polyakovloopaftercuterr;
-	double largestclusterdomainwallpoll, largestclusterdomainwallpollerr;
-	double avgdomainwallpoll, avgdomainwallpollerr;
 	double avgperccluster, avgpercclustererr;
 	vector<double> largestclusterboxcount, largestclusterboxcounterr;
 	vector<double> largestnonpercboxcount, largestnonpercboxcounterr;
@@ -99,6 +98,9 @@ struct Resultstruct{
   double largestnpclustermeanfreepath, largestnpclustermeanfreepatherr;
   double avgclustermeanfreepath, avgclustermeanfreepatherr;
   double avgnpclustermeanfreepath, avgnpclustermeanfreepatherr;
+  
+  double largestclustermeanfreepathnew, largestclustermeanfreepathnewerr;
+  double largestnpclustermeanfreepathnew, largestnpclustermeanfreepathnewerr;
 };
 
 // Stuff to find and categorize sectors/clusters for one configuration
