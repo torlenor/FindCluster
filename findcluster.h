@@ -70,7 +70,10 @@ struct Observablestruct{
   vector<double> meanfreepathnew;
   double largestclustermeanfreepathnew;
   double largestnpclustermeanfreepathnew;
-  
+  double avgclustermeanfreepathnew;
+  double avgnpclustermeanfreepathnew;
+  double avgFclustermeanfreepathnew;
+  double avgFnpclustermeanfreepathnew;
 };
 
 struct Resultstruct{
@@ -101,6 +104,10 @@ struct Resultstruct{
   
   double largestclustermeanfreepathnew, largestclustermeanfreepathnewerr;
   double largestnpclustermeanfreepathnew, largestnpclustermeanfreepathnewerr;
+  double avgclustermeanfreepathnew, avgclustermeanfreepathnewerr;
+  double avgnpclustermeanfreepathnew, avgnpclustermeanfreepathnewerr;
+  double avgFclustermeanfreepathnew, avgFclustermeanfreepathnewerr;
+  double avgFnpclustermeanfreepathnew, avgFnpclustermeanfreepathnewerr;
 };
 
 // Stuff to find and categorize sectors/clusters for one configuration

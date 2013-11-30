@@ -560,4 +560,126 @@ void obsClusterMeanFreePathNew(Observablestruct &lobs, Clusterstruct &lclusterda
   } */
 }
 
+void obsAverageMeanfreepathNew(Observablestruct &lobs, Clusterstruct &lclusterdata){
+
+  // Naive averages
+  // Calculate average over all clusters
+  double avgclustermeanfreepathnew=0;
+  int cnt=0;
+  for(unsigned int c=0; c<lclusterdata.clustermembers.size(); c++){
+    if(lclusterdata.clustersector[c] < 2){
+      avgclustermeanfreepathnew += lobs.meanfreepathnew[c];
+      cnt++;
+    }    
+  }
+  lobs.avgclustermeanfreepathnew = avgclustermeanfreepathnew/(double)cnt;
+  // Calculate average cluster size non percolating
+  avgclustermeanfreepathnew=0;
+  cnt=0;
+  for(unsigned int c=0; c<lclusterdata.clustermembers.size(); c++){
+    if(lclusterdata.clustersector[c] < 2 && lclusterdata.clusterispercolating[c] == 0){
+      avgclustermeanfreepathnew += lobs.meanfreepathnew[c];
+      cnt++;
+    }    
+  }
+  lobs.avgnpclustermeanfreepathnew = avgclustermeanfreepathnew/(double)cnt;
+
+  // --------------------------------------------------------------------- //
+  // Fortunato/Stauffer average over all clusters
+  // --------------------------------------------------------------------- //
+	// First calculate the number of clusters of size s per lattice site
+	vector<int> sizes;
+	vector<double> sizedist;
+	vector<double> pathavg;
+	vector<int> pathcnt;
+	double avgFclustermeanfreepathnew=0;
+	int curcsize;
+	int knownsize=0;
+
+	for(unsigned int c=0; c<lclusterdata.clustermembers.size(); c++){
+		if(lclusterdata.clustersector[c] < 2 && lclusterdata.clustermembers[c].size() > 1){
+			curcsize = lclusterdata.clustermembers[c].size();
+			knownsize=0;
+			for(unsigned int s=0; s<sizes.size(); s++){
+				if(sizes[s] == curcsize){
+					knownsize = s;
+					break;
+				}
+			}
+			if(knownsize>0){
+				sizedist[knownsize] += 1.0/(double)Nspace;
+
+				pathavg[knownsize] += lobs.meanfreepathnew.at(c);
+				pathcnt[knownsize]++;
+			}else{
+				sizes.push_back(curcsize);
+				sizedist.push_back(1.0/(double)Nspace);
+				
+				pathavg.push_back(lobs.meanfreepathnew.at(c));
+				pathcnt.push_back(1);
+			}
+		}
+	}
+
+	// Norm of pathavg
+	for(unsigned int size=0; size<sizedist.size(); size++){
+		pathavg[size]=pathavg[size]/(double)pathcnt[size];
+	}
+
+	for(unsigned int size=0; size<sizedist.size(); size++){
+		avgFclustermeanfreepathnew += sizedist[size]*sizes[size]*pathavg.at(size);
+	}
+
+	lobs.avgFclustermeanfreepathnew = avgFclustermeanfreepathnew;
+	
+	// --------------------------------------------------------------------- //
+  // Fortunato/Stauffer average over all clusters (non-perc.)
+  // --------------------------------------------------------------------- //
+	// First calculate the number of clusters of size s per lattice site
+	sizes.resize(0);
+	sizedist.resize(0);
+	pathavg.resize(0);
+	pathcnt.resize(0);
+	double avgFnpclustermeanfreepathnew=0;
+	curcsize=0;
+	knownsize=0;
+
+	for(unsigned int c=0; c<lclusterdata.clustermembers.size(); c++){
+		if(lclusterdata.clustersector[c] < 2 && lclusterdata.clustermembers[c].size() > 1  && lclusterdata.clusterispercolating[c] == 0){
+			curcsize = lclusterdata.clustermembers[c].size();
+			knownsize=0;
+			for(unsigned int s=0; s<sizes.size(); s++){
+				if(sizes[s] == curcsize){
+					knownsize = s;
+					break;
+				}
+			}
+			if(knownsize>0){
+				sizedist[knownsize] += 1.0/(double)Nspace;
+
+				pathavg[knownsize] += lobs.meanfreepathnew.at(c);
+				pathcnt[knownsize]++;
+			}else{
+				sizes.push_back(curcsize);
+				sizedist.push_back(1.0/(double)Nspace);
+				
+				pathavg.push_back(lobs.meanfreepathnew.at(c));
+				pathcnt.push_back(1);
+			}
+		}
+	}
+
+	// Norm of pathavg
+	for(unsigned int size=0; size<sizedist.size(); size++){
+		pathavg[size]=pathavg[size]/(double)pathcnt[size];
+	}
+
+	for(unsigned int size=0; size<sizedist.size(); size++){
+		avgFnpclustermeanfreepathnew += sizedist[size]*sizes[size]*pathavg.at(size);
+	}
+
+	lobs.avgFnpclustermeanfreepathnew = avgFnpclustermeanfreepathnew;
+}
+
+
 #endif // FINDCLUSTER_PATH_HPP

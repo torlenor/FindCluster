@@ -9,7 +9,14 @@ void writeresults(){
 	fclustersize << "# Nt largestclusterweight largestclusterweighterr avgclusterweight avgclusterweighterr avgfortunatoclustersize avgfortunatoclustersizeerr largestnonpercclusterweight largestnonpercclusterweighterr largestclusterradius largestclusterradiuserr rootmeansquaredistanceR rootmeansquaredistanceR" << endl;
 	fclustersize.flags (std::ios::scientific);
 	fclustersize.precision(numeric_limits<double>::digits10 + 1);
-	fclustersize << Nt << " " << results.maxclustersize << " " << results.maxclustersizeerr << " " << results.avgclustersize << " " << results.avgclustersizeerr << " " << results.avgclusersizeFortunato << " " << results.avgclusersizeFortunatoerr << " " << results.maxnonpercclustersize << " " << results.maxnonpercclustersizeerr << " " << results.largestclusterradius << " " << results.largestclusterradiuserr << " " << results.avgrootmeansquaredistance << " " << results.avgrootmeansquaredistanceerr << endl;
+	fclustersize << Nt << " " 
+	  << results.maxclustersize << " " << results.maxclustersizeerr << " " 
+	  << results.avgclustersize << " " << results.avgclustersizeerr << " " 
+	  << results.avgclusersizeFortunato << " " << results.avgclusersizeFortunatoerr << " " 
+	  << results.maxnonpercclustersize << " " << results.maxnonpercclustersizeerr << " " 
+	  << results.largestclusterradius << " " << results.largestclusterradiuserr << " " 
+	  << results.avgrootmeansquaredistance << " " << results.avgrootmeansquaredistanceerr 
+	<< endl;
 	fclustersize.close();
 	
 	stringstream favgclustersizename;
@@ -84,7 +91,11 @@ void writeresults(){
 	ffreepathnew.precision(numeric_limits<double>::digits10 + 1);
 	ffreepathnew << Nt << " " 
       << results.largestclustermeanfreepathnew << " " << results.largestclustermeanfreepathnewerr << " " 
-      << results.largestnpclustermeanfreepathnew << " " << results.largestnpclustermeanfreepathnewerr
+      << results.largestnpclustermeanfreepathnew << " " << results.largestnpclustermeanfreepathnewerr << " " 
+      << results.avgclustermeanfreepathnew << " " << results.avgclustermeanfreepathnewerr << " " 
+      << results.avgnpclustermeanfreepathnew << " " << results.avgnpclustermeanfreepathnewerr << " " 
+      << results.avgFclustermeanfreepathnew << " " << results.avgFclustermeanfreepathnewerr << " " 
+      << results.avgFnpclustermeanfreepathnew << " " << results.avgFnpclustermeanfreepathnewerr
   << endl;
 	ffreepathnew.close();
 	// END NEW DEFINITION OF MEAN FREE PATH

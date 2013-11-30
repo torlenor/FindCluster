@@ -627,6 +627,7 @@ void calcObservables(Observablestruct &lobs, Clusterstruct &lclusterdata){
   // obsClusterMeanFreePathLargest(lobs, lclusterdata);
   obsClusterMeanFreePath(lobs, lclusterdata);
   obsClusterMeanFreePathNew(lobs, lclusterdata);
+  obsAverageMeanfreepathNew(lobs, lclusterdata);
 	
 	// lobs.rootmeansquaredistanceR
 	if(dodistance){
@@ -972,6 +973,62 @@ void calcExp(){
 	Jackknife(ddata, mlargestnpclustermeanfreepathnew, mlargestnpclustermeanfreepathnewerr, nmeas);
 	results.largestnpclustermeanfreepathnew=mlargestnpclustermeanfreepathnew;
 	results.largestnpclustermeanfreepathnewerr=mlargestnpclustermeanfreepathnewerr;
+	  
+  // Mean free path of avg cluster expectation value
+	double mavgclustermeanfreepathnew=0, mavgclustermeanfreepathnewerr=0;
+	for(int n=0;n<nmeas;n++){
+		ddata[n]=0;
+		for(int j=0;j<nmeas;j++){
+			if(n!=j)
+				ddata[n] += (&obs[j])->avgclustermeanfreepathnew;
+		}
+		ddata[n] = ddata[n]/(double)(nmeas-1);
+	}
+	Jackknife(ddata, mavgclustermeanfreepathnew, mavgclustermeanfreepathnewerr, nmeas);
+	results.avgclustermeanfreepathnew=mavgclustermeanfreepathnew;
+	results.avgclustermeanfreepathnewerr=mavgclustermeanfreepathnewerr;
+  
+  // Mean free path of avg non-perc. cluster expectation value
+	double mavgnpclustermeanfreepathnew=0, mavgnpclustermeanfreepathnewerr=0;
+	for(int n=0;n<nmeas;n++){
+		ddata[n]=0;
+		for(int j=0;j<nmeas;j++){
+			if(n!=j)
+				ddata[n] += (&obs[j])->avgnpclustermeanfreepathnew;
+		}
+		ddata[n] = ddata[n]/(double)(nmeas-1);
+	}
+	Jackknife(ddata, mavgnpclustermeanfreepathnew, mavgnpclustermeanfreepathnewerr, nmeas);
+	results.avgnpclustermeanfreepathnew=mavgnpclustermeanfreepathnew;
+	results.avgnpclustermeanfreepathnewerr=mavgnpclustermeanfreepathnewerr;
+	
+	// Mean free path of avg cluster expectation value Fortunato/Stauffer
+	double mavgFclustermeanfreepathnew=0, mavgFclustermeanfreepathnewerr=0;
+	for(int n=0;n<nmeas;n++){
+		ddata[n]=0;
+		for(int j=0;j<nmeas;j++){
+			if(n!=j)
+				ddata[n] += (&obs[j])->avgFclustermeanfreepathnew;
+		}
+		ddata[n] = ddata[n]/(double)(nmeas-1);
+	}
+	Jackknife(ddata, mavgFclustermeanfreepathnew, mavgFclustermeanfreepathnewerr, nmeas);
+	results.avgFclustermeanfreepathnew=mavgFclustermeanfreepathnew;
+	results.avgFclustermeanfreepathnewerr=mavgFclustermeanfreepathnewerr;
+  
+  // Mean free path of avg non-perc. cluster expectation value Fortunato/Stauffer
+	double mavgFnpclustermeanfreepathnew=0, mavgFnpclustermeanfreepathnewerr=0;
+	for(int n=0;n<nmeas;n++){
+		ddata[n]=0;
+		for(int j=0;j<nmeas;j++){
+			if(n!=j)
+				ddata[n] += (&obs[j])->avgFnpclustermeanfreepathnew;
+		}
+		ddata[n] = ddata[n]/(double)(nmeas-1);
+	}
+	Jackknife(ddata, mavgFnpclustermeanfreepathnew, mavgFnpclustermeanfreepathnewerr, nmeas);
+	results.avgFnpclustermeanfreepathnew=mavgFnpclustermeanfreepathnew;
+	results.avgFnpclustermeanfreepathnewerr=mavgFnpclustermeanfreepathnewerr;
 	// END NEW DEFINITION OF MEAN FREE PATH
 
 	if(doboxes){
