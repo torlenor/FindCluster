@@ -382,6 +382,7 @@ void obsClusterMeanFreePathNew(Observablestruct &lobs, Clusterstruct &lclusterda
       totalcount=0;
       double path1=0, path2=0, path3=0;
       int paths=0;
+      double segment=0;
 
       int i1=0, i2=0, i3=0, startpoint=0, ii=0;
 
@@ -391,6 +392,7 @@ void obsClusterMeanFreePathNew(Observablestruct &lobs, Clusterstruct &lclusterda
       // First direction
       paths=0;
       path1=0;
+      segment=0;
       for (i1=0; i1<leng1; i1++) {
       for (i2=0; i2<leng2; i2++) {
         for( int ij=0; ij<leng3; ij++) {
@@ -401,6 +403,7 @@ void obsClusterMeanFreePathNew(Observablestruct &lobs, Clusterstruct &lclusterda
 
           if (lclusterdata.isincluster[latmap(i1, i2, i3)] == c && istagged[i3] == 0) {
             paths++;
+            segment=0;
 
             // Go in +3 direction
             startpoint = i3;
@@ -409,7 +412,8 @@ void obsClusterMeanFreePathNew(Observablestruct &lobs, Clusterstruct &lclusterda
               if (istagged[ii] == 1) {
                 cout << "WTF!" << endl;
               }
-              path1 = path1 + 1.0;
+              segment += 1.0;
+              // path1 = path1 + 1.0;
               istagged[ii] = 1;
               totalcount++;
               ii++;
@@ -421,7 +425,8 @@ void obsClusterMeanFreePathNew(Observablestruct &lobs, Clusterstruct &lclusterda
             ii = startpoint;
             do {
               if( istagged[ii] == 0) {
-                path1 = path1 + 1.0;
+                segment += 1.0;
+                // path1 = path1 + 1.0;
                 istagged[ii] = 1;
                 totalcount++;
               }
@@ -429,12 +434,12 @@ void obsClusterMeanFreePathNew(Observablestruct &lobs, Clusterstruct &lclusterda
               if(ii == -1)
                 ii = ii + leng3;
             } while ( lclusterdata.isincluster.at(latmap(i1, i2, ii)) == c && ii != startpoint);
-            
-          }
+            path1 += segment*segment;
+          } // new segment found if end
         }
       }
       }
-      path1=(path1*path1)/((double)lclusterdata.clustermembers[c].size()*(double)2.0);
+      path1=path1/((double)lclusterdata.clustermembers[c].size()*(double)2.0);
       // END 1st direction
       if ( (totalcount - (int)lclusterdata.clustermembers[c].size()) != 0) {
         cout << "ERROR: Something wrong in path calculation, direction 3. Number of counted cluster members != clustermembers" << endl;
@@ -442,7 +447,9 @@ void obsClusterMeanFreePathNew(Observablestruct &lobs, Clusterstruct &lclusterda
 
       // 2nd direction
       paths=0;
+      path2=0;
       totalcount=0;
+      segment=0;
       for (i1=0; i1<leng1; i1++) {
       for (i3=0; i3<leng3; i3++) {
         for( int ij=0; ij<leng2; ij++) {
@@ -453,6 +460,7 @@ void obsClusterMeanFreePathNew(Observablestruct &lobs, Clusterstruct &lclusterda
 
           if (lclusterdata.isincluster[latmap(i1, i2, i3)] == c && istagged[i2] == 0) {
             paths++;
+            segment=0;
 
             // Go in +2 direction
             startpoint = i2;
@@ -461,7 +469,8 @@ void obsClusterMeanFreePathNew(Observablestruct &lobs, Clusterstruct &lclusterda
               if (istagged[ii] == 1) {
                 cout << "WTF!" << endl;
               }
-              path2 = path2 + 1.0;
+              segment += 1.0;
+              // path2 = path2 + 1.0;
               istagged[ii] = 1;
               totalcount++;
               ii++;
@@ -473,7 +482,8 @@ void obsClusterMeanFreePathNew(Observablestruct &lobs, Clusterstruct &lclusterda
             ii = startpoint;
             do {
               if( istagged[ii] == 0) {
-                path2 = path2 + 1.0;
+                segment += 1.0;
+                // path2 = path2 + 1.0;
                 totalcount++;
                 istagged[ii] = 1;
               }
@@ -481,12 +491,12 @@ void obsClusterMeanFreePathNew(Observablestruct &lobs, Clusterstruct &lclusterda
               if(ii == -1)
                 ii = ii + leng2;
             } while ( lclusterdata.isincluster.at(latmap(i1, ii, i3)) == c && ii != startpoint);
-            
-          }
+            path2 += segment*segment;
+          } // new segment found if end
         }
       }
       }
-      path2=(path2*path2)/((double)lclusterdata.clustermembers[c].size()*(double)2.0);
+      path2=path2/((double)lclusterdata.clustermembers[c].size()*(double)2.0);
       // END 2nd direction
       if ( (totalcount - (int)lclusterdata.clustermembers[c].size()) != 0) {
         cout << "ERROR: Something wrong in path calculation, direction 2. Number of counted cluster members != clustermembers" << endl;
@@ -495,6 +505,7 @@ void obsClusterMeanFreePathNew(Observablestruct &lobs, Clusterstruct &lclusterda
       // 3rd direction
       paths=0;
       totalcount=0;
+      segment=0;
       for (i2=0; i2<leng2; i2++) {
       for (i3=0; i3<leng3; i3++) {
         for( int ij=0; ij<leng1; ij++) {
@@ -505,6 +516,7 @@ void obsClusterMeanFreePathNew(Observablestruct &lobs, Clusterstruct &lclusterda
 
           if (lclusterdata.isincluster[latmap(i1, i2, i3)] == c && istagged[i1] == 0) {
             paths++;
+            segment=0;
 
             // Go in +1 direction
             startpoint = i1;
@@ -513,7 +525,8 @@ void obsClusterMeanFreePathNew(Observablestruct &lobs, Clusterstruct &lclusterda
               if (istagged[ii] == 1) {
                 cout << "WTF!" << endl;
               }
-              path3 = path3 + 1.0;
+              segment += 1.0;
+              // path3 = path3 + 1.0;
               istagged[ii] = 1;
               totalcount++;
               ii++;
@@ -525,7 +538,8 @@ void obsClusterMeanFreePathNew(Observablestruct &lobs, Clusterstruct &lclusterda
             ii = startpoint;
             do {
               if( istagged[ii] == 0) {
-                path3 = path3 + 1.0;
+                segment += 1.0;
+                // path3 = path3 + 1.0;
                 totalcount++;
                 istagged[ii] = 1;
               }
@@ -533,12 +547,12 @@ void obsClusterMeanFreePathNew(Observablestruct &lobs, Clusterstruct &lclusterda
               if(ii == -1)
                 ii = ii + leng1;
             } while ( lclusterdata.isincluster.at(latmap(ii, i2, i3)) == c && ii != startpoint);
-            
-          }
+            path3 += segment*segment;
+          } // new segment found if end
         }
       }
       }
-      path3=(path3*path3)/((double)lclusterdata.clustermembers[c].size()*(double)2.0);
+      path3=path3/((double)lclusterdata.clustermembers[c].size()*(double)2.0);
       // END 3nd direction
       
       if ( (totalcount - (int)lclusterdata.clustermembers[c].size()) != 0) {

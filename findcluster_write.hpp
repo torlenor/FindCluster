@@ -86,7 +86,7 @@ void writeresults(){
 	ffreepathnewname << "meanfreepath_new_" << Ns << "x" << Nt << "_f" << fraction << ".res";
 	ofstream ffreepathnew;
 	ffreepathnew.open(ffreepathnewname.str().c_str());
-	ffreepathnew << "# Nt largestcluster largestclustererr largestnpcluster largestnpclustererr avgcluster avgclustererr avgnpcluster avgnpclustererr" << endl;
+	ffreepathnew << "# 1Nt 2largestcluster 3largestclustererr 4largestnpcluster 5largestnpclustererr 6avgcluster 7avgclustererr 8avgnpcluster 9avgnpclustererr 10avgFcluster 11avgFclustererr 12avgFnpcluster 13avgFnpclustererr" << endl;
 	ffreepathnew.flags (std::ios::scientific);
 	ffreepathnew.precision(numeric_limits<double>::digits10 + 1);
 	ffreepathnew << Nt << " " 
