@@ -1,15 +1,11 @@
-#ifndef GENERIC_HPP
-#define GENERIC_HPP
+#ifndef READOWNDATA_HPP
+#define READOWNDATA_HPP
 
 #include <iostream>
 #include <fstream>
 #include <complex>
 #include <vector>
 #include <string>
-
-int writePollEv(string fevname);
-int writePollEvBinary(string fevname);
-void checkPollEv();
 
 void checkPollEv(int leng1, int leng2, int leng3, int leng4, int matrixdim, vector<vector<complex<double> > > &pollev){
 	#ifdef DEBUG
@@ -117,4 +113,4 @@ int readPollEvBinary(int leng1, int leng2, int leng3, int leng4, int matrixdim, 
         return nindex + 4 - elems;
 }
 
-#endif // GENERIC_HPP
+#endif // READOWNDATA_HPP

@@ -15,14 +15,17 @@
 #include <iomanip>
 #include <limits>
 
-using namespace std;
 
 #include "version.h"
-#include "include/generic.hpp"
+// #include "include/readowndata.hpp"
+#include "include/readwupperdata.hpp"
+
+using namespace std;
 
 #include "include/jackknife.h"
 
 #include "findcluster.h"
+
 
 int Ns=4, Nt=4;
 int matrixdim=3, leng1=4, leng2=4, leng3=4, leng4=4, Nspace=4*4*4*4;
@@ -97,13 +100,13 @@ int main(int argc, char *argv[]){
 			cout << "\r" <<  fevname[n] << "..." << flush;
 		}
 		// Read Polyakov loop eigenvalues file
-		if(readPollEvBinary(leng1, leng2, leng3, leng4, matrixdim, pollev, fevname[n]) != 0){
+		if(readWupperPollEvBinary(leng1, leng2, leng3, leng4, matrixdim, pollev, fevname[n]) != 0){
 			cout << "ERROR: Problems with writePollEvBinary !" << endl;
 			return 1;
 		}
 		
 		// Check Polyakov loop eigenvalues
-		checkPollEv(leng1, leng2, leng3, leng4, matrixdim, pollev);
+		// checkPollEv(leng1, leng2, leng3, leng4, matrixdim, pollev);
 		
 		if(usealternativesectors==true){
 			fillSectorsAlt(clusterdata[n], r); // Categorize lattice points by sectors using alternative prescription
