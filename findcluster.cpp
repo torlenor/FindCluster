@@ -90,16 +90,18 @@ int main(int argc, char *argv[]){
 	cout << "------------------------------------------------------------------------------" << endl;
 	for(int n=0;n<nmeas;n++){
 		// Allocate memory for faster access
-                (&clusterdata[n])->isinsector.resize(Nspace);
-                (&clusterdata[n])->isincluster.resize(Nspace);
+    (&clusterdata[n])->isinsector.resize(Nspace);
+    (&clusterdata[n])->isincluster.resize(Nspace);
 
 		if(detail){
 			cout << endl << "------------------------------------------------------------------------------" << endl;
-			cout << fevname[n] << "..." << endl;
+			cout << fevname[n] << " ... " << endl;
 		}else{
-			cout << "\r" <<  fevname[n] << "..." << flush;
+			cout << "\r" <<  "                                                   " << flush;
+			cout << "\r" <<  fevname[n] << " ... " << flush;
 		}
 		// Read Polyakov loop eigenvalues file
+    cout << "r" << flush;
 		if(readWupperPollEvBinary(leng1, leng2, leng3, leng4, matrixdim, pollev, fevname[n]) != 0){
 			cout << "ERROR: Problems with writePollEvBinary !" << endl;
 			return 1;
@@ -113,13 +115,17 @@ int main(int argc, char *argv[]){
 		}else{
 			fillSectors(clusterdata[n], delta); // Categorize lattice points by sectors
 		}
-		
+	
+    cout << "c" << flush;
 		findClusters(clusterdata[n]);	// Identify clusters
 		checkClusters(clusterdata[n]); // Check clusters
+    cout << "p" << flush;
 		findPercolatingCluster(clusterdata[n]); // Find percolating clusters
 
+    cout << "s" << flush;
 		sortClusterSize(clusterdata[n]); // Sort clusters per number of members
 
+    cout << "o" << flush;
 		calcObservables(obs[n], clusterdata[n]); // Calculate observables
 		
 		if(detail){

@@ -37,7 +37,7 @@ int readWupperPollEvBinary(int leng1, int leng2, int leng3, int leng4, int matri
 
 	int is;
 
-	if( nindex != pollev.size() * pollev[pollev.size()-1].size() ){
+	if( nindex > pollev.size() * pollev[pollev.size()-1].size() ){
 		cout << "ERROR: Something wrong in readPollEvBinary!" << endl;
 		cout << "Want to read nindex = " << nindex << " entries, but has space for (only) " << pollev.size() * pollev[pollev.size()-1].size() << " entries!" << endl;
 	}
@@ -85,7 +85,7 @@ int readWupperPollEvBinary(int leng1, int leng2, int leng3, int leng4, int matri
 
   poll = poll/((double)leng1*leng2*leng3);
 
-  cout << "Total Polyakov loop P = " << poll << endl;
+  // cout << "Total Polyakov loop P = " << poll << endl;
 	
   return 2*nindex + 4 - elems; // factor 2 from complex and 4 are the 4 ints at the beginning
 }
