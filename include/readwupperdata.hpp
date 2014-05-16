@@ -6,7 +6,6 @@
 #include <complex>
 #include <vector>
 #include <string>
-#include <complex.h>
 
 // Für jedes Gitter gibt es dann Nx*Ny*Nz*2*4+16 bytes
 // im folgenden Format:
