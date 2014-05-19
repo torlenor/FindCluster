@@ -60,10 +60,12 @@ void writeresults(){
 	fnperccname << "npercc_" << Ns << "x" << Nt << "_f" << fraction << ".res";
 	ofstream fnpercc;
 	fnpercc.open(fnperccname.str().c_str());
-	fnpercc << "# Nt percclusters percclusterserr" << endl;
+	fnpercc << "# Nt percclusters percclusterserr cut cuterr" << endl;
 	fnpercc.flags (std::ios::scientific);
 	fnpercc.precision(numeric_limits<double>::digits10 + 1);
-	fnpercc << Nt << " " << results.avgperccluster << " " << results.avgpercclustererr << endl;
+	fnpercc << Nt << " " << results.avgperccluster << " " << results.avgpercclustererr << " " 
+          << results.cut << " " << results.cuterr 
+  << endl;
 	fnpercc.close();
 	
   stringstream ffreepathname;
