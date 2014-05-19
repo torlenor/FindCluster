@@ -95,10 +95,10 @@ int main(int argc, char *argv[]){
 
 		if(detail){
 			cout << endl << "------------------------------------------------------------------------------" << endl;
-			cout << fevname[n] << " ... " << endl;
+			cout << n+1 << " of "<< nmeas << ": " << fevname[n] << " ... " << endl;
 		}else{
 			cout << "\r" <<  "                                                   " << flush;
-			cout << "\r" <<  fevname[n] << " ... " << flush;
+			cout << "\r" << n+1 << " of "<< nmeas << ": " << fevname[n] << " ... " << flush;
 		}
 		// Read Polyakov loop eigenvalues file
     cout << "r" << flush;
