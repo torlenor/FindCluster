@@ -624,10 +624,12 @@ void calcObservables(Observablestruct &lobs, Clusterstruct &lclusterdata){
 		}
 	}
 
-  // obsClusterMeanFreePathLargest(lobs, lclusterdata);
-  // obsClusterMeanFreePath(lobs, lclusterdata);
-  // obsClusterMeanFreePathNew(lobs, lclusterdata);
-  // obsAverageMeanfreepathNew(lobs, lclusterdata);
+	if(domean){
+    obsClusterMeanFreePathLargest(lobs, lclusterdata);
+    obsClusterMeanFreePath(lobs, lclusterdata);
+    obsClusterMeanFreePathNew(lobs, lclusterdata);
+    obsAverageMeanfreepathNew(lobs, lclusterdata);
+  }
 	
 	// lobs.rootmeansquaredistanceR
 	if(dodistance){
@@ -640,22 +642,6 @@ void calcObservables(Observablestruct &lobs, Clusterstruct &lclusterdata){
 }
 
 void calcExp(){
-	double maxclustersize=0, maxclustersizeerr=0;
-
-	double mlargestnpclustersize=0, mlargestnpclustersizeerr=0;
-
-	double avgclustersize=0, avgclustersizeerr=0;
-	double avgclustersizenp=0, avgclustersizenperr=0;
-	double avgclustersizeF=0, avgclustersizeFerr=0;
-	double avgclustersizeFnp=0, avgclustersizeFnperr=0;
-	double avgrootmeansquaredistanceR=0, avgrootmeansquaredistanceRerr=0;
-
-	double avgpercc=0, avgperccerr=0;
-
-	double cut=0, cuterr=0;
-
-	double mlaserdim=0, mlaserdimerr=0;
-	
 	double ddata[nmeas];
 
 	// Start of Jackknife
@@ -668,9 +654,7 @@ void calcExp(){
 		}
 		ddata[n] = ddata[n]/(double)(nmeas-1);
 	}
-	Jackknife(ddata, maxclustersize, maxclustersizeerr, nmeas);
-	results.maxclustersize=maxclustersize;
-	results.maxclustersizeerr=maxclustersizeerr;
+	Jackknife(ddata, results.maxclustersize, results.maxclustersizeerr, nmeas);
 	
 	// Maximal non percolating cluster size per volume expectation value
 	for(int n=0;n<nmeas;n++){
@@ -681,9 +665,7 @@ void calcExp(){
 		}
 		ddata[n] = ddata[n]/(double)(nmeas-1);
 	}
-	Jackknife(ddata, mlargestnpclustersize, mlargestnpclustersizeerr, nmeas);
-	results.maxnonpercclustersize=mlargestnpclustersize;
-	results.maxnonpercclustersizeerr=mlargestnpclustersizeerr;
+	Jackknife(ddata, results.maxnonpercclustersize, results.maxnonpercclustersizeerr, nmeas);
 	
 	// Average cluster size expectation value
 	for(int n=0;n<nmeas;n++){
@@ -694,9 +676,7 @@ void calcExp(){
 		}
 		ddata[n] = ddata[n]/(double)(nmeas-1);
 	}
-	Jackknife(ddata, avgclustersize, avgclustersizeerr, nmeas);
-	results.avgclustersize=avgclustersize;
-	results.avgclustersizeerr=avgclustersizeerr;
+	Jackknife(ddata, results.avgclustersize, results.avgclustersizeerr, nmeas);
 	
 	// Average cluster size expectation value (Fortunato (1.7))
 	for(int n=0;n<nmeas;n++){
@@ -707,9 +687,7 @@ void calcExp(){
 		}
 		ddata[n] = ddata[n]/(double)(nmeas-1);
 	}
-	Jackknife(ddata, avgclustersizeF, avgclustersizeFerr, nmeas);
-	results.avgclusersizeFortunato=avgclustersizeF;
-	results.avgclusersizeFortunatoerr=avgclustersizeFerr;
+	Jackknife(ddata, results.avgclusersizeFortunato, results.avgclusersizeFortunatoerr, nmeas);
 	
 	// Average cluster size expectation value without percolating clusters Fortunato
 	for(int n=0;n<nmeas;n++){
@@ -720,9 +698,7 @@ void calcExp(){
 		}
 		ddata[n] = ddata[n]/(double)(nmeas-1);
 	}
-	Jackknife(ddata, avgclustersizeFnp, avgclustersizeFnperr, nmeas);
-	results.avgclustersizeFnp=avgclustersizeFnp;
-	results.avgclustersizeFnperr=avgclustersizeFnperr;
+	Jackknife(ddata, results.avgclustersizeFnp, results.avgclustersizeFnperr, nmeas);
 	
 	// Average cluster size expectation value without percolating clusters
 	for(int n=0;n<nmeas;n++){
@@ -733,9 +709,7 @@ void calcExp(){
 		}
 		ddata[n] = ddata[n]/(double)(nmeas-1);
 	}
-	Jackknife(ddata, avgclustersizenp, avgclustersizenperr, nmeas);
-	results.avgclustersizenp=avgclustersizenp;
-	results.avgclustersizenperr=avgclustersizenperr;
+	Jackknife(ddata, results.avgclustersizenp, results.avgclustersizenperr, nmeas);
 	
 	if(dodistance){
 		// Average root mean square distance traveled R
@@ -747,9 +721,7 @@ void calcExp(){
 			}
 			ddata[n] = ddata[n]/(double)(nmeas-1);
 		}
-		Jackknife(ddata, avgrootmeansquaredistanceR, avgrootmeansquaredistanceRerr, nmeas);
-		results.avgrootmeansquaredistance=avgrootmeansquaredistanceR;
-		results.avgrootmeansquaredistanceerr=avgrootmeansquaredistanceRerr;
+		Jackknife(ddata, results.avgrootmeansquaredistance, results.avgrootmeansquaredistanceerr, nmeas);
 	}
 	
 	// Cut expectation value
@@ -761,9 +733,7 @@ void calcExp(){
 		}
 		ddata[n] = ddata[n]/(double)(nmeas-1);
 	}
-	Jackknife(ddata, cut, cuterr, nmeas);
-	results.cut=cut;
-	results.cuterr=cuterr;
+	Jackknife(ddata, results.cut, results.cuterr, nmeas);
 	
 	// Perimeter expectation value
 	for(int n=0;n<nmeas;n++){
@@ -774,12 +744,9 @@ void calcExp(){
 		}
 		ddata[n] = ddata[n]/(double)(nmeas-1);
 	}
-	Jackknife(ddata, mlaserdim, mlaserdimerr, nmeas);
-	results.totalperimeter=mlaserdim;
-	results.totalperimetererr=mlaserdimerr;
+	Jackknife(ddata, results.totalperimeter, results.totalperimetererr, nmeas);
 	
 	// Perimeter largest non percolating cluster expectation value
-	double marealargestnonpercc=0, marealargestnonperccerr=0;
 	for(int n=0;n<nmeas;n++){
 		ddata[n]=0;
 		for(int j=0;j<nmeas;j++){
@@ -788,12 +755,9 @@ void calcExp(){
 		}
 		ddata[n] = ddata[n]/(double)(nmeas-1);
 	}
-	Jackknife(ddata, marealargestnonpercc, marealargestnonperccerr, nmeas);
-	results.largestnonpercperimeter=marealargestnonpercc;
-	results.largestnonpercperimetererr=marealargestnonperccerr;
+	Jackknife(ddata, results.largestnonpercperimeter, results.largestnonpercperimetererr, nmeas);
 	
   // Perimeter avg non percolating cluster expectation value
-	double mareaavgnonpercc=0, mareaavgnonperccerr=0;
 	for(int n=0;n<nmeas;n++){
 		ddata[n]=0;
 		for(int j=0;j<nmeas;j++){
@@ -802,12 +766,9 @@ void calcExp(){
 		}
 		ddata[n] = ddata[n]/(double)(nmeas-1);
 	}
-	Jackknife(ddata, mareaavgnonpercc, mareaavgnonperccerr, nmeas);
-	results.avgnonpercperimeter=mareaavgnonpercc;
-	results.avgnonpercperimetererr=mareaavgnonperccerr;
+	Jackknife(ddata, results.avgnonpercperimeter, results.avgnonpercperimetererr, nmeas);
 	
 	// Radius of largest cluster expectation value
-	double mlargestclusterradius=0, mlargestclusterradiuserr=0;
 	for(int n=0;n<nmeas;n++){
 		ddata[n]=0;
 		for(int j=0;j<nmeas;j++){
@@ -816,12 +777,9 @@ void calcExp(){
 		}
 		ddata[n] = ddata[n]/(double)(nmeas-1);
 	}
-	Jackknife(ddata, mlargestclusterradius, mlargestclusterradiuserr, nmeas);
-	results.largestclusterradius=mlargestclusterradius;
-	results.largestclusterradiuserr=mlargestclusterradiuserr;
+	Jackknife(ddata, results.largestclusterradius, results.largestclusterradiuserr, nmeas);
 	
 	// Radius of largest non-perc. cluster expectation value
-	double mlargestnpclusterradius=0, mlargestnpclusterradiuserr=0;
 	for(int n=0;n<nmeas;n++){
 		ddata[n]=0;
 		for(int j=0;j<nmeas;j++){
@@ -830,12 +788,9 @@ void calcExp(){
 		}
 		ddata[n] = ddata[n]/(double)(nmeas-1);
 	}
-	Jackknife(ddata, mlargestnpclusterradius, mlargestnpclusterradiuserr, nmeas);
-	results.largestnpclusterradius=mlargestnpclusterradius;
-	results.largestnpclusterradiuserr=mlargestnpclusterradiuserr;
+	Jackknife(ddata, results.largestnpclusterradius, results.largestnpclusterradiuserr, nmeas);
 	
 	// Avg. radius of cluster
-	double mavgclusterradius=0, mavgclusterradiuserr=0;
 	for(int n=0;n<nmeas;n++){
 		ddata[n]=0;
 		for(int j=0;j<nmeas;j++){
@@ -844,12 +799,9 @@ void calcExp(){
 		}
 		ddata[n] = ddata[n]/(double)(nmeas-1);
 	}
-	Jackknife(ddata, mavgclusterradius, mavgclusterradiuserr, nmeas);
-	results.avgclusterradius=mavgclusterradius;
-	results.avgclusterradiuserr=mavgclusterradiuserr;
+	Jackknife(ddata, results.avgclusterradius, results.avgclusterradiuserr, nmeas);
 	
 	// Avg. radius of non-perc. clusters
-	double mavgnpclusterradius=0, mavgnpclusterradiuserr=0;
 	for(int n=0;n<nmeas;n++){
 		ddata[n]=0;
 		for(int j=0;j<nmeas;j++){
@@ -858,12 +810,9 @@ void calcExp(){
 		}
 		ddata[n] = ddata[n]/(double)(nmeas-1);
 	}
-	Jackknife(ddata, mavgnpclusterradius, mavgnpclusterradiuserr, nmeas);
-	results.avgnpclusterradius=mavgnpclusterradius;
-	results.avgnpclusterradiuserr=mavgnpclusterradiuserr;
+	Jackknife(ddata, results.avgnpclusterradius, results.avgnpclusterradiuserr, nmeas);
 
 	// Polyakov loop expectation value only for points with sector < 2
-	double mpoll=0, mpollerr=0;
 	for(int n=0;n<nmeas;n++){
 		ddata[n]=0;
 		for(int j=0;j<nmeas;j++){
@@ -872,9 +821,7 @@ void calcExp(){
 		}
 		ddata[n] = ddata[n]/(double)(nmeas-1);
 	}
-	Jackknife(ddata, mpoll, mpollerr, nmeas);
-	results.polyakovloopaftercut=mpoll;
-	results.polyakovloopaftercuterr=mpollerr;
+	Jackknife(ddata, results.polyakovloopaftercut, results.polyakovloopaftercuterr, nmeas);
 	
 	// Number of percolating clusters expectation value
 	for(int n=0;n<nmeas;n++){
@@ -885,151 +832,121 @@ void calcExp(){
 		}
 		ddata[n] = ddata[n]/(double)(nmeas-1);
 	}
-	Jackknife(ddata, avgpercc, avgperccerr, nmeas);
-	results.avgperccluster=avgpercc;
-	results.avgpercclustererr=avgperccerr;
+	Jackknife(ddata, results.avgperccluster, results.avgpercclustererr, nmeas);
 	
-  // Mean free path of largest cluster expectation value
-	double mlargestclustermeanfreepath=0, mlargestclustermeanfreepatherr=0;
-	for(int n=0;n<nmeas;n++){
-		ddata[n]=0;
-		for(int j=0;j<nmeas;j++){
-			if(n!=j)
-				ddata[n] += (&obs[j])->largestclustermeanfreepath;
-		}
-		ddata[n] = ddata[n]/(double)(nmeas-1);
-	}
-	Jackknife(ddata, mlargestclustermeanfreepath, mlargestclustermeanfreepatherr, nmeas);
-	results.largestclustermeanfreepath=mlargestclustermeanfreepath;
-	results.largestclustermeanfreepatherr=mlargestclustermeanfreepatherr;
-  
-  // Mean free path of largest non-perc. cluster expectation value
-	double mlargestnpclustermeanfreepath=0, mlargestnpclustermeanfreepatherr=0;
-	for(int n=0;n<nmeas;n++){
-		ddata[n]=0;
-		for(int j=0;j<nmeas;j++){
-			if(n!=j)
-				ddata[n] += (&obs[j])->largestnpclustermeanfreepath;
-		}
-		ddata[n] = ddata[n]/(double)(nmeas-1);
-	}
-	Jackknife(ddata, mlargestnpclustermeanfreepath, mlargestnpclustermeanfreepatherr, nmeas);
-	results.largestnpclustermeanfreepath=mlargestnpclustermeanfreepath;
-	results.largestnpclustermeanfreepatherr=mlargestnpclustermeanfreepatherr;
-  
-  // Mean free path of avg cluster expectation value
-	double mavgclustermeanfreepath=0, mavgclustermeanfreepatherr=0;
-	for(int n=0;n<nmeas;n++){
-		ddata[n]=0;
-		for(int j=0;j<nmeas;j++){
-			if(n!=j)
-				ddata[n] += (&obs[j])->avgclustermeanfreepath;
-		}
-		ddata[n] = ddata[n]/(double)(nmeas-1);
-	}
-	Jackknife(ddata, mavgclustermeanfreepath, mavgclustermeanfreepatherr, nmeas);
-	results.avgclustermeanfreepath=mavgclustermeanfreepath;
-	results.avgclustermeanfreepatherr=mavgclustermeanfreepatherr;
-  
-  // Mean free path of avg non-perc. cluster expectation value
-	double mavgnpclustermeanfreepath=0, mavgnpclustermeanfreepatherr=0;
-	for(int n=0;n<nmeas;n++){
-		ddata[n]=0;
-		for(int j=0;j<nmeas;j++){
-			if(n!=j)
-				ddata[n] += (&obs[j])->avgnpclustermeanfreepath;
-		}
-		ddata[n] = ddata[n]/(double)(nmeas-1);
-	}
-	Jackknife(ddata, mavgnpclustermeanfreepath, mavgnpclustermeanfreepatherr, nmeas);
-	results.avgnpclustermeanfreepath=mavgnpclustermeanfreepath;
-	results.avgnpclustermeanfreepatherr=mavgnpclustermeanfreepatherr;
+	if(domean){
+    // Mean free path of largest cluster expectation value
+    for(int n=0;n<nmeas;n++){
+      ddata[n]=0;
+      for(int j=0;j<nmeas;j++){
+        if(n!=j)
+          ddata[n] += (&obs[j])->largestclustermeanfreepath;
+      }
+      ddata[n] = ddata[n]/(double)(nmeas-1);
+    }
+    Jackknife(ddata, results.largestclustermeanfreepath, results.largestclustermeanfreepatherr, nmeas);
+    
+    // Mean free path of largest non-perc. cluster expectation value
+    for(int n=0;n<nmeas;n++){
+      ddata[n]=0;
+      for(int j=0;j<nmeas;j++){
+        if(n!=j)
+          ddata[n] += (&obs[j])->largestnpclustermeanfreepath;
+      }
+      ddata[n] = ddata[n]/(double)(nmeas-1);
+    }
+    Jackknife(ddata, results.largestnpclustermeanfreepath, results.largestnpclustermeanfreepatherr, nmeas);
+    
+    // Mean free path of avg cluster expectation value
+    for(int n=0;n<nmeas;n++){
+      ddata[n]=0;
+      for(int j=0;j<nmeas;j++){
+        if(n!=j)
+          ddata[n] += (&obs[j])->avgclustermeanfreepath;
+      }
+      ddata[n] = ddata[n]/(double)(nmeas-1);
+    }
+    Jackknife(ddata, results.avgclustermeanfreepath, results.avgclustermeanfreepatherr, nmeas);
+    
+    // Mean free path of avg non-perc. cluster expectation value
+    for(int n=0;n<nmeas;n++){
+      ddata[n]=0;
+      for(int j=0;j<nmeas;j++){
+        if(n!=j)
+          ddata[n] += (&obs[j])->avgnpclustermeanfreepath;
+      }
+      ddata[n] = ddata[n]/(double)(nmeas-1);
+    }
+    Jackknife(ddata, results.avgnpclustermeanfreepath, results.avgnpclustermeanfreepatherr, nmeas);
 
-  // NEW DEFINITION OF MEAN FREE PATH
-  // Mean free path of largest cluster expectation value (NEW)
-	double mlargestclustermeanfreepathnew=0, mlargestclustermeanfreepathnewerr=0;
-	for(int n=0;n<nmeas;n++){
-		ddata[n]=0;
-		for(int j=0;j<nmeas;j++){
-			if(n!=j)
-				ddata[n] += (&obs[j])->largestclustermeanfreepathnew;
-		}
-		ddata[n] = ddata[n]/(double)(nmeas-1);
-	}
-	Jackknife(ddata, mlargestclustermeanfreepathnew, mlargestclustermeanfreepathnewerr, nmeas);
-	results.largestclustermeanfreepathnew=mlargestclustermeanfreepathnew;
-	results.largestclustermeanfreepathnewerr=mlargestclustermeanfreepathnewerr;
-  
-  // Mean free path of largest non-perc. cluster expectation value (NEW)
-	double mlargestnpclustermeanfreepathnew=0, mlargestnpclustermeanfreepathnewerr=0;
-	for(int n=0;n<nmeas;n++){
-		ddata[n]=0;
-		for(int j=0;j<nmeas;j++){
-			if(n!=j)
-				ddata[n] += (&obs[j])->largestnpclustermeanfreepathnew;
-		}
-		ddata[n] = ddata[n]/(double)(nmeas-1);
-	}
-	Jackknife(ddata, mlargestnpclustermeanfreepathnew, mlargestnpclustermeanfreepathnewerr, nmeas);
-	results.largestnpclustermeanfreepathnew=mlargestnpclustermeanfreepathnew;
-	results.largestnpclustermeanfreepathnewerr=mlargestnpclustermeanfreepathnewerr;
-	  
-  // Mean free path of avg cluster expectation value
-	double mavgclustermeanfreepathnew=0, mavgclustermeanfreepathnewerr=0;
-	for(int n=0;n<nmeas;n++){
-		ddata[n]=0;
-		for(int j=0;j<nmeas;j++){
-			if(n!=j)
-				ddata[n] += (&obs[j])->avgclustermeanfreepathnew;
-		}
-		ddata[n] = ddata[n]/(double)(nmeas-1);
-	}
-	Jackknife(ddata, mavgclustermeanfreepathnew, mavgclustermeanfreepathnewerr, nmeas);
-	results.avgclustermeanfreepathnew=mavgclustermeanfreepathnew;
-	results.avgclustermeanfreepathnewerr=mavgclustermeanfreepathnewerr;
-  
-  // Mean free path of avg non-perc. cluster expectation value
-	double mavgnpclustermeanfreepathnew=0, mavgnpclustermeanfreepathnewerr=0;
-	for(int n=0;n<nmeas;n++){
-		ddata[n]=0;
-		for(int j=0;j<nmeas;j++){
-			if(n!=j)
-				ddata[n] += (&obs[j])->avgnpclustermeanfreepathnew;
-		}
-		ddata[n] = ddata[n]/(double)(nmeas-1);
-	}
-	Jackknife(ddata, mavgnpclustermeanfreepathnew, mavgnpclustermeanfreepathnewerr, nmeas);
-	results.avgnpclustermeanfreepathnew=mavgnpclustermeanfreepathnew;
-	results.avgnpclustermeanfreepathnewerr=mavgnpclustermeanfreepathnewerr;
-	
-	// Mean free path of avg cluster expectation value Fortunato/Stauffer
-	double mavgFclustermeanfreepathnew=0, mavgFclustermeanfreepathnewerr=0;
-	for(int n=0;n<nmeas;n++){
-		ddata[n]=0;
-		for(int j=0;j<nmeas;j++){
-			if(n!=j)
-				ddata[n] += (&obs[j])->avgFclustermeanfreepathnew;
-		}
-		ddata[n] = ddata[n]/(double)(nmeas-1);
-	}
-	Jackknife(ddata, mavgFclustermeanfreepathnew, mavgFclustermeanfreepathnewerr, nmeas);
-	results.avgFclustermeanfreepathnew=mavgFclustermeanfreepathnew;
-	results.avgFclustermeanfreepathnewerr=mavgFclustermeanfreepathnewerr;
-  
-  // Mean free path of avg non-perc. cluster expectation value Fortunato/Stauffer
-	double mavgFnpclustermeanfreepathnew=0, mavgFnpclustermeanfreepathnewerr=0;
-	for(int n=0;n<nmeas;n++){
-		ddata[n]=0;
-		for(int j=0;j<nmeas;j++){
-			if(n!=j)
-				ddata[n] += (&obs[j])->avgFnpclustermeanfreepathnew;
-		}
-		ddata[n] = ddata[n]/(double)(nmeas-1);
-	}
-	Jackknife(ddata, mavgFnpclustermeanfreepathnew, mavgFnpclustermeanfreepathnewerr, nmeas);
-	results.avgFnpclustermeanfreepathnew=mavgFnpclustermeanfreepathnew;
-	results.avgFnpclustermeanfreepathnewerr=mavgFnpclustermeanfreepathnewerr;
-	// END NEW DEFINITION OF MEAN FREE PATH
+    // NEW DEFINITION OF MEAN FREE PATH
+    // Mean free path of largest cluster expectation value (NEW)
+    for(int n=0;n<nmeas;n++){
+      ddata[n]=0;
+      for(int j=0;j<nmeas;j++){
+        if(n!=j)
+          ddata[n] += (&obs[j])->largestclustermeanfreepathnew;
+      }
+      ddata[n] = ddata[n]/(double)(nmeas-1);
+    }
+    Jackknife(ddata, results.largestclustermeanfreepathnew, results.largestclustermeanfreepathnewerr, nmeas);
+    
+    // Mean free path of largest non-perc. cluster expectation value (NEW)
+    for(int n=0;n<nmeas;n++){
+      ddata[n]=0;
+      for(int j=0;j<nmeas;j++){
+        if(n!=j)
+          ddata[n] += (&obs[j])->largestnpclustermeanfreepathnew;
+      }
+      ddata[n] = ddata[n]/(double)(nmeas-1);
+    }
+    Jackknife(ddata, results.largestnpclustermeanfreepathnew, results.largestnpclustermeanfreepathnewerr, nmeas);
+      
+    // Mean free path of avg cluster expectation value
+    for(int n=0;n<nmeas;n++){
+      ddata[n]=0;
+      for(int j=0;j<nmeas;j++){
+        if(n!=j)
+          ddata[n] += (&obs[j])->avgclustermeanfreepathnew;
+      }
+      ddata[n] = ddata[n]/(double)(nmeas-1);
+    }
+    Jackknife(ddata, results.avgclustermeanfreepathnew, results.avgclustermeanfreepathnewerr, nmeas);
+    
+    // Mean free path of avg non-perc. cluster expectation value
+    for(int n=0;n<nmeas;n++){
+      ddata[n]=0;
+      for(int j=0;j<nmeas;j++){
+        if(n!=j)
+          ddata[n] += (&obs[j])->avgnpclustermeanfreepathnew;
+      }
+      ddata[n] = ddata[n]/(double)(nmeas-1);
+    }
+    Jackknife(ddata, results.avgnpclustermeanfreepathnew, results.avgnpclustermeanfreepathnewerr, nmeas);
+    
+    // Mean free path of avg cluster expectation value Fortunato/Stauffer
+    for(int n=0;n<nmeas;n++){
+      ddata[n]=0;
+      for(int j=0;j<nmeas;j++){
+        if(n!=j)
+          ddata[n] += (&obs[j])->avgFclustermeanfreepathnew;
+      }
+      ddata[n] = ddata[n]/(double)(nmeas-1);
+    }
+    Jackknife(ddata, results.avgFclustermeanfreepathnew, results.avgFclustermeanfreepathnewerr, nmeas);
+    
+    // Mean free path of avg non-perc. cluster expectation value Fortunato/Stauffer
+    for(int n=0;n<nmeas;n++){
+      ddata[n]=0;
+      for(int j=0;j<nmeas;j++){
+        if(n!=j)
+          ddata[n] += (&obs[j])->avgFnpclustermeanfreepathnew;
+      }
+      ddata[n] = ddata[n]/(double)(nmeas-1);
+    }
+    Jackknife(ddata, results.avgFnpclustermeanfreepathnew, results.avgFnpclustermeanfreepathnewerr, nmeas);
+    // END NEW DEFINITION OF MEAN FREE PATH
+  } // END IF(domean)
 
 	if(doboxes){
 		// Box counts for largest cluster which is not in sector 2

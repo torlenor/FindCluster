@@ -40,6 +40,7 @@ bool detail=false; // Controlls if we want detailed information for every config
 bool doboxes=false; // Controlls if we want box counting calculations
 bool dodistance=false; // Controlls if we want box counting calculations
 bool doradius=true; // Controlls if we want radius calculation
+bool domean=false; // Controlls if we want mean distance traveled calculations
 
 bool memorysaver=false; // Controlls if we drop the clusterdata arrays after observable calculations
 
