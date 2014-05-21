@@ -31,6 +31,7 @@ char texthelp[]="Usage: findcluster.x [OPTION] ... [POLLEVCONFIG/POLLEVCONFIGLIS
     " p ... identifying percolating cluster\n"
     " s ... sorting center cluster\n"
     " o ... calculating observables\n"
+    " b ... calculating box counting observables\n"
 		"\n"
 		"Exit status:\n"
 		" 0  if OK,\n"

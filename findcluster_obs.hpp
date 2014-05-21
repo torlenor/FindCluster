@@ -612,8 +612,10 @@ void calcObservables(Observablestruct &lobs, Clusterstruct &lclusterdata){
 	// if(doboxes)
 	// obsBoxes(lobs, lclusterdata);
 	// lobs.numberofboxes
-	if(doboxes)
+	if(doboxes) {
+    cout << "b" << flush;
 		obsBoxesOnlyLargest(lobs, lclusterdata);
+  }
 	
 	if(doradius){
 		if(dodistance){
