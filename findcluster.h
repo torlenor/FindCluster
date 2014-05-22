@@ -1,32 +1,6 @@
 #ifndef FINDCLUSTER_H
 #define FINDCLUSTER_H
 
-// options struct
-struct Options{
-  int Ns, Nt; // Spatial and temporal lattice extent
-  int matrixdim, leng1, leng2, leng3, leng4, Nspace;
-
-  int nmeas; // Number of measurements/configurations to use
-  
-  double fraction; // fraction to cut
-  double delta; // delta = pi/3 *(1 - fraction), will be set in init
-
-  bool usealternativesectors; // Controlls if we want the alternative sector identification
-  double r; // radius for alternative sector identification
-
-  bool do3d; // Controlls if we want to write out data for 3d visualization
-
-  bool detail; // Controlls if we want detailed information for every configuration
-  bool doboxes; // Controlls if we want box counting calculations
-  bool dodistance; // Controlls if we want box counting calculations
-  bool doradius; // Controlls if we want radius calculation
-  bool domean; // Controlls if we want mean distance traveled calculations
-
-  bool memorysaver; // Controlls if we drop the clusterdata arrays after observable calculations 
-
-  vector<string> fevname; // Filenames of configurations
-};
-
 // Vectors to store cluster information
 struct Clusterstruct{
 	vector<int> isinsector;  // lclusterdata.isinsector[is] stores the sector of the lattice point is

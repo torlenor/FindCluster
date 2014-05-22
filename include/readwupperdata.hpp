@@ -15,9 +15,16 @@
 //         complex float L[Nz][Ny][Nx];
 // };
 
-int readWupperPollEvBinary(int leng1, int leng2, int leng3, int leng4, int matrixdim, std::vector<std::vector<std::complex<double> > > &pollev, std::string fevname){
+using std::vector;
+using std::endl;
+using std::cout;
+using std::flush;
+using std::string;
+using std::ifstream;
+
+int readWupperPollEvBinary(int leng1, int leng2, int leng3, int leng4, int matrixdim, vector<vector<std::complex<double> > > &pollev, string fevname){
 	#ifdef DEBUG
-  std::cout << "Reading 3d lattice with Polyakov loop evs... " << std::flush;
+	cout << "Reading 3d lattice with Polyakov loop evs... " << flush;
 	#endif
 	
 	int elems=0;
@@ -30,8 +37,8 @@ int readWupperPollEvBinary(int leng1, int leng2, int leng3, int leng4, int matri
 	int is;
 
 	if( nindex > pollev.size() * pollev[pollev.size()-1].size() ){
-    std::cout << "ERROR: Something wrong in readPollEvBinary!" << std::endl;
-    std::cout << "Want to read nindex = " << nindex << " entries, but has space for (only) " << pollev.size() * pollev[pollev.size()-1].size() << " entries!" << std::endl;
+		cout << "ERROR: Something wrong in readPollEvBinary!" << endl;
+		cout << "Want to read nindex = " << nindex << " entries, but has space for (only) " << pollev.size() * pollev[pollev.size()-1].size() << " entries!" << endl;
 	}
 	
  	pFile = fopen(fevname.c_str(), "rb");
@@ -45,7 +52,7 @@ int readWupperPollEvBinary(int leng1, int leng2, int leng3, int leng4, int matri
 		
 		// Check lattice dimensions
 		if(leng1!=cleng1 || leng2!=cleng2 || leng3!=cleng3 || leng4!=cleng4){
-      std::cout << "ERROR: lattice dimensions are different in config file and settings !" << std::endl;
+			cout << "ERROR: lattice dimensions are different in config file and settings !" << endl;
 			return 1;
 		}
 
@@ -66,7 +73,7 @@ int readWupperPollEvBinary(int leng1, int leng2, int leng3, int leng4, int matri
 		fclose(pFile);
 	}
 	#ifdef DEBUG
-  std::cout << "done!" << std::endl;
+	cout << "done!" << endl;
 	#endif
     
   std::complex<double> poll(0,0);
@@ -77,6 +84,8 @@ int readWupperPollEvBinary(int leng1, int leng2, int leng3, int leng4, int matri
 
   poll = poll/((double)leng1*leng2*leng3);
 
+  // cout << "Total Polyakov loop P = " << poll << endl;
+	
   return 2*nindex + 4 - elems; // factor 2 from complex and 4 are the 4 ints at the beginning
 }
 

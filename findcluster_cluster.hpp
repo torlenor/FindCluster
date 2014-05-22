@@ -5,7 +5,7 @@ void sortClusterSize(Clusterstruct &lclusterdata){
 	// Sorts clusters by their size and creates a sortedcluster vector
 	// which contains the sorted cluster id's
 	lclusterdata.sortedcluster.resize(lclusterdata.clustermembers.size());
-	lclusterdata.isinsortedcluster.resize(opt.Nspace);
+	lclusterdata.isinsortedcluster.resize(Nspace);
 	
 	for(unsigned int c=0; c<lclusterdata.clustermembers.size(); c++){
 		lclusterdata.sortedcluster[c]=c;
@@ -50,40 +50,40 @@ void fillSectorsAlt(Clusterstruct &lclusterdata, double r){
 	int csectm1=0;
 	int csect0=0;
 
-	opt.delta = M_PI/3.0;
+	delta = M_PI/3.0;
 	
 	double tracephase=0;
 	double radius=0;
 	
 	#ifdef DEBUG
-	cout << "Delta = " << opt.delta << endl;
+	cout << "Delta = " << delta << endl;
 	cout << "r = " << r << endl;
 	#endif
 
-	lclusterdata.poll.resize(opt.Nspace);
+	lclusterdata.poll.resize(Nspace);
 	
-	for(int is=0;is<opt.Nspace;is++)
+	for(int is=0;is<Nspace;is++)
 		lclusterdata.isinsector[is] = 2;
 	
-	for(int is=0;is<opt.Nspace;is++){
+	for(int is=0;is<Nspace;is++){
 		tracephase = arg(pollev[is][0] + pollev[is][1] + pollev[is][2]);
 		radius = abs(pollev[is][0] + pollev[is][1] + pollev[is][2]);
 		
-		if(abs(tracephase - 2.0*M_PI/3.0) <= opt.delta){
+		if(abs(tracephase - 2.0*M_PI/3.0) <= delta){
 			if(radius >= r){
 				lclusterdata.isinsector[is]=1;
 				csectp1++;
 			}
 		}
 		
-		if(abs(tracephase) < opt.delta){
+		if(abs(tracephase) < delta){
 			if(radius >= r){
 				lclusterdata.isinsector[is]=0;
 				csect0++;
 			}
 		}
 		
-		if(abs(tracephase + 2.0*M_PI/3.0) <= opt.delta){
+		if(abs(tracephase + 2.0*M_PI/3.0) <= delta){
 			if(radius >= r){
 				lclusterdata.isinsector[is]=-1;
 				csectm1++;
@@ -114,12 +114,12 @@ void fillSectors(Clusterstruct &lclusterdata, double delta){
 	cout << "Delta = " << delta << endl;
 	#endif
 
-	lclusterdata.poll.resize(opt.Nspace);
+	lclusterdata.poll.resize(Nspace);
 	
-	for(int is=0;is<opt.Nspace;is++)
+	for(int is=0;is<Nspace;is++)
 		lclusterdata.isinsector[is] = 2;
 	
-	for(int is=0;is<opt.Nspace;is++){
+	for(int is=0;is<Nspace;is++){
 		tracephase = arg(pollev[is][0] + pollev[is][1] + pollev[is][2]);
 		
 		if(abs(tracephase - 2.0*M_PI/3.0) <= delta){
@@ -165,20 +165,20 @@ void findPercolatingCluster(Clusterstruct &lclusterdata){
 	members.resize(lclusterdata.clustermembers.size());
 	for(unsigned int i=0;i<members.size();i++){
 		members[i].resize(3);
-		members[i][0].resize(opt.leng1);
-		for(int j=0;j<opt.leng1;j++)
+		members[i][0].resize(leng1);
+		for(int j=0;j<leng1;j++)
 			members[i][0][j]=0;
-		members[i][1].resize(opt.leng2);
-		for(int j=0;j<opt.leng2;j++)
+		members[i][1].resize(leng2);
+		for(int j=0;j<leng2;j++)
 			members[i][1][j]=0;
-		members[i][2].resize(opt.leng3);
-		for(int j=0;j<opt.leng3;j++)
+		members[i][2].resize(leng3);
+		for(int j=0;j<leng3;j++)
 			members[i][2][j]=0;
 	}
 	
-	for(int i1=0;i1<opt.leng1;i1++)
-	for(int i2=0;i2<opt.leng2;i2++)
-	for(int i3=0;i3<opt.leng3;i3++){
+	for(int i1=0;i1<leng1;i1++)
+	for(int i2=0;i2<leng2;i2++)
+	for(int i3=0;i3<leng3;i3++){
 		is = latmap(i1, i2, i3);
 		cluster = lclusterdata.isincluster[is];
 		if(lclusterdata.clustersector[cluster] < 2){
@@ -191,14 +191,14 @@ void findPercolatingCluster(Clusterstruct &lclusterdata){
 	int sum1, sum2, sum3, percclustercnt=-1;
 	for(unsigned int c=0;c<lclusterdata.clustermembers.size();c++){
 		sum1=0; sum2=0; sum3=0;
-		for(int i1=0;i1<opt.leng1;i1++)
+		for(int i1=0;i1<leng1;i1++)
 			sum1 += members[c][0][i1];
-		for(int i2=0;i2<opt.leng2;i2++)
+		for(int i2=0;i2<leng2;i2++)
 			sum2 += members[c][1][i2];
-		for(int i3=0;i3<opt.leng3;i3++)
+		for(int i3=0;i3<leng3;i3++)
 			sum3 += members[c][2][i3];
 			
-		if(sum1 == opt.leng1 || sum2 == opt.leng2 || sum3 == opt.leng3){
+		if(sum1 == leng1 || sum2 == leng2 || sum3 == leng3){
 			percclustercnt++;
 			lclusterdata.percolatingclusters.push_back(c);
 			lclusterdata.percolatingdirections.push_back(vector<int>());
@@ -206,11 +206,11 @@ void findPercolatingCluster(Clusterstruct &lclusterdata){
 			lclusterdata.percolatingdirections[percclustercnt][0]=0;
 			lclusterdata.percolatingdirections[percclustercnt][1]=0;
 			lclusterdata.percolatingdirections[percclustercnt][2]=0;
-			if(sum1 == opt.leng1)
+			if(sum1 == leng1)
 				lclusterdata.percolatingdirections[percclustercnt][0]=1;
-			if(sum2 == opt.leng2)
+			if(sum2 == leng2)
 				lclusterdata.percolatingdirections[percclustercnt][1]=1;
-			if(sum3 == opt.leng3)
+			if(sum3 == leng3)
 				lclusterdata.percolatingdirections[percclustercnt][2]=1;
 			#ifdef DEBUG
 			cout << "sum1 = " << sum1 << " sum2 = " << sum2 << " sum3 = " << sum3 << endl;
@@ -240,8 +240,8 @@ void findClusters(Clusterstruct &lclusterdata){
 	int sector = 0, cluster = 0, memberis = 0, isneib = 0;
 
 	vector<bool> isfiled;
-	isfiled.resize(opt.Nspace);
-	for(int is=0;is<opt.Nspace;is++){
+	isfiled.resize(Nspace);
+	for(int is=0;is<Nspace;is++){
 		isfiled[is] = false;
 		lclusterdata.isincluster[is] = -1;
 	}
@@ -249,7 +249,7 @@ void findClusters(Clusterstruct &lclusterdata){
 	int totalmembers=0;
 
 	cluster = -1; // Note: We begin counting with ID 0!
-	for(int is=0;is<opt.Nspace;is++){
+	for(int is=0;is<Nspace;is++){
 		if(isfiled[is] == false){
 			sector = lclusterdata.isinsector[is];
 			cluster++; // current cluster id (Note: We begin counting with ID 0!)
@@ -283,15 +283,15 @@ void findClusters(Clusterstruct &lclusterdata){
 						// Check if over periodic boundaries
 						getCoords(memberis, ci1, ci2, ci3);
 						switch(mu){
-							case 0: if(ci1 + 1 == opt.leng1)
+							case 0: if(ci1 + 1 == leng1)
 									lclusterdata.clusterisperiodic[cluster][0]=1;
 								break;
 
-							case 1: if(ci2 + 1 == opt.leng2)
+							case 1: if(ci2 + 1 == leng2)
 									lclusterdata.clusterisperiodic[cluster][1]=1;
 								break;
 							
-							case 2: if(ci3 + 1 == opt.leng3)
+							case 2: if(ci3 + 1 == leng3)
 									lclusterdata.clusterisperiodic[cluster][2]=1;
 								break;
 							
@@ -323,10 +323,10 @@ void findClusters(Clusterstruct &lclusterdata){
 	}
 	
 	#ifdef DEBUG
-	cout << "" << totalmembers << " of " << opt.Nspace << " lattice points visited!" << endl;
+	cout << "" << totalmembers << " of " << Nspace << " lattice points visited!" << endl;
 	#endif
 	
-	for(int is=0;is<opt.Nspace;is++){
+	for(int is=0;is<Nspace;is++){
 		if(isfiled[is] == false)
 			cout << "WARNING: Some points did not get filled!" << endl;
 	}
@@ -341,7 +341,7 @@ void checkClusters(Clusterstruct &lclusterdata){
 	cout << "Checking clusters... " << flush;
 	#endif
 
-	for(int is=0;is<opt.Nspace;is++){
+	for(int is=0;is<Nspace;is++){
 		if(lclusterdata.isincluster[is] < 0)
 			cout << "WARNING: Some points do not have a valid cluster ID!" << endl;
 	}
@@ -349,9 +349,9 @@ void checkClusters(Clusterstruct &lclusterdata){
 	int sum=0;
 	for(unsigned int c=0;c<lclusterdata.clustermembers.size();c++)
 		sum+=lclusterdata.clustermembers[c].size();
-	if(sum != opt.Nspace){
+	if(sum != Nspace){
 		cout << "WARNING: Number of lattice points differ from number of clustermember entries!" << endl;
-		cout << "Number of entries = " << sum << " Number of lattice points = " << opt.Nspace << endl;
+		cout << "Number of entries = " << sum << " Number of lattice points = " << Nspace << endl;
 	}
 	
 	// Check for conistency of the cluster arrays lclusterdata.isinsector and lclusterdata.clustersector
@@ -368,13 +368,13 @@ void checkClusters(Clusterstruct &lclusterdata){
 	// exeption is thrown if it is outside vector range
 	int mult=1;
 	vector<int> membercheck;
-	membercheck.resize(opt.Nspace);
+	membercheck.resize(Nspace);
 	for(unsigned int c=0;c<lclusterdata.clustermembers.size();c++){
 		for(unsigned int member=0; member<lclusterdata.clustermembers[c].size(); member++){
 			membercheck.at(lclusterdata.clustermembers[c][member]) = 1;
 		}
 	}
-	for(int is=0;is<opt.Nspace;is++){
+	for(int is=0;is<Nspace;is++){
 		mult = mult*membercheck[is];
 	}
 	if(mult != 1){
