@@ -1,9 +1,11 @@
 #ifndef FINDCLUSTER_INIT_HPP
 #define FINDCLUSTER_INIT_HPP
 
-#include <getopt.h>
 #include <cstdio>
+#include <getopt.h>
 #include <string.h>
+
+#include "findcluster.h"
 
 char texthelp[]="Usage: findcluster.x [OPTION] ... [POLLEVCONFIG/POLLEVCONFIGLIST]\n"
 		"Finds cluster and performs calculations with it.\n" 
@@ -42,101 +44,115 @@ char texthelp[]="Usage: findcluster.x [OPTION] ... [POLLEVCONFIG/POLLEVCONFIGLIS
 
 int init(int &argc, char *argv[]){
 
-	cout << endl;
-	cout << "findcluster.x " << MAJOR_VERSION << "." << MINOR_VERSION << "." << REVISION_VERSION << " ~ " << __DATE__ << " " << __TIME__ << endl << endl
-		<< "Finds cluster and performs calculations with it." << endl
-		<< "Uses Polyakov loop eigenvalues as input." << endl << endl;
+cout << endl;
+cout << "findcluster.x " << MAJOR_VERSION << "." << MINOR_VERSION << "." << REVISION_VERSION << " ~ " << __DATE__ << " " << __TIME__ << endl 
+  << endl 
+  << "Finds cluster and performs calculations with it." << endl 
+  << "Uses Polyakov loop eigenvalues as input." << endl 
+  << endl;
 
 	cout << "Initializing... " << endl;
 
-	if(argc<2){
+	if (argc<2) {
 		cout << endl << texthelp << endl;
 		return 2;
 	}
 
-       	int c;
-       	
-       	while (1){
-		static struct option long_options[] =
-			{
-			/* These options don't set a flag.
-			We distinguish them by their indices. */
-			{"Ns", required_argument, 0, 's'},
-			{"Nt", required_argument, 0, 't'},
-			{"fraction", required_argument, 0, 'f'},
-			{"nmeas", required_argument, 0, 'n'},
-			{"detail", no_argument, 0, 'd'},
-			{"boxes", no_argument, 0, 'b'},
-			{"distance", no_argument, 0, 'a'},
-			{"rsector", required_argument, 0, 'r'},
-			{"3d", no_argument, 0, 0},
-			{"memory", no_argument, 0, 'm'},
-			/* These options set a flag. */
-			// {"free", no_argument, 0, 'f'},
-			// {"u0", required_argument, 0, 0},
-			{"help", no_argument, 0, 'h'},
-			{"version", no_argument, 0, 'v'},
-			{0, 0, 0, 0}
-			};
+  // Set default options
+  opt.Ns=4, opt.Nt=4;
+  opt.matrixdim=3, opt.leng1=opt.Ns, opt.leng2=opt.Ns, opt.leng3=opt.Ns, opt.leng4=opt.Nt, opt.Nspace=opt.Ns*opt.Ns*opt.Ns;
+
+  opt.nmeas=1;
+
+  opt.usealternativesectors=false;
+  opt.r=0;
+
+  opt.do3d=false;
+
+  opt.detail=false; // Controlls if we want detailed information for every configuration
+  opt.doboxes=false; // Controlls if we want box counting calculations
+  opt.dodistance=false; // Controlls if we want box counting calculations
+  opt.doradius=true; // Controlls if we want radius calculation
+  opt.domean=false; // Controlls if we want mean distance traveled calculations
+
+  opt.memorysaver=false; // Controlls if we drop the clusterdata arrays after observable calculations
+
+  opt.fraction = 0.0;
+
+	const double delta0 = M_PI/3.0;
+	opt.delta = delta0*(1.0 - opt.fraction);
+
+  int c;
+    
+  while (1) {
+    static struct option long_options[] =
+    {
+      {"Ns", required_argument, 0, 's'},
+      {"Nt", required_argument, 0, 't'},
+      {"fraction", required_argument, 0, 'f'},
+      {"nmeas", required_argument, 0, 'n'},
+      {"rsector", required_argument, 0, 'r'},
+      {"detail", no_argument, 0, 'd'},
+      {"boxes", no_argument, 0, 'b'},
+      {"distance", no_argument, 0, 'a'},
+      {"3d", no_argument, 0, 0},
+      {"memory", no_argument, 0, 'm'},
+      {"help", no_argument, 0, 'h'},
+      {"version", no_argument, 0, 'v'},
+      {0, 0, 0, 0}
+    };
 			
 		/* getopt_long stores the option index here. */
 		int option_index = 0;
 
-		c = getopt_long (argc, argv, "s:t:f:n:r:hvdbma",
+		c = getopt_long(argc, argv, "s:t:f:n:r:hvdbma",
 		long_options, &option_index);
 
 		/* Detect the end of the options. */
 		if (c == -1)
 			break;
 
-		switch (c){
+		switch (c) {
 			case 0:
-				/* If this option set a flag, do nothing else now. */
-				/*if (long_options[option_index].flag != 0)
-					break;
-				printf ("option %s", long_options[option_index].name);
-				if (optarg)
-					printf (" with arg %s", optarg);
-				printf ("\n");A */
-		                if( strcmp( "3d", long_options[option_index].name ) == 0 )
-			                   do3d = true;
+        if (strcmp( "3d", long_options[option_index].name ) == 0)
+          opt.do3d = true;
 				break;
 
 			case 's':
-				Ns = atoi(optarg);
+				opt.Ns = atoi(optarg);
 				break;
 
 			case 't':
-				Nt = atoi(optarg);
+				opt.Nt = atoi(optarg);
 				break;
 
 			case 'f':
-				fraction = atof(optarg);
+				opt.fraction = atof(optarg);
 				break;
 
 			case 'n':
-				nmeas = atoi(optarg);
+				opt.nmeas = atoi(optarg);
 				break;
 
 			case 'd':
-				detail = true;
+				opt.detail = true;
 				break;
 			
 			case 'b':
-				doboxes = true;
+				opt.doboxes = true;
 				break;
 			
 			case 'a':
-				dodistance = true;
+				opt.dodistance = true;
 				break;
 			
 			case 'r':
-				usealternativesectors = true;
-				r = atof(optarg);
+				opt.usealternativesectors = true;
+				opt.r = atof(optarg);
 				break;
 			
 			case 'm':
-				memorysaver = true;
+				opt.memorysaver = true;
 				break;
 
 			case 'v':
@@ -162,79 +178,70 @@ int init(int &argc, char *argv[]){
 		cout << "ERROR: No configuration file specified!" << endl;
 	}
 	
-	delta0 = M_PI/3.0;
-	delta = delta0*(1.0 - fraction);
+	opt.delta = delta0*(1.0 - opt.fraction);
 
 	// Prepare for nmeas measurements
-	clusterdata = new Clusterstruct[nmeas];
-	obs = new Observablestruct[nmeas];
-	fevname.resize(nmeas);
+	clusterdata = new Clusterstruct[opt.nmeas];
+	obs = new Observablestruct[opt.nmeas];
 
-	if(nmeas>1){
+	opt.fevname.resize(opt.nmeas);
+
+	if (opt.nmeas>1) {
 		// Read finname file and fill fevname
 		ifstream fin;
 		fin.open(finname.c_str());
-		if(fin.is_open()!=true){
-                	cout  << "ERROR: File " << finname <<  " to read configuration filename list could not be opened!" << endl;
-			throw 1;
-        	}
-        	
-        	string strtmp;
-        	int n=0;
-        	while(n<nmeas && getline(fin, fevname.at(n)) ){
-			n++;
+		if(fin.is_open()!=true) {
+      cout  << "ERROR: File " << finname <<  " to read configuration filename list could not be opened!" << endl;
+      throw 1;
+    }
+
+    string strtmp;
+    int n=0;
+    while (n<opt.nmeas && getline(fin, opt.fevname.at(n))) {
+      n++;
 		}
-		if(n<nmeas){
+
+		if (n<opt.nmeas) {
 			cout << "ERROR: Only found " << n << " names in " << finname << " !" << endl;
 			return 1;
 		}
-	}else{
-		fevname[0] = finname;
+	} else {
+		opt.fevname[0] = finname;
 	}
 
-	leng1=Ns; leng2=Ns; leng3=Ns; leng4=Nt;
+	opt.leng1=opt.Ns; opt.leng2=opt.Ns; opt.leng3=opt.Ns; opt.leng4=opt.Nt;
 	
-	Nspace = Ns*Ns*Ns;
+	opt.Nspace = opt.Ns*opt.Ns*opt.Ns;
 
-	neib.resize(Nspace);
-	for(int is=0;is<Nspace;is++)
+	neib.resize(opt.Nspace);
+	for (int is=0; is<opt.Nspace; is++)
 		neib[is].resize(6);
 
 	fillNeib();
 
 	#ifdef DEBUG
-	cout << "Allocating 3d (Ns^3 * 3) lattice for Polyakov loop evs... " << flush;
+	  cout << "Allocating 3d (Ns^3 * 3) lattice for Polyakov loop evs... " << flush;
 	#endif
-	pollev.resize(Nspace);
-	for(int is=0;is<Nspace;is++)
-		pollev[is].resize(matrixdim);
+	pollev.resize(opt.Nspace);
+	for (int is=0; is<opt.Nspace; is++)
+		pollev[is].resize(opt.matrixdim);
 	#ifdef DEBUG
-	cout << "done!" << endl;
+	  cout << "done!" << endl;
 	#endif
-	
-//	#ifdef DEBUG
-//	cout << "Creating cluster data arrays..." << flush;
-//	#endif
-//	for(int n=0;n<nmeas;n++){
-//		(&clusterdata[n])->isinsector.resize(Nspace);
-		// (&clusterdata[0])->clustersector will not be allocated here, but on the fly with push_back
-//		(&clusterdata[n])->isincluster.resize(Nspace);
-		// (&clusterdata[0])->clustermembers will not be allocated here, but on the fly with push_back
-//	}
 
-	if(doboxes){
+	if (opt.doboxes) {
 		// Boxsize array
-		for(int s=0;s<Ns;s++){
-			if( Ns % (s+1) == 0)
+		for (int s=0; s<opt.Ns; s++) {
+			if (opt.Ns % (s+1) == 0)
 				boxsize.push_back(s+1);
 		}
 		
-		for(unsigned int i=0;i<boxsize.size();i++){
-			boxes.push_back(Ns/boxsize[i]);
+		for (unsigned int i=0; i<boxsize.size(); i++) {
+			boxes.push_back(opt.Ns/boxsize[i]);
 		}
 	
 		#ifdef DEBUG
-		for(unsigned int i=0;i<boxsize.size();i++)
+		for (unsigned int i=0; i<boxsize.size(); i++)
 			cout << "Size = " << boxsize[i] << " Nr. of boxes = " << boxes[i] << endl;
 		#endif
 	}

@@ -1,18 +1,18 @@
 #ifndef FINDCLUSTER_RADIUS_HPP
 #define FINDCLUSTER_RADIUS_HPP
 void getCoordsShift(int is, int &i1, int &i2, int &i3, int *shift){
-	        i1 = (is % (leng1*leng2) ) % leng1;
-	        i2 = (is % (leng1*leng2) ) / leng1;
-	        i3 = is / (leng1*leng2);
+	        i1 = (is % (opt.leng1*opt.leng2) ) % opt.leng1;
+	        i2 = (is % (opt.leng1*opt.leng2) ) / opt.leng1;
+	        i3 = is / (opt.leng1*opt.leng2);
 
 		if(i1>shift[0])
-			i1=i1-leng1;
+			i1=i1-opt.leng1;
 		if(i2>shift[1])
-			i2=i2-leng2;
+			i2=i2-opt.leng2;
 		if(i3>shift[2])
-			i3=i3-leng3;
+			i3=i3-opt.leng3;
 
-	        // if(is != i1 + i2*leng1 + i3*leng1*leng2)
+	        // if(is != i1 + i2*opt.leng1 + i3*opt.leng1*opt.leng2)
 	        //        cout << "ERROR: Problem in getCoords!" << endl;
 }
 
@@ -39,9 +39,9 @@ void obsClusterRadius(Observablestruct &lobs, Clusterstruct &lclusterdata){
 			radiussquaremin=1E30;
 
 			// Calculate center of mass
-			for(int s1=0;s1<leng1/2;s1++)
-			for(int s2=0;s2<leng2/2;s2++)
-			for(int s3=0;s3<leng3/2;s3++){
+			for(int s1=0;s1<opt.leng1/2;s1++)
+			for(int s2=0;s2<opt.leng2/2;s2++)
+			for(int s3=0;s3<opt.leng3/2;s3++){
 				shift[0]=s1 + 0.5;
 				shift[1]=s2 + 0.5;
 				shift[2]=s3 + 0.5;
@@ -135,9 +135,9 @@ void obsClusterRadiusOnlyLargest(Observablestruct &lobs, Clusterstruct &lcluster
 			radiussquaremin=1E30;
 
 			// Calculate center of mass
-			for(int s1=0;s1<leng1/2;s1++)
-			for(int s2=0;s2<leng2/2;s2++)
-			for(int s3=0;s3<leng3/2;s3++){
+			for(int s1=0;s1<opt.leng1/2;s1++)
+			for(int s2=0;s2<opt.leng2/2;s2++)
+			for(int s3=0;s3<opt.leng3/2;s3++){
 				shift[0]=s1 + 0.5;
 				shift[1]=s2 + 0.5;
 				shift[2]=s3 + 0.5;
@@ -201,9 +201,9 @@ void obsClusterRadiusOnlyLargestNP(Observablestruct &lobs, Clusterstruct &lclust
   radiussquaremin=1E30;
 
   // Calculate center of mass
-  for(int s1=0;s1<leng1/2;s1++)
-  for(int s2=0;s2<leng2/2;s2++)
-  for(int s3=0;s3<leng3/2;s3++){
+  for(int s1=0;s1<opt.leng1/2;s1++)
+  for(int s2=0;s2<opt.leng2/2;s2++)
+  for(int s3=0;s3<opt.leng3/2;s3++){
     shift[0]=s1 + 0.5;
     shift[1]=s2 + 0.5;
     shift[2]=s3 + 0.5;
