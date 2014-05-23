@@ -1,5 +1,28 @@
-#ifndef FINDCLUSTER_PATH_HPP
-#define FINDCLUSTER_PATH_HPP
+/*
+ * findcluster_path.cpp - Mean free path calculations
+ *
+ * Copyright © 2014 H.-P. Schadler  <hanspeter.schadler@uni-graz.at>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ *
+ */
+
+#include "findcluster_path.h"
+
+#include <iostream>
+#include <vector>
 
 #include "findcluster.h"
 
@@ -15,7 +38,7 @@ void obsClusterMeanFreePathLargest(Observablestruct &lobs, Clusterstruct &lclust
 
   int i1=0, i2=0, i3=0, startpoint=0, ii=0;
 
-  vector<int> istagged;
+  std::vector<int> istagged;
   istagged.resize(opt.leng3);
 
   // First direction
@@ -37,7 +60,7 @@ void obsClusterMeanFreePathLargest(Observablestruct &lobs, Clusterstruct &lclust
         ii = startpoint;
         do {
           if (istagged[ii] == 1) {
-            cout << "WTF!" << endl;
+            std::cout << "WTF!" << std::endl;
           }
           path1 = path1 + 1.0;
           istagged[ii] = 1;
@@ -83,7 +106,7 @@ void obsClusterMeanFreePathLargest(Observablestruct &lobs, Clusterstruct &lclust
         ii = startpoint;
         do {
           if (istagged[ii] == 1) {
-            cout << "WTF!" << endl;
+            std::cout << "WTF!" << std::endl;
           }
           path2 = path2 + 1.0;
           istagged[ii] = 1;
@@ -129,7 +152,7 @@ void obsClusterMeanFreePathLargest(Observablestruct &lobs, Clusterstruct &lclust
         ii = startpoint;
         do {
           if (istagged[ii] == 1) {
-            cout << "WTF!" << endl;
+            std::cout << "WTF!" << std::endl;
           }
           path3 = path3 + 1.0;
           istagged[ii] = 1;
@@ -176,7 +199,7 @@ void obsClusterMeanFreePath(Observablestruct &lobs, Clusterstruct &lclusterdata,
 
       int i1=0, i2=0, i3=0, startpoint=0, ii=0;
 
-      vector<int> istagged;
+      std::vector<int> istagged;
       istagged.resize(opt.leng3);
 
       // First direction
@@ -198,7 +221,7 @@ void obsClusterMeanFreePath(Observablestruct &lobs, Clusterstruct &lclusterdata,
             ii = startpoint;
             do {
               if (istagged[ii] == 1) {
-                cout << "WTF!" << endl;
+                std::cout << "WTF!" << std::endl;
               }
               path1 = path1 + 1.0;
               istagged[ii] = 1;
@@ -228,7 +251,7 @@ void obsClusterMeanFreePath(Observablestruct &lobs, Clusterstruct &lclusterdata,
       path1=path1/(double)paths;
       // END 1st direction
       if ( (totalcount - (int)lclusterdata.clustermembers[c].size()) != 0) {
-        cout << "ERROR: Something wrong in path calculation, direction 3. Number of counted cluster members != clustermembers" << endl;
+        std::cout << "ERROR: Something wrong in path calculation, direction 3. Number of counted cluster members != clustermembers" << std::endl;
       }
 
       // 2nd direction
@@ -250,7 +273,7 @@ void obsClusterMeanFreePath(Observablestruct &lobs, Clusterstruct &lclusterdata,
             ii = startpoint;
             do {
               if (istagged[ii] == 1) {
-                cout << "WTF!" << endl;
+                std::cout << "WTF!" << std::endl;
               }
               path2 = path2 + 1.0;
               istagged[ii] = 1;
@@ -280,7 +303,7 @@ void obsClusterMeanFreePath(Observablestruct &lobs, Clusterstruct &lclusterdata,
       path2=path2/(double)paths;
       // END 2nd direction
       if ( (totalcount - (int)lclusterdata.clustermembers[c].size()) != 0) {
-        cout << "ERROR: Something wrong in path calculation, direction 2. Number of counted cluster members != clustermembers" << endl;
+        std::cout << "ERROR: Something wrong in path calculation, direction 2. Number of counted cluster members != clustermembers" << std::endl;
       }
 
       // 3rd direction
@@ -302,7 +325,7 @@ void obsClusterMeanFreePath(Observablestruct &lobs, Clusterstruct &lclusterdata,
             ii = startpoint;
             do {
               if (istagged[ii] == 1) {
-                cout << "WTF!" << endl;
+                std::cout << "WTF!" << std::endl;
               }
               path3 = path3 + 1.0;
               istagged[ii] = 1;
@@ -333,7 +356,7 @@ void obsClusterMeanFreePath(Observablestruct &lobs, Clusterstruct &lclusterdata,
       // END 3nd direction
       
       if ( (totalcount - (int)lclusterdata.clustermembers[c].size()) != 0) {
-        cout << "ERROR: Something wrong in path calculation, direction 1. Number of counted cluster members != clustermembers" << endl;
+        std::cout << "ERROR: Something wrong in path calculation, direction 1. Number of counted cluster members != clustermembers" << std::endl;
       }
 
       lobs.meanfreepath[c]=(path1+path2+path3)/(double)3.0;
@@ -368,7 +391,7 @@ void obsClusterMeanFreePath(Observablestruct &lobs, Clusterstruct &lclusterdata,
   // Write a list of clusterweight and meanfreepath to stdout
   /* for(unsigned int c=0; c<lclusterdata.sortedrealcluster.size(); c++){
     if(lclusterdata.clustersector[lclusterdata.sortedrealcluster[c]] < 2){
-      cout << lclusterdata.clustermembers[lclusterdata.sortedrealcluster[c]].size() << " " << lobs.meanfreepath[lclusterdata.sortedrealcluster[c]] << endl;
+      std::cout << lclusterdata.clustermembers[lclusterdata.sortedrealcluster[c]].size() << " " << lobs.meanfreepath[lclusterdata.sortedrealcluster[c]] << std::endl;
     }
   } */
 
@@ -389,7 +412,7 @@ void obsClusterMeanFreePathNew(Observablestruct &lobs, Clusterstruct &lclusterda
 
       int i1=0, i2=0, i3=0, startpoint=0, ii=0;
 
-      vector<int> istagged;
+      std::vector<int> istagged;
       istagged.resize(opt.leng3);
 
       // First direction
@@ -413,7 +436,7 @@ void obsClusterMeanFreePathNew(Observablestruct &lobs, Clusterstruct &lclusterda
             ii = startpoint;
             do {
               if (istagged[ii] == 1) {
-                cout << "WTF!" << endl;
+                std::cout << "WTF!" << std::endl;
               }
               segment += 1.0;
               // path1 = path1 + 1.0;
@@ -445,7 +468,7 @@ void obsClusterMeanFreePathNew(Observablestruct &lobs, Clusterstruct &lclusterda
       path1=path1/((double)lclusterdata.clustermembers[c].size()*(double)2.0);
       // END 1st direction
       if ( (totalcount - (int)lclusterdata.clustermembers[c].size()) != 0) {
-        cout << "ERROR: Something wrong in path calculation, direction 3. Number of counted cluster members != clustermembers" << endl;
+        std::cout << "ERROR: Something wrong in path calculation, direction 3. Number of counted cluster members != clustermembers" << std::endl;
       }
 
       // 2nd direction
@@ -470,7 +493,7 @@ void obsClusterMeanFreePathNew(Observablestruct &lobs, Clusterstruct &lclusterda
             ii = startpoint;
             do {
               if (istagged[ii] == 1) {
-                cout << "WTF!" << endl;
+                std::cout << "WTF!" << std::endl;
               }
               segment += 1.0;
               // path2 = path2 + 1.0;
@@ -502,7 +525,7 @@ void obsClusterMeanFreePathNew(Observablestruct &lobs, Clusterstruct &lclusterda
       path2=path2/((double)lclusterdata.clustermembers[c].size()*(double)2.0);
       // END 2nd direction
       if ( (totalcount - (int)lclusterdata.clustermembers[c].size()) != 0) {
-        cout << "ERROR: Something wrong in path calculation, direction 2. Number of counted cluster members != clustermembers" << endl;
+        std::cout << "ERROR: Something wrong in path calculation, direction 2. Number of counted cluster members != clustermembers" << std::endl;
       }
 
       // 3rd direction
@@ -526,7 +549,7 @@ void obsClusterMeanFreePathNew(Observablestruct &lobs, Clusterstruct &lclusterda
             ii = startpoint;
             do {
               if (istagged[ii] == 1) {
-                cout << "WTF!" << endl;
+                std::cout << "WTF!" << std::endl;
               }
               segment += 1.0;
               // path3 = path3 + 1.0;
@@ -559,7 +582,7 @@ void obsClusterMeanFreePathNew(Observablestruct &lobs, Clusterstruct &lclusterda
       // END 3nd direction
       
       if ( (totalcount - (int)lclusterdata.clustermembers[c].size()) != 0) {
-        cout << "ERROR: Something wrong in path calculation, direction 1. Number of counted cluster members != clustermembers" << endl;
+        std::cout << "ERROR: Something wrong in path calculation, direction 1. Number of counted cluster members != clustermembers" << std::endl;
       }
 
       lobs.meanfreepathnew[c]=(path1+path2+path3)/(double)3.0;
@@ -572,7 +595,7 @@ void obsClusterMeanFreePathNew(Observablestruct &lobs, Clusterstruct &lclusterda
     // Write a list of clusterweight and meanfreepath to stdout
   /* for(unsigned int c=0; c<lclusterdata.sortedrealcluster.size(); c++){
     if(lclusterdata.clustersector[lclusterdata.sortedrealcluster[c]] < 2){
-      cout << lclusterdata.clustermembers[lclusterdata.sortedrealcluster[c]].size() << " " << lobs.meanfreepathnew[lclusterdata.sortedrealcluster[c]] << endl;
+      std::cout << lclusterdata.clustermembers[lclusterdata.sortedrealcluster[c]].size() << " " << lobs.meanfreepathnew[lclusterdata.sortedrealcluster[c]] << std::endl;
     }
   } */
 }
@@ -605,10 +628,10 @@ void obsAverageMeanfreepathNew(Observablestruct &lobs, Clusterstruct &lclusterda
   // Fortunato/Stauffer average over all clusters
   // --------------------------------------------------------------------- //
 	// First calculate the number of clusters of size s per lattice site
-	vector<int> sizes;
-	vector<double> sizedist;
-	vector<double> pathavg;
-	vector<int> pathcnt;
+	std::vector<int> sizes;
+	std::vector<double> sizedist;
+	std::vector<double> pathavg;
+	std::vector<int> pathcnt;
 	double avgFclustermeanfreepathnew=0;
 	int curcsize;
 	int knownsize=0;
@@ -710,6 +733,3 @@ void obsAverageMeanfreepathNew(Observablestruct &lobs, Clusterstruct &lclusterda
 
 	lobs.avgFnpclustermeanfreepathnew = avgFnpclustermeanfreepathnew/(double)norm;
 }
-
-
-#endif // FINDCLUSTER_PATH_HPP
