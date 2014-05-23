@@ -70,7 +70,7 @@ int main(int argc, char *argv[]) {
 			cout << endl << "------------------------------------------------------------------------------" << endl;
 			cout << n+1 << " of "<< opt.nmeas << ": " << opt.fevname[n] << " ... " << endl;
 		} else {
-			cout << "\r" <<  "                                                   " << flush;
+			cout << "\r" <<  "                                                                   " << flush;
 			cout << "\r" << n+1 << " of "<< opt.nmeas << ": " << opt.fevname[n] << " ... " << flush;
 		}
 		// Read Polyakov loop eigenvalues file
