@@ -2,6 +2,4 @@
   * Make it possible to read Wuppertal data and own data
   * Do not use 3 entry arrays (eigenvalues) to store one value for the
     Polyakov loop that we get from Wuppertal
-  * Split findcluster_obs.hpp into findcluster_obs.hpp and findcluster_expvalue.hpp (or similar
   * Transition to header/source code seperated file structure
-  * Transition to cmake based build system

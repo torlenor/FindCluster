@@ -5,6 +5,8 @@
    v1.9 - 2014-05-22 Hans-Peter Schadler
 */
 
+#include "findcluster.h"
+
 #include <algorithm>
 #include <complex>
 #include <cstdlib>
@@ -17,13 +19,11 @@
 
 #include "version.h"
 
+#include "include/jackknife.h"
+#include "include/readowndata.hpp"
 #include "include/readwupperdata.hpp"
 
 using namespace std;
-
-#include "include/jackknife.h"
-
-#include "findcluster.h"
 
 Options opt;
 
