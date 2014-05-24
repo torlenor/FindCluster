@@ -161,13 +161,6 @@ struct Resultstruct{
   double avgFnpclustermeanfreepathnew, avgFnpclustermeanfreepathnewerr;
 };
 
-// Stuff to find and categorize sectors/clusters for one configuration
-void fillSectors(Clusterstruct &lclusterdata, double delta);
-void fillSectorsAlt(Clusterstruct &lclusterdata, double r);
-void findClusters(Clusterstruct &lclusterdata);
-void checkClusters(Clusterstruct &lclusterdata);
-void findPercolatingCluster(Clusterstruct &lclusterdata);
-
 void writeConfigResultsstdout(Observablestruct &lobs, Clusterstruct &lclusterdata);
 void writeClusterList(Clusterstruct &lclusterdata);
 

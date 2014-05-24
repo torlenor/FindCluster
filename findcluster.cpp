@@ -22,20 +22,18 @@
 #include "findcluster.h"
 
 #include <algorithm>
-#include <complex>
-#include <cstdlib>
 #include <fstream>
 #include <iomanip>
 #include <iostream>
 #include <limits>
-#include <string>
 #include <vector>
 
-#include "version.h"
+#include "findcluster_cluster.h"
 
 #include "include/jackknife.h"
 #include "include/readowndata.hpp"
 #include "include/readwupperdata.hpp"
+#include "version.h"
 
 using namespace std;
 
@@ -43,10 +41,8 @@ Options opt;
 
 // Vector for Polyakov loop eigenvalue data
 vector<vector<complex<double> > > pollev;
-
 // Neib vector
 vector<vector<int> > neib;
-
 // Box size vector
 vector<int> boxsize;
 vector<int> boxes;
@@ -55,7 +51,6 @@ Clusterstruct *clusterdata;
 Observablestruct *obs;
 Resultstruct results;
 
-#include "findcluster_cluster.hpp"
 #include "findcluster_helper.hpp"
 #include "findcluster_init.hpp"
 #include "findcluster_obs.hpp"
@@ -98,19 +93,19 @@ int main(int argc, char *argv[]) {
 		// checkPollEv(leng1, leng2, leng3, leng4, matrixdim, pollev);
 		
 		if (opt.usealternativesectors==true) {
-			fillSectorsAlt(clusterdata[n], opt.r); // Categorize lattice points by sectors using alternative prescription
+			fillSectorsAlt(clusterdata[n], pollev, opt, opt.r); // Categorize lattice points by sectors using alternative prescription
 		} else {
-			fillSectors(clusterdata[n], opt.delta); // Categorize lattice points by sectors
+			fillSectors(clusterdata[n], pollev, opt, opt.delta); // Categorize lattice points by sectors
 		}
 	
     cout << "c" << flush;
-		findClusters(clusterdata[n]);	// Identify clusters
-		checkClusters(clusterdata[n]); // Check clusters
+		findClusters(clusterdata[n], neib, opt);	// Identify clusters
+		checkClusters(clusterdata[n], opt); // Check clusters
     cout << "p" << flush;
-		findPercolatingCluster(clusterdata[n]); // Find percolating clusters
+		findPercolatingCluster(clusterdata[n], opt); // Find percolating clusters
 
     cout << "s" << flush;
-		sortClusterSize(clusterdata[n]); // Sort clusters per number of members
+		sortClusterSize(clusterdata[n], opt); // Sort clusters per number of members
 
     cout << "o" << flush;
 		calcObservables(obs[n], clusterdata[n]); // Calculate observables
