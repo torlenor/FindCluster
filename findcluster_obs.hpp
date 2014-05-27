@@ -489,8 +489,6 @@ void calcObservables(Observablestruct &lobs, Clusterstruct &lclusterdata){
 	}
 
 	if(opt.domean){
-    obsClusterMeanFreePathLargest(lobs, lclusterdata, opt);
-    obsClusterMeanFreePath(lobs, lclusterdata, opt);
     obsClusterMeanFreePathNew(lobs, lclusterdata, opt);
     obsAverageMeanfreepathNew(lobs, lclusterdata, opt);
   }
@@ -699,50 +697,6 @@ void calcExp(){
 	Jackknife(ddata, results.avgperccluster, results.avgpercclustererr, opt.nmeas);
 	
 	if(opt.domean){
-    // Mean free path of largest cluster expectation value
-    for(int n=0;n<opt.nmeas;n++){
-      ddata[n]=0;
-      for(int j=0;j<opt.nmeas;j++){
-        if(n!=j)
-          ddata[n] += (&obs[j])->largestclustermeanfreepath;
-      }
-      ddata[n] = ddata[n]/(double)(opt.nmeas-1);
-    }
-    Jackknife(ddata, results.largestclustermeanfreepath, results.largestclustermeanfreepatherr, opt.nmeas);
-    
-    // Mean free path of largest non-perc. cluster expectation value
-    for(int n=0;n<opt.nmeas;n++){
-      ddata[n]=0;
-      for(int j=0;j<opt.nmeas;j++){
-        if(n!=j)
-          ddata[n] += (&obs[j])->largestnpclustermeanfreepath;
-      }
-      ddata[n] = ddata[n]/(double)(opt.nmeas-1);
-    }
-    Jackknife(ddata, results.largestnpclustermeanfreepath, results.largestnpclustermeanfreepatherr, opt.nmeas);
-    
-    // Mean free path of avg cluster expectation value
-    for(int n=0;n<opt.nmeas;n++){
-      ddata[n]=0;
-      for(int j=0;j<opt.nmeas;j++){
-        if(n!=j)
-          ddata[n] += (&obs[j])->avgclustermeanfreepath;
-      }
-      ddata[n] = ddata[n]/(double)(opt.nmeas-1);
-    }
-    Jackknife(ddata, results.avgclustermeanfreepath, results.avgclustermeanfreepatherr, opt.nmeas);
-    
-    // Mean free path of avg non-perc. cluster expectation value
-    for(int n=0;n<opt.nmeas;n++){
-      ddata[n]=0;
-      for(int j=0;j<opt.nmeas;j++){
-        if(n!=j)
-          ddata[n] += (&obs[j])->avgnpclustermeanfreepath;
-      }
-      ddata[n] = ddata[n]/(double)(opt.nmeas-1);
-    }
-    Jackknife(ddata, results.avgnpclustermeanfreepath, results.avgnpclustermeanfreepatherr, opt.nmeas);
-
     // NEW DEFINITION OF MEAN FREE PATH
     // Mean free path of largest cluster expectation value (NEW)
     for(int n=0;n<opt.nmeas;n++){

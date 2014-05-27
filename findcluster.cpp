@@ -47,7 +47,6 @@ vector<vector<int> > neib;
 vector<int> boxsize;
 vector<int> boxes;
 
-Clusterstruct *clusterdata;
 Observablestruct *obs;
 Resultstruct results;
 
@@ -72,8 +71,9 @@ int main(int argc, char *argv[]) {
 	cout << "------------------------------------------------------------------------------" << endl;
 	for (int n=0; n<opt.nmeas; n++) {
 		// Allocate memory for faster access
-    (&clusterdata[n])->isinsector.resize(opt.Nspace);
-    (&clusterdata[n])->isincluster.resize(opt.Nspace);
+    Clusterstruct lclusterdata;
+    lclusterdata.isinsector.resize(opt.Nspace);
+    lclusterdata.isincluster.resize(opt.Nspace);
 
 		if (opt.detail) {
 			cout << endl << "------------------------------------------------------------------------------" << endl;
@@ -93,38 +93,38 @@ int main(int argc, char *argv[]) {
 		// checkPollEv(leng1, leng2, leng3, leng4, matrixdim, pollev);
 		
 		if (opt.usealternativesectors==true) {
-			fillSectorsAlt(clusterdata[n], pollev, opt, opt.r); // Categorize lattice points by sectors using alternative prescription
+			fillSectorsAlt(lclusterdata, pollev, opt, opt.r); // Categorize lattice points by sectors using alternative prescription
 		} else {
-			fillSectors(clusterdata[n], pollev, opt, opt.delta); // Categorize lattice points by sectors
+			fillSectors(lclusterdata, pollev, opt, opt.delta); // Categorize lattice points by sectors
 		}
 	
     cout << "c" << flush;
-		findClusters(clusterdata[n], neib, opt);	// Identify clusters
-		checkClusters(clusterdata[n], opt); // Check clusters
+		findClusters(lclusterdata, neib, opt);	// Identify clusters
+		checkClusters(lclusterdata, opt); // Check clusters
     cout << "p" << flush;
-		findPercolatingCluster(clusterdata[n], opt); // Find percolating clusters
+		findPercolatingCluster(lclusterdata, opt); // Find percolating clusters
 
     cout << "s" << flush;
-		sortClusterSize(clusterdata[n], opt); // Sort clusters per number of members
+		sortClusterSize(lclusterdata, opt); // Sort clusters per number of members
 
     cout << "o" << flush;
-		calcObservables(obs[n], clusterdata[n]); // Calculate observables
+		calcObservables(obs[n], lclusterdata); // Calculate observables
 		
 		if (opt.detail) {
 			cout << endl << "Details for " << opt.fevname[n] << ":" << endl;
-			writeConfigResultsstdout(obs[n], clusterdata[n]);
+			writeConfigResultsstdout(obs[n], lclusterdata);
 		}
 		
 		if (opt.do3d) {
 			// Write data for 3dclusters program
 			stringstream f3dclustername;
 			f3dclustername << "3dcluster_" << opt.leng1 << "x" << opt.leng4 << "_m" << setprecision(0) << fixed << n << ".data";
-			cluster3doutput(clusterdata[n], f3dclustername.str());
+			cluster3doutput(lclusterdata, f3dclustername.str());
 		}
 
-		if (opt.memorysaver) {
-			freeMem(clusterdata[n]);
-		}
+		//if (opt.memorysaver) {
+		//	freeMem(clusterdata[n]);
+		//}
 	}
 
 	if (opt.do3d) {
@@ -147,7 +147,7 @@ int main(int argc, char *argv[]) {
 	writeresultsstdout();
 	writeresults();
 
-	delete [] clusterdata; clusterdata=0;
+	// delete [] clusterdata; clusterdata=0;
 	delete [] obs; obs=0;
 	
 	return 0;

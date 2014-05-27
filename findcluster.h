@@ -95,7 +95,7 @@ struct Observablestruct{
 
 	std::vector<std::vector<int> > numberofboxes;
 	
-	std::vector<std::vector<double> > centerofmass;
+	// std::vector<std::vector<double> > centerofmass;
 	std::vector<double> clusterradius;
 	double largestclusterradius;
 	double largestnpclusterradius;
@@ -111,12 +111,6 @@ struct Observablestruct{
 	double areaavgnonperccluster;
 
 	double poll;
-  
-  std::vector<double> meanfreepath;
-  double largestclustermeanfreepath;
-  double largestnpclustermeanfreepath;
-  double avgclustermeanfreepath;
-  double avgnpclustermeanfreepath;
   
   std::vector<double> meanfreepathnew;
   double largestclustermeanfreepathnew;
@@ -147,11 +141,6 @@ struct Resultstruct{
 	double avgperccluster, avgpercclustererr;
 	std::vector<double> largestclusterboxcount, largestclusterboxcounterr;
 	std::vector<double> largestnonpercboxcount, largestnonpercboxcounterr;
-  
-  double largestclustermeanfreepath, largestclustermeanfreepatherr;
-  double largestnpclustermeanfreepath, largestnpclustermeanfreepatherr;
-  double avgclustermeanfreepath, avgclustermeanfreepatherr;
-  double avgnpclustermeanfreepath, avgnpclustermeanfreepatherr;
   
   double largestclustermeanfreepathnew, largestclustermeanfreepathnewerr;
   double largestnpclustermeanfreepathnew, largestnpclustermeanfreepathnewerr;

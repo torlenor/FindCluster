@@ -181,7 +181,6 @@ cout << "findcluster.x " << MAJOR_VERSION << "." << MINOR_VERSION << "." << REVI
 	opt.delta = delta0*(1.0 - opt.fraction);
 
 	// Prepare for nmeas measurements
-	clusterdata = new Clusterstruct[opt.nmeas];
 	obs = new Observablestruct[opt.nmeas];
 
 	opt.fevname.resize(opt.nmeas);

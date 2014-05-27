@@ -26,6 +26,7 @@
 
 #include "findcluster.h"
 
+/* OLD VERSION
 void obsClusterMeanFreePathLargest(Observablestruct &lobs, Clusterstruct &lclusterdata, Options opt){
   // Calculates the mean free path of the largest cluster
 	lobs.meanfreepath.resize(lclusterdata.clustermembers.size());
@@ -388,14 +389,8 @@ void obsClusterMeanFreePath(Observablestruct &lobs, Clusterstruct &lclusterdata,
   }
   lobs.avgnpclustermeanfreepath = avgclustermeanfreepath/(double)cnt;
 
-  // Write a list of clusterweight and meanfreepath to stdout
-  /* for(unsigned int c=0; c<lclusterdata.sortedrealcluster.size(); c++){
-    if(lclusterdata.clustersector[lclusterdata.sortedrealcluster[c]] < 2){
-      std::cout << lclusterdata.clustermembers[lclusterdata.sortedrealcluster[c]].size() << " " << lobs.meanfreepath[lclusterdata.sortedrealcluster[c]] << std::endl;
-    }
-  } */
-
 }
+*/ // OLD VERSION END
 
 void obsClusterMeanFreePathNew(Observablestruct &lobs, Clusterstruct &lclusterdata, Options opt){
   // Calculates the mean free path of all clusters using the new definition

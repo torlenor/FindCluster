@@ -24,8 +24,8 @@
 
 #include "findcluster.h"
 
-void obsClusterMeanFreePathLargest(Observablestruct &lobs, Clusterstruct &lclusterdata, Options opt);
-void obsClusterMeanFreePath(Observablestruct &lobs, Clusterstruct &lclusterdata, Options opt);
+// void obsClusterMeanFreePathLargest(Observablestruct &lobs, Clusterstruct &lclusterdata, Options opt);
+// void obsClusterMeanFreePath(Observablestruct &lobs, Clusterstruct &lclusterdata, Options opt);
 void obsClusterMeanFreePathNew(Observablestruct &lobs, Clusterstruct &lclusterdata, Options opt);
 void obsAverageMeanfreepathNew(Observablestruct &lobs, Clusterstruct &lclusterdata, Options opt);
 

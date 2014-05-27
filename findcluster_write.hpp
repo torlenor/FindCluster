@@ -30,7 +30,7 @@ void writeavgclustersize() {
   std::ofstream favgclustersize;
 	favgclustersize.open(favgclustersizename.str().c_str());
 
-	favgclustersize << "# Nt avgclusterweight avgclusterweighterr avgfortunatoclustersize avgfortunatoclustersizeerr avgclusterweightFnp avgclusterweightFnperr avgclusterweightnp avgclusterweightnperr avgnpclusterradius avgnpclusterradiuserr avgnpclusterarea avgnpclusterareaerr" << std::endl;
+	favgclustersize << "# 1_Nt 2_avgclusterweight 3_avgclusterweighterr 4_avgfortunatoclustersize 5_avgfortunatoclustersizeerr 6_avgclusterweightFnp 7_avgclusterweightFnperr 8_avgclusterweightnp 9_avgclusterweightnperr 10_avgnpclusterradius 11_avgnpclusterradiuserr 12_avgnpclusterarea 13_avgnpclusterareaerr" << std::endl;
 	favgclustersize.flags (std::ios::scientific);
 	favgclustersize.precision(numeric_limits<double>::digits10 + 1);
 	favgclustersize << opt.Nt << " " 
@@ -52,7 +52,7 @@ void writeclusterradius() {
   std::ofstream fclusterradius;
 	fclusterradius.open(fclusterradiusname.str().c_str());
 
-	fclusterradius << "# Nt largestclusterradius largestclusterradiuserr largestnpclusterradius largestnpclusterradiuserr avgclusterradius avgclusterradiuserr avgnpcluterradius avgnpclusterradiuserr rootmeansquaredistanceR rootmeansquaredistanceRerr maxclustersize maxclustersizeerr maxnonpercclustersize maxnonpercclustersizeerr avgclustersize avgclustersizeerr avgclusersizeFortunato avgclusersizeFortunatoerr avgclustersizeFnp avgclustersizeFnperr" << std::endl;
+	fclusterradius << "# 1_Nt 2_largestclusterradius 3_largestclusterradiuserr 4_largestnpclusterradius 5_largestnpclusterradiuserr 6_avgclusterradius 7_avgclusterradiuserr 8_avgnpcluterradius 9_avgnpclusterradiuserr 10_rootmeansquaredistanceR 11_rootmeansquaredistanceRerr 12_maxclustersize 13_maxclustersizeerr 14_maxnonpercclustersize 15_maxnonpercclustersizeerr 16_avgclustersize 17_avgclustersizeerr 18_avgclusersizeFortunato 19_avgclusersizeFortunatoerr 20_avgclustersizeFnp 21_avgclustersizeFnperr" << std::endl;
 	fclusterradius.flags (std::ios::scientific);
 	fclusterradius.precision(numeric_limits<double>::digits10 + 1);
 	fclusterradius << opt.Nt << " " << results.largestclusterradius << " " << results.largestclusterradiuserr << " "
@@ -77,7 +77,7 @@ void writenpercc() {
   std::ofstream fnpercc;
 	fnpercc.open(fnperccname.str().c_str());
 
-	fnpercc << "# Nt percclusters percclusterserr cut cuterr" << std::endl;
+	fnpercc << "# 1_Nt 2_percclusters 3_percclusterserr 4_cut 5_cuterr" << std::endl;
 	fnpercc.flags (std::ios::scientific);
 	fnpercc.precision(numeric_limits<double>::digits10 + 1);
 	fnpercc << opt.Nt << " " << results.avgperccluster << " " << results.avgpercclustererr << " " 
@@ -87,26 +87,6 @@ void writenpercc() {
 	fnpercc.close();
 }
 
-void writefreepath() {
-  std::stringstream ffreepathname;
-	ffreepathname << "freepath_" << opt.Ns << "x" << opt.Nt << "_f" << opt.fraction << ".res";
-
-  std::ofstream ffreepath;
-	ffreepath.open(ffreepathname.str().c_str());
-
-	ffreepath << "# Nt largestcluster largestclustererr largestnpcluster largestnpclustererr avgcluster avgclustererr avgnpcluster avgnpclustererr" << std::endl;
-	ffreepath.flags (std::ios::scientific);
-	ffreepath.precision(numeric_limits<double>::digits10 + 1);
-	ffreepath << opt.Nt << " " 
-    << results.largestclustermeanfreepath << " " << results.largestclustermeanfreepatherr << " " 
-    << results.largestnpclustermeanfreepath << " " << results.largestnpclustermeanfreepatherr << " " 
-    << results.avgclustermeanfreepath << " " << results.avgclustermeanfreepatherr << " " 
-    << results.avgnpclustermeanfreepath << " " << results.avgnpclustermeanfreepatherr
-  << std::endl;
-
-	ffreepath.close();
-}
-
 void writemeanfreepathnew() {
   std::stringstream ffreepathnewname;
 	ffreepathnewname << "meanfreepath_new_" << opt.Ns << "x" << opt.Nt << "_f" << opt.fraction << ".res";
@@ -114,7 +94,7 @@ void writemeanfreepathnew() {
   std::ofstream ffreepathnew;
 	ffreepathnew.open(ffreepathnewname.str().c_str());
 
-	ffreepathnew << "# 1Nt 2largestcluster 3largestclustererr 4largestnpcluster 5largestnpclustererr 6avgcluster 7avgclustererr 8avgnpcluster 9avgnpclustererr 10avgFcluster 11avgFclustererr 12avgFnpcluster 13avgFnpclustererr" << std::endl;
+	ffreepathnew << "# 1_Nt 2_largestcluster 3_largestclustererr 4_largestnpcluster 5_largestnpclustererr 6_avgcluster 7_avgclustererr 8_avgnpcluster 9_avgnpclustererr 10_avgFcluster 11_avgFclustererr 12_avgFnpcluster 13_avgFnpclustererr" << std::endl;
 	ffreepathnew.flags (std::ios::scientific);
 	ffreepathnew.precision(numeric_limits<double>::digits10 + 1);
 	ffreepathnew << opt.Nt << " " 
@@ -136,7 +116,7 @@ void writebox() {
     std::ofstream fboxcnt;
 		fboxcnt.open(fboxcntname.str().c_str());
 
-		fboxcnt << "# boxsize boxcnt boxcnterr" << std::endl;
+		fboxcnt << "# 1_boxsize 2_boxcnt 3_boxcnterr" << std::endl;
 		fboxcnt.flags (std::ios::scientific);
 		fboxcnt.precision(numeric_limits<double>::digits10 + 1);
 		for (unsigned int size=0; size<boxsize.size(); size++) {
@@ -153,7 +133,7 @@ void writeboxnp() {
     std::ofstream fboxcnt;
 		fboxcnt.open(fboxcntname.str().c_str());
 
-		fboxcnt << "# boxsize boxcntnonpercc boxcntnonperccerr" << std::endl;
+		fboxcnt << "# 1_boxsize 2_boxcntnonpercc 3_boxcntnonperccerr" << std::endl;
 		fboxcnt.flags (std::ios::scientific);
 		fboxcnt.precision(numeric_limits<double>::digits10 + 1);
 		for(unsigned int size=0; size<boxsize.size(); size++){
@@ -170,7 +150,7 @@ void writearea() {
   std::ofstream farea;
 	farea.open(fareaname.str().c_str());
 
-	farea << "# Nt area areaerr arealargestnonpercc arealargestnonperccerr largestclusterweight largestclusterweighterr largestnonpercclusterweight largestnonpercclusterweighterr areaavgnonpercc areaavgnonperccerr avgclusersizeFnp avgclusersizeFnperr" << std::endl;
+	farea << "# 1_Nt 2_area 3_areaerr 4_arealargestnonpercc 5_arealargestnonperccerr 6_largestclusterweight 7_largestclusterweighterr 8_largestnonpercclusterweight 9_largestnonpercclusterweighterr 10_areaavgnonpercc 11_areaavgnonperccerr 12_avgclusersizeFnp 13_avgclusersizeFnperr" << std::endl;
 	farea.flags (std::ios::scientific);
 	farea.precision(numeric_limits<double>::digits10 + 1);
 	farea << opt.Nt << " " 
@@ -192,7 +172,7 @@ void writepoll() {
 	ofstream fpoll;
 	fpoll.open(fpollname.str().c_str());
 
-	fpoll << "# Nt poll pollerr domainwallpoll(largest cluster) domainwallpollerr(largest cluster) avgdomainwallpoll avgdomainwallpollerr" << std::endl;
+	fpoll << "# 1_Nt 2_poll 3_pollerr" << std::endl;
 	fpoll.flags (std::ios::scientific);
 	fpoll.precision(numeric_limits<double>::digits10 + 1);
 	fpoll << opt.Nt << " " 
@@ -206,8 +186,9 @@ void writeresults() {
   writeclustersize();
   writeavgclustersize();
   writeclusterradius();
+
   writenpercc();
-  writefreepath();
+
   writemeanfreepathnew();
 	
 	if(opt.doboxes){
