@@ -21,8 +21,8 @@ char texthelp[]="Usage: findcluster.x [OPTION] ... [POLLEVCONFIG/POLLEVCONFIGLIS
 		"  -b, --boxes                performes the box counting calculation (expensive)\n"
 		"  -a, --distance             performes the distance traveled calculation (expensive)\n"
 		"  -r, --rsector RADIUS       use alternative sector classification with r = RADIUS\n"
+		"  -o, --olddata              read old Polyakov loop ev data instead of wuppertal data (NOT ENTIRELY TESTED!!!)\n"
 		"  --3d                       write 3dcluster data files\n"
-		"  -m, --memory               drop clusterdata vectors after calculating the observables\n"
 		"\n"  
 		"  -h  --help                 display this help and exit\n"
 		"  -v  --version              output version information and exit\n"
@@ -60,9 +60,11 @@ cout << "findcluster.x " << MAJOR_VERSION << "." << MINOR_VERSION << "." << REVI
 
   // Set default options
   opt.Ns=4, opt.Nt=4;
-  opt.matrixdim=3, opt.leng1=opt.Ns, opt.leng2=opt.Ns, opt.leng3=opt.Ns, opt.leng4=opt.Nt, opt.Nspace=opt.Ns*opt.Ns*opt.Ns;
+  opt.matrixdim=1, opt.leng1=opt.Ns, opt.leng2=opt.Ns, opt.leng3=opt.Ns, opt.leng4=opt.Nt, opt.Nspace=opt.Ns*opt.Ns*opt.Ns;
 
   opt.nmeas=1;
+
+  opt.wupperdata=true; // Controlls if we want to read wuppertal data, default true
 
   opt.usealternativesectors=false;
   opt.r=0;
@@ -74,8 +76,6 @@ cout << "findcluster.x " << MAJOR_VERSION << "." << MINOR_VERSION << "." << REVI
   opt.dodistance=false; // Controlls if we want box counting calculations
   opt.doradius=true; // Controlls if we want radius calculation
   opt.domean=false; // Controlls if we want mean distance traveled calculations
-
-  opt.memorysaver=false; // Controlls if we drop the clusterdata arrays after observable calculations
 
   opt.fraction = 0.0;
 
@@ -95,8 +95,8 @@ cout << "findcluster.x " << MAJOR_VERSION << "." << MINOR_VERSION << "." << REVI
       {"detail", no_argument, 0, 'd'},
       {"boxes", no_argument, 0, 'b'},
       {"distance", no_argument, 0, 'a'},
+      {"olddata", no_argument, 0, 'o'},
       {"3d", no_argument, 0, 0},
-      {"memory", no_argument, 0, 'm'},
       {"help", no_argument, 0, 'h'},
       {"version", no_argument, 0, 'v'},
       {0, 0, 0, 0}
@@ -105,7 +105,7 @@ cout << "findcluster.x " << MAJOR_VERSION << "." << MINOR_VERSION << "." << REVI
 		/* getopt_long stores the option index here. */
 		int option_index = 0;
 
-		c = getopt_long(argc, argv, "s:t:f:n:r:hvdbma",
+		c = getopt_long(argc, argv, "s:t:f:n:r:hvdboa",
 		long_options, &option_index);
 
 		/* Detect the end of the options. */
@@ -146,15 +146,16 @@ cout << "findcluster.x " << MAJOR_VERSION << "." << MINOR_VERSION << "." << REVI
 				opt.dodistance = true;
 				break;
 			
+      case 'o':
+				opt.wupperdata = false;
+        opt.matrixdim = 3;
+				break;
+			
 			case 'r':
 				opt.usealternativesectors = true;
 				opt.r = atof(optarg);
 				break;
 			
-			case 'm':
-				opt.memorysaver = true;
-				break;
-
 			case 'v':
 				cout << endl << "findcluster.x version " << MAJOR_VERSION << "." << MINOR_VERSION << "." << REVISION_VERSION << endl;
 				abort();

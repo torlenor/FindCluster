@@ -84,13 +84,19 @@ int main(int argc, char *argv[]) {
 		}
 		// Read Polyakov loop eigenvalues file
     cout << "r" << flush;
-		if (readWupperPollEvBinary(opt.leng1, opt.leng2, opt.leng3, opt.leng4, opt.matrixdim, pollev, opt.fevname[n]) != 0) {
-			cout << "ERROR: Problems with writePollEvBinary !" << endl;
-			return 1;
-		}
-		
-		// Check Polyakov loop eigenvalues
-		// checkPollEv(leng1, leng2, leng3, leng4, matrixdim, pollev);
+		if (opt.wupperdata) {
+      if (readWupperPollBinary(opt.leng1, opt.leng2, opt.leng3, opt.leng4, opt.matrixdim, pollev, opt.fevname[n]) != 0) {
+        cout << "ERROR: Problems with readWupperPollBinary !" << endl;
+        return 1;
+      }
+    } else {
+      if (readPollEvBinary(opt.leng1, opt.leng2, opt.leng3, opt.leng4, opt.matrixdim, pollev, opt.fevname[n]) != 0) {
+        cout << "ERROR: Problems with readPollEVBinary !" << endl;
+        return 1;
+      }
+      // Check Polyakov loop eigenvalues
+      checkPollEv(opt.leng1, opt.leng2, opt.leng3, opt.leng4, opt.matrixdim, pollev);
+    }
 		
 		if (opt.usealternativesectors==true) {
 			fillSectorsAlt(lclusterdata, pollev, opt, opt.r); // Categorize lattice points by sectors using alternative prescription
@@ -121,10 +127,6 @@ int main(int argc, char *argv[]) {
 			f3dclustername << "3dcluster_" << opt.leng1 << "x" << opt.leng4 << "_m" << setprecision(0) << fixed << n << ".data";
 			cluster3doutput(lclusterdata, f3dclustername.str());
 		}
-
-		//if (opt.memorysaver) {
-		//	freeMem(clusterdata[n]);
-		//}
 	}
 
 	if (opt.do3d) {

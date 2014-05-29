@@ -1,5 +1,4 @@
 - 2.0.0
-  * Make it possible to read Wuppertal data and own data
-  * Do not use 3 entry arrays (eigenvalues) to store one value for the
-    Polyakov loop that we get from Wuppertal
   * Transition to header/source code seperated file structure
+  * Make it possible to write out all measurements and not just expectation
+    values

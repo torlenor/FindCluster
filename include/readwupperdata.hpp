@@ -15,7 +15,7 @@
 //         complex float L[Nz][Ny][Nx];
 // };
 
-int readWupperPollEvBinary(int leng1, int leng2, int leng3, int leng4, int matrixdim, std::vector<std::vector<std::complex<double> > > &pollev, std::string fevname){
+int readWupperPollBinary(int leng1, int leng2, int leng3, int leng4, int matrixdim, std::vector<std::vector<std::complex<double> > > &pollev, std::string fevname){
 	#ifdef DEBUG
   std::cout << "Reading 3d lattice with Polyakov loop evs... " << std::flush;
 	#endif
@@ -56,9 +56,8 @@ int readWupperPollEvBinary(int leng1, int leng2, int leng3, int leng4, int matri
 			is = i1 + i2*leng1 + i3*leng1*leng2;
 			elems += fread(&re, sizeof(float), 1, pFile);
 			elems += fread(&im, sizeof(float), 1, pFile);
-      pollev[is][0]=std::complex<double>(re,im);
-      pollev[is][1]=0;
-      pollev[is][2]=0;
+      pollev.at(is).at(0)=std::complex<double>(re,im);
+      // We use only one entry as we get Polyakov loop values from Wuppertal instead of 3 eigenvalues
 		}
 		fclose(pFile);
 	}

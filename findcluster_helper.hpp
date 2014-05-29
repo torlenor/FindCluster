@@ -54,6 +54,8 @@ int latmap(int i1, int i2, int i3) {
 void printsettings() {
 	cout << "Settings:" << endl << endl;
 	cout << "Lattice size = " << opt.leng1 << "x" << opt.leng2 << "x" << opt.leng3 << "x" << opt.leng4 << endl;
+	if (opt.wupperdata)
+		cout << "Reading Wuppertal Polakov loop data format.." <<  endl;
 	cout << "Number of configurations = " << opt.nmeas << endl;
 	if (! opt.usealternativesectors) {
 		cout << "Cut fraction = " << opt.fraction << endl;
@@ -66,8 +68,6 @@ void printsettings() {
 		cout << "Writing detailed results for every configuration." <<  endl;
 	if (opt.do3d)
 		cout << "Writing 3dcluster visualization data files." <<  endl;
-	if (opt.memorysaver)
-		cout << "Memory saver active." <<  endl;
 }
 
 void freeMem(Clusterstruct &lclusterdata) {

@@ -31,6 +31,8 @@ struct Options{
   int Ns, Nt; // Spatial and temporal lattice extent
   int matrixdim, leng1, leng2, leng3, leng4, Nspace;
 
+  bool wupperdata; // if true, marks that we are reading wuppertal data, if off we read the old polyakov loop ev structure
+
   int nmeas; // Number of measurements/configurations to use
   
   double fraction; // fraction to cut
@@ -46,8 +48,6 @@ struct Options{
   bool dodistance; // Controlls if we want box counting calculations
   bool doradius; // Controlls if we want radius calculation
   bool domean; // Controlls if we want mean distance traveled calculations
-
-  bool memorysaver; // Controlls if we drop the clusterdata arrays after observable calculations 
 
   std::vector<std::string> fevname; // Filenames of configurations
 };

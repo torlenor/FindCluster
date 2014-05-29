@@ -82,6 +82,7 @@ void fillSectorsAlt(Clusterstruct &lclusterdata, std::vector<std::vector<std::co
 
 	opt.delta = M_PI/3.0;
 	
+  std::complex<double> trace=0;
 	double tracephase=0;
 	double radius=0;
 	
@@ -96,8 +97,12 @@ void fillSectorsAlt(Clusterstruct &lclusterdata, std::vector<std::vector<std::co
 		lclusterdata.isinsector[is] = 2;
 	
 	for (int is=0; is<opt.Nspace; is++) {
-		tracephase = arg(pollev[is][0] + pollev[is][1] + pollev[is][2]);
-		radius = abs(pollev[is][0] + pollev[is][1] + pollev[is][2]);
+    trace=0;
+    for(int i=0;i<opt.matrixdim;i++) {
+      trace+=pollev.at(is).at(i);
+    }
+		tracephase = arg(trace);
+		radius = abs(trace);
 		
 		if (abs(tracephase - 2.0*M_PI/3.0) <= opt.delta) {
 			if (radius >= r) {
@@ -119,7 +124,7 @@ void fillSectorsAlt(Clusterstruct &lclusterdata, std::vector<std::vector<std::co
 				csectm1++;
 			}
 		}
-		lclusterdata.poll[is]=pollev[is][0] + pollev[is][1] + pollev[is][2];
+		lclusterdata.poll[is]=trace;
 	}
 	
 	lclusterdata.nsectm1=csectm1; lclusterdata.nsect0=csect0; lclusterdata.nsectp1=csectp1;
@@ -138,6 +143,7 @@ void fillSectors(Clusterstruct &lclusterdata, std::vector<std::vector<std::compl
 	int csectm1=0;
 	int csect0=0;
 	
+  std::complex<double> trace;
 	double tracephase=0;
 	
 	#ifdef DEBUG
@@ -150,7 +156,11 @@ void fillSectors(Clusterstruct &lclusterdata, std::vector<std::vector<std::compl
 		lclusterdata.isinsector[is] = 2;
 	
 	for (int is=0; is<opt.Nspace; is++) {
-		tracephase = arg(pollev[is][0] + pollev[is][1] + pollev[is][2]);
+    trace=0;
+    for(int i=0;i<opt.matrixdim;i++) {
+      trace+=pollev.at(is).at(i);
+    }
+		tracephase = arg(trace);
 		
 		if (abs(tracephase - 2.0*M_PI/3.0) <= delta) {
 			lclusterdata.isinsector[is]=1;
@@ -167,7 +177,7 @@ void fillSectors(Clusterstruct &lclusterdata, std::vector<std::vector<std::compl
 			csectm1++;
 		}
 
-		lclusterdata.poll[is]=pollev[is][0] + pollev[is][1] + pollev[is][2];
+		lclusterdata.poll[is]=trace;
 	}
 	
 	lclusterdata.nsectm1=csectm1; lclusterdata.nsect0=csect0; lclusterdata.nsectp1=csectp1;
