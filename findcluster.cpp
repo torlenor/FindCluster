@@ -29,6 +29,7 @@
 #include <vector>
 
 #include "findcluster_cluster.h"
+#include "findcluster_writemeasure.h"
 
 #include "include/jackknife.h"
 #include "include/readowndata.hpp"
@@ -141,6 +142,9 @@ int main(int argc, char *argv[]) {
 		f3dclusterlist.close();
 	}
 
+	if (opt.writemeas) {
+		writeMeasures(obs, opt);
+	}
 	cout << endl;
 	cout << "------------------------------------------------------------------------------" << endl;
 

@@ -22,6 +22,7 @@ char texthelp[]="Usage: findcluster.x [OPTION] ... [POLLEVCONFIG/POLLEVCONFIGLIS
 		"  -a, --distance             performes the distance traveled calculation (expensive)\n"
 		"  -r, --rsector RADIUS       use alternative sector classification with r = RADIUS\n"
 		"  -o, --olddata              read old Polyakov loop ev data instead of wuppertal data (NOT ENTIRELY TESTED!!!)\n"
+		"  -w, --writemeas            writes all measurements to file\n"
 		"  --3d                       write 3dcluster data files\n"
 		"\n"  
 		"  -h  --help                 display this help and exit\n"
@@ -76,6 +77,7 @@ cout << "findcluster.x " << MAJOR_VERSION << "." << MINOR_VERSION << "." << REVI
   opt.dodistance=false; // Controlls if we want box counting calculations
   opt.doradius=true; // Controlls if we want radius calculation
   opt.domean=false; // Controlls if we want mean distance traveled calculations
+  opt.writemeas=false; // Controlls if we want to writeout all measurements
 
   opt.fraction = 0.0;
 
@@ -96,6 +98,7 @@ cout << "findcluster.x " << MAJOR_VERSION << "." << MINOR_VERSION << "." << REVI
       {"boxes", no_argument, 0, 'b'},
       {"distance", no_argument, 0, 'a'},
       {"olddata", no_argument, 0, 'o'},
+      {"writemeas", no_argument, 0, 'w'},
       {"3d", no_argument, 0, 0},
       {"help", no_argument, 0, 'h'},
       {"version", no_argument, 0, 'v'},
@@ -105,7 +108,7 @@ cout << "findcluster.x " << MAJOR_VERSION << "." << MINOR_VERSION << "." << REVI
 		/* getopt_long stores the option index here. */
 		int option_index = 0;
 
-		c = getopt_long(argc, argv, "s:t:f:n:r:hvdboa",
+		c = getopt_long(argc, argv, "s:t:f:n:r:hvdboaw",
 		long_options, &option_index);
 
 		/* Detect the end of the options. */
@@ -149,6 +152,10 @@ cout << "findcluster.x " << MAJOR_VERSION << "." << MINOR_VERSION << "." << REVI
       case 'o':
 				opt.wupperdata = false;
         opt.matrixdim = 3;
+				break;
+      
+      case 'w':
+				opt.writemeas = true;
 				break;
 			
 			case 'r':

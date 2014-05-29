@@ -49,6 +49,8 @@ struct Options{
   bool doradius; // Controlls if we want radius calculation
   bool domean; // Controlls if we want mean distance traveled calculations
 
+  bool writemeas; // Controlls if we want to writeout all measurements
+
   std::vector<std::string> fevname; // Filenames of configurations
 };
 
