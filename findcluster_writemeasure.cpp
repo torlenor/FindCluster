@@ -26,28 +26,54 @@
 
 #include "findcluster.h"
 
-void writemeasclustersize(Observablestruct *obs, Options &opt) {
+void prepwriteMeasure(Options &opt) {
+  // Prepare file for writemeasclustersize
   std::stringstream fclustersizename;
-	fclustersizename << "meas_clustersize_" << opt.Ns << "x" << opt.Nt << "_f" << opt.fraction << ".res";
-
+	fclustersizename << "meas_cluster_" << opt.Ns << "x" << opt.Nt << "_f" << opt.fraction << ".res";
   std::ofstream fclustersize;
 	fclustersize.open(fclustersizename.str().c_str());
+	fclustersize << "# 0_meas opt.maxclustersize opt.largestnonpercclustersize opt.largestnonpercclusterid opt.largetsnonpercclustersector opt.avgclustersize opt.avgclustersizeF opt.rootmeansquaredistanceR opt.avgclustersizenp opt.avgclustersizeFnp opt.cut opt.largestclusterradius opt.largestnpclusterradius opt.avgclusterradius opt.avgnpclusterradius opt.percc opt.area opt.arealargestnonperccluster opt.areaavgnonperccluster opt.poll opt.largestclustermeanfreepathnew opt.largestnpclustermeanfreepathnew opt.avgclustermeanfreepathnew opt.avgnpclustermeanfreepathnew opt.avgFclustermeanfreepathnew opt.avgFnpclustermeanfreepathnew" << std::endl;
+	fclustersize.close();
+}
 
-	fclustersize << "# 0_meas 1_Nt 2_largestclusterweight 3_largestclusterweighterr 4_avgclusterweight 5_avgclusterweighterr 6_avgfortunatoclustersize 7_avgfortunatoclustersizeerr 8_largestnonpercclusterweight 9_largestnonpercclusterweighterr 10_largestclusterradius 11_largestclusterradiuserr 12_rootmeansquaredistanceR 13_rootmeansquaredistanceR" << std::endl;
-	fclustersize.flags (std::ios::scientific);
+void writemeascluster(Observablestruct &lobs, Options &opt, int m) {
+  std::stringstream fclustersizename;
+	fclustersizename << "meas_cluster_" << opt.Ns << "x" << opt.Nt << "_f" << opt.fraction << ".res";
+
+  std::ofstream fclustersize;
+	fclustersize.open(fclustersizename.str().c_str(), std::ofstream::out | std::ofstream::app);
+	
+  fclustersize.flags (std::ios::scientific);
 	fclustersize.precision(std::numeric_limits<double>::digits10 + 1);
 	
 	// Loop over all measurements
-	for (int m=0; m<opt.nmeas; m++) {
-		fclustersize << m << " " << opt.Nt << " " 
-			<< (&obs[m])->maxclustersize/(double)opt.Nspace << " " 
-			<< (&obs[m])->avgclustersize << " " 
-			<< (&obs[m])->avgclustersizeF << " " 
-			<< (&obs[m])->largestnonpercclustersize/(double)opt.Nspace << " " 
-			<< (&obs[m])->largestclusterradius << " " 
-			<< (&obs[m])->rootmeansquaredistanceR << " " 
-		<< "\n";
-	} // End loop m
+		fclustersize << m << " " <<  
+      lobs.maxclustersize << " " << 
+      lobs.largestnonpercclustersize << " " << 
+      lobs.largestnonpercclusterid << " " << 
+      lobs.largetsnonpercclustersector << " " << 
+      lobs.avgclustersize << " " << 
+      lobs.avgclustersizeF << " " << 
+      lobs.rootmeansquaredistanceR << " " << 
+      lobs.avgclustersizenp << " " << 
+      lobs.avgclustersizeFnp << " " << 
+      lobs.cut << " " << 
+      lobs.largestclusterradius << " " << 
+      lobs.largestnpclusterradius << " " << 
+      lobs.avgclusterradius << " " << 
+      lobs.avgnpclusterradius << " " << 
+      lobs.percc << " " << 
+      lobs.area << " " << 
+      lobs.arealargestnonperccluster << " " << 
+      lobs.areaavgnonperccluster << " " << 
+      lobs.poll << " " << 
+      lobs.largestclustermeanfreepathnew << " " << 
+      lobs.largestnpclustermeanfreepathnew << " " << 
+      lobs.avgclustermeanfreepathnew << " " << 
+      lobs.avgnpclustermeanfreepathnew << " " << 
+      lobs.avgFclustermeanfreepathnew << " " << 
+      lobs.avgFnpclustermeanfreepathnew 
+    << "\n";
 	
 	fclustersize.close();
 }
@@ -212,8 +238,8 @@ void writepoll() {
 	fpoll.close();
 }
 */
-void writeMeasures(Observablestruct *obs, Options &opt) {
-  writemeasclustersize(obs, opt);
+void writeMeasures(Observablestruct &lobs, Options &opt, int m) {
+  writemeascluster(lobs, opt, m);
   /* writemeasavgclustersize();
   writemeasclusterradius();
 

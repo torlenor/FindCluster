@@ -67,6 +67,10 @@ int main(int argc, char *argv[]) {
 	printsettings();
 	cout << endl;
 
+  if(opt.writemeas) {
+    prepwriteMeasure(opt);
+  }
+
 	// Main part
 	// Loop over all nmeas configurations
 	cout << "------------------------------------------------------------------------------" << endl;
@@ -128,6 +132,10 @@ int main(int argc, char *argv[]) {
 			f3dclustername << "3dcluster_" << opt.leng1 << "x" << opt.leng4 << "_m" << setprecision(0) << fixed << n << ".data";
 			cluster3doutput(lclusterdata, f3dclustername.str());
 		}
+	
+    if (opt.writemeas) {
+		  writeMeasures(obs[n], opt, n);
+  	}
 	}
 
 	if (opt.do3d) {
@@ -142,9 +150,6 @@ int main(int argc, char *argv[]) {
 		f3dclusterlist.close();
 	}
 
-	if (opt.writemeas) {
-		writeMeasures(obs, opt);
-	}
 	cout << endl;
 	cout << "------------------------------------------------------------------------------" << endl;
 

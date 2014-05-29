@@ -24,6 +24,7 @@
 
 #include "findcluster.h"
 
-void writeMeasures(Observablestruct *obs, Options &opt);
+void prepwriteMeasure(Options &opt);
+void writeMeasures(Observablestruct &lobs, Options &opt, int m);
 
 #endif // FINDCLUSTER_WRITEMEASURE_H
