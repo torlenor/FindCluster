@@ -446,57 +446,63 @@ void calcObservables(Observablestruct &lobs, Clusterstruct &lclusterdata){
 	cout << "Calculating observables... " << flush;
 	#endif
 
-	// lobs.maxclustersize, lobs.maxclusterid, lobs.maxclustersector
-	obsLargestCluster(lobs, lclusterdata);
-	// lobs.avgclustersize
-	obsAverageClusterSize(lobs, lclusterdata);
-	// lobs.avgclustersizeF
-	obsAverageClusterSizeFortunato(lobs, lclusterdata);
-	// lobs.avgclustersizenopercc
-	obsAverageClusterSizeNoPercc(lobs, lclusterdata);
-	// lobs.cut
-	obsCutPercentage(lobs, lclusterdata);
-	// lobs.largestclusterid
-	lobs.largestclusterid=lclusterdata.sortedrealcluster[0];
-	// lobs.percc
-	obsNumberOfPercClusters(lobs, lclusterdata);
-	// lobs.area
-	obsArea(lobs, lclusterdata);
-	// lobs.arealargestnonperccluster
-	obsAreaLargestNonPercCluster(lobs, lclusterdata);
-	// lobs.areaavgnonperccluster
-	obsAreaAvgNonPercCluster(lobs, lclusterdata);
-	// lobs.poll
-	obsPollAfterCut(lobs, lclusterdata);
+  if (! opt.fastmode) {
+    // lobs.maxclustersize, lobs.maxclusterid, lobs.maxclustersector
+    obsLargestCluster(lobs, lclusterdata);
+    // lobs.avgclustersize
+    obsAverageClusterSize(lobs, lclusterdata);
+    // lobs.avgclustersizeF
+    obsAverageClusterSizeFortunato(lobs, lclusterdata);
+    // lobs.avgclustersizenopercc
+    obsAverageClusterSizeNoPercc(lobs, lclusterdata);
+    // lobs.cut
+    obsCutPercentage(lobs, lclusterdata);
+    // lobs.largestclusterid
+    lobs.largestclusterid=lclusterdata.sortedrealcluster[0];
+    // lobs.percc
+    obsNumberOfPercClusters(lobs, lclusterdata);
+    // lobs.area
+    obsArea(lobs, lclusterdata);
+    // lobs.arealargestnonperccluster
+    obsAreaLargestNonPercCluster(lobs, lclusterdata);
+    // lobs.areaavgnonperccluster
+    obsAreaAvgNonPercCluster(lobs, lclusterdata);
+    // lobs.poll
+    obsPollAfterCut(lobs, lclusterdata);
 
-	
-	// lobs.numberofboxes
-	// if(doboxes)
-	// obsBoxes(lobs, lclusterdata, opt, boxsize, boxes);
-	// lobs.numberofboxes
-	if(opt.doboxes) {
-    cout << "b" << flush;
-		obsBoxesOnlyLargest(lobs, lclusterdata, opt, boxsize, boxes);
-  }
-	
-	if(opt.doradius){
-		if(opt.dodistance){
-			obsClusterRadius(lobs, lclusterdata, opt);
-		}else{
-			obsClusterRadiusOnlyLargest(lobs, lclusterdata, opt);
-      obsClusterRadiusOnlyLargestNP(lobs, lclusterdata, opt);
-		}
-	}
+    
+    // lobs.numberofboxes
+    // if(doboxes)
+    // obsBoxes(lobs, lclusterdata, opt, boxsize, boxes);
+    // lobs.numberofboxes
+    if(opt.doboxes) {
+      cout << "b" << flush;
+      obsBoxesOnlyLargest(lobs, lclusterdata, opt, boxsize, boxes);
+    }
+    
+    if(opt.doradius){
+      if(opt.dodistance){
+        obsClusterRadius(lobs, lclusterdata, opt);
+      }else{
+        obsClusterRadiusOnlyLargest(lobs, lclusterdata, opt);
+        obsClusterRadiusOnlyLargestNP(lobs, lclusterdata, opt);
+      }
+    }
 
-	if(opt.domean){
-    obsClusterMeanFreePathNew(lobs, lclusterdata, opt);
-    obsAverageMeanfreepathNew(lobs, lclusterdata, opt);
+    if(opt.domean){
+      obsClusterMeanFreePathNew(lobs, lclusterdata, opt);
+      obsAverageMeanfreepathNew(lobs, lclusterdata, opt);
+    }
+    
+    // lobs.rootmeansquaredistanceR
+    if(opt.dodistance){
+      obsRootMeanSquareDistance(lobs, lclusterdata);
+    }
+  } else { // Fast Mode
+    obsLargestCluster(lobs, lclusterdata);
+    lobs.largestclusterid=lclusterdata.sortedrealcluster[0];
+    obsClusterRadiusOnlyLargest(lobs, lclusterdata, opt);
   }
-	
-	// lobs.rootmeansquaredistanceR
-	if(opt.dodistance){
-		obsRootMeanSquareDistance(lobs, lclusterdata);
-	}
 
 	#ifdef DEBUG
 	cout << "done!" << endl;

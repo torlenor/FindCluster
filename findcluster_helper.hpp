@@ -70,6 +70,8 @@ void printsettings() {
 		cout << "Writing 3dcluster visualization data files." <<  endl;
 	if (opt.writemeas)
 		cout << "Writing all measurements to file." <<  endl;
+	if (opt.fastmode)
+		cout << "FAST MODE: Fast mode activated! Calculating only largest cluster radius!" <<  endl;
 }
 
 void freeMem(Clusterstruct &lclusterdata) {
