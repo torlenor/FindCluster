@@ -2,3 +2,4 @@
   * Transition to header/source code seperated file structure
   * Make it possible to write out all measurements and not just expectation
     values
+  * Implement a fast mode for radius determination
