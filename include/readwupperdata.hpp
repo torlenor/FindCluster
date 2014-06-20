@@ -49,18 +49,33 @@ int readWupperPollBinary(int leng1, int leng2, int leng3, int leng4, int matrixd
 
     float re=0;
     float im=0;
-		
+
+    int readcnt=0;
+
 		for (int i1=0; i1<leng1; i1++)
 		for (int i2=0; i2<leng2; i2++)
 		for (int i3=0; i3<leng3; i3++) {
 			is = i1 + i2*leng1 + i3*leng1*leng2;
-			elems += fread(&re, sizeof(float), 1, pFile);
-			elems += fread(&im, sizeof(float), 1, pFile);
+			readcnt = fread(&re, sizeof(float), 1, pFile);
+      if (readcnt != 1)
+        std::cout << "ERROR: Reading file. Re part at " << i1 << "," << i2 << "," << i3 << std::endl;
+      elems += readcnt;
+			readcnt = fread(&im, sizeof(float), 1, pFile);
+      if (readcnt != 1)
+        std::cout << "ERROR: Reading file. Im part at " << i1 << "," << i2 << "," << i3 << std::endl;
+      elems += readcnt;
       pollev.at(is).at(0)=std::complex<double>(re,im);
       // We use only one entry as we get Polyakov loop values from Wuppertal instead of 3 eigenvalues
 		}
+
+    // Check if we are at the end of file by reading one more float number
+	  readcnt = fread(&im, sizeof(float), 1, pFile);
+    if (readcnt == 1)
+      std::cout << "ERROR: Reading configuration: Seems that we did not reache EOF!" << std::endl;
+
 		fclose(pFile);
 	}
+
 
 	#ifdef DEBUG
   std::cout << "done!" << std::endl;
