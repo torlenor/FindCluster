@@ -1,5 +1,5 @@
 /*
- * findcluster_measurewrite.h - Write out measurements - headers
+ * findcluster_writemeasure.h - Write out measurements - headers
  *
  * Copyright © 2014 H.-P. Schadler  <hanspeter.schadler@uni-graz.at>
  *
