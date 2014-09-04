@@ -155,7 +155,11 @@ int main(int argc, char *argv[]) {
 
 	// Calculate the expectation values and write the results to file and stdout
 	calcExp();
-	writeresultsstdout();
+  if (opt.nmeas < 2) {
+	  writeresultsstdout_singleconf(obs[0]);
+  } else {
+	  writeresultsstdout();
+  }
 	writeresults();
 
 	// delete [] clusterdata; clusterdata=0;

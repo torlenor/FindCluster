@@ -210,8 +210,22 @@ void writeresultsstdout() {
     std::cout << "Root mean distance traveled R = " << results.avgrootmeansquaredistance << ", Error = " << results.avgrootmeansquaredistanceerr << std::endl;
 	}
   std::cout << "Cut = " << results.cut << " Cut err = " << results.cuterr << std::endl;
-  std::cout << "Laserdim = " << results.totalperimeter << " Laserdim err = " << results.totalperimetererr << std::endl;
+  std::cout << "Surface = " << results.totalperimeter << " Surface err = " << results.totalperimetererr << std::endl;
   std::cout << "Polyakov loop = " << results.polyakovloopaftercut << " Polyakov loop err = " << results.polyakovloopaftercuterr << endl << std::endl;
+}
+
+void writeresultsstdout_singleconf(Observablestruct &lobs) {
+  std::cout << "Values (one configuration): " << std::endl;
+  std::cout << "Average cluster size = " << setprecision(14) << lobs.avgclustersize << ", Maximum cluster size / V = " << lobs.maxclustersize << std::endl;
+	std::cout << "Average cluster err  = " << " - " << ", Maximum cluster / V err  = " << " - " << std::endl;
+  std::cout << "Average cluster size Fortunato (1.7) = " << lobs.avgclustersizeF << ", Error  = " << " - " << std::endl;
+  std::cout << "Radius of largest cluster = " << lobs.largestclusterradius << ", Error = " << " - " << std::endl;
+	if(opt.dodistance){
+    std::cout << "Root mean distance traveled R = " << " - " << ", Error = " << " - " << std::endl;
+	}
+  std::cout << "Cut = " << lobs.cut << " Cut err = " << " - " << std::endl;
+  std::cout << "Surface = " << lobs.area << " Surface err = " << " - " << std::endl;
+  std::cout << "Polyakov loop = " << lobs.poll << " Polyakov loop err = " << " - " << endl << std::endl;
 }
 
 void writeConfigResultsstdout(Observablestruct &lobs, Clusterstruct &lclusterdata){
