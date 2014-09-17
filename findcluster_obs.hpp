@@ -63,8 +63,8 @@ void obsAverageClusterSizeFortunato(Observablestruct &lobs, Clusterstruct &lclus
 	// Calculate average cluster size from Fortunato (1.7)
 	// We consider only non-percolating clusters.
 	// First calculate the number of clusters of size s per lattice site
-	vector<int> sizes;
-	vector<double> sizedist;
+  std::vector<int> sizes;
+  std::vector<double> sizedist;
 	int curcsize;
 	int knownsize=0;
 	for(unsigned int c=0; c<lclusterdata.clustermembers.size(); c++){
@@ -102,8 +102,8 @@ void obsAverageClusterSizeFortunato(Observablestruct &lobs, Clusterstruct &lclus
 void obsAverageClusterSizeNoPercc(Observablestruct &lobs, Clusterstruct &lclusterdata){
 	// Calculate average cluster size without percolating clusters
 	// First calculate the number of clusters of size s per lattice site
-	vector<int> sizes;
-	vector<double> sizedist;
+  std::vector<int> sizes;
+  std::vector<double> sizedist;
 	int curcsize;
 	int knownsize=0;
 	for(unsigned int c=0; c<lclusterdata.clustermembers.size(); c++){
@@ -157,11 +157,11 @@ void obsArea(Observablestruct &lobs, Clusterstruct &lclusterdata){
 	for(i2=0;i2<opt.Ns;i2++)
 	for(i3=0;i3<opt.Ns;i3++){
 		i1=0;
-		is=latmap(i1, i2, i3);
+		is=latmap(i1, i2, i3, opt);
 		if(lclusterdata.isincluster[is]==lobs.largestclusterid)
 			incluster=true;
 		for(i1=1;i1<opt.Ns;i1++){
-			is=latmap(i1, i2, i3);
+			is=latmap(i1, i2, i3, opt);
 			if(incluster==true && lclusterdata.isincluster[is] != lobs.largestclusterid){
 				incluster=false;
 				lobs.area++;
@@ -177,11 +177,11 @@ void obsArea(Observablestruct &lobs, Clusterstruct &lclusterdata){
 	for(i1=0;i1<opt.Ns;i1++)
 	for(i3=0;i3<opt.Ns;i3++){
 		i2=0;
-		is=latmap(i1, i2, i3);
+		is=latmap(i1, i2, i3, opt);
 		if(lclusterdata.isincluster[is]==lobs.largestclusterid)
 			incluster=true;
 		for(i2=1;i2<opt.Ns;i2++){
-			is=latmap(i1, i2, i3);
+			is=latmap(i1, i2, i3, opt);
 			if(incluster==true && lclusterdata.isincluster[is] != lobs.largestclusterid){
 				incluster=false;
 				lobs.area++;
@@ -197,11 +197,11 @@ void obsArea(Observablestruct &lobs, Clusterstruct &lclusterdata){
 	for(i1=0;i1<opt.Ns;i1++)
 	for(i2=0;i2<opt.Ns;i2++){
 		i3=0;
-		is=latmap(i1, i2, i3);
+		is=latmap(i1, i2, i3, opt);
 		if(lclusterdata.isincluster[is]==lobs.largestclusterid)
 			incluster=true;
 		for(i3=1;i3<opt.Ns;i3++){
-			is=latmap(i1, i2, i3);
+			is=latmap(i1, i2, i3, opt);
 			if(incluster==true && lclusterdata.isincluster[is] != lobs.largestclusterid){
 				incluster=false;
 				lobs.area++;
@@ -232,11 +232,11 @@ void obsAreaLargestNonPercCluster(Observablestruct &lobs, Clusterstruct &lcluste
 	for(i2=0;i2<opt.Ns;i2++)
 	for(i3=0;i3<opt.Ns;i3++){
 		i1=0;
-		is=latmap(i1, i2, i3);
+		is=latmap(i1, i2, i3, opt);
 		if(lclusterdata.isincluster[is]==cluster)
 			incluster=true;
 		for(i1=1;i1<opt.Ns;i1++){
-			is=latmap(i1, i2, i3);
+			is=latmap(i1, i2, i3, opt);
 			if(incluster==true && lclusterdata.isincluster[is] != cluster){
 				incluster=false;
 				lobs.arealargestnonperccluster++;
@@ -252,11 +252,11 @@ void obsAreaLargestNonPercCluster(Observablestruct &lobs, Clusterstruct &lcluste
 	for(i1=0;i1<opt.Ns;i1++)
 	for(i3=0;i3<opt.Ns;i3++){
 		i2=0;
-		is=latmap(i1, i2, i3);
+		is=latmap(i1, i2, i3, opt);
 		if(lclusterdata.isincluster[is]==cluster)
 			incluster=true;
 		for(i2=1;i2<opt.Ns;i2++){
-			is=latmap(i1, i2, i3);
+			is=latmap(i1, i2, i3, opt);
 			if(incluster==true && lclusterdata.isincluster[is] != cluster){
 				incluster=false;
 				lobs.arealargestnonperccluster++;
@@ -272,11 +272,11 @@ void obsAreaLargestNonPercCluster(Observablestruct &lobs, Clusterstruct &lcluste
 	for(i1=0;i1<opt.Ns;i1++)
 	for(i2=0;i2<opt.Ns;i2++){
 		i3=0;
-		is=latmap(i1, i2, i3);
+		is=latmap(i1, i2, i3, opt);
 		if(lclusterdata.isincluster[is]==cluster)
 			incluster=true;
 		for(i3=1;i3<opt.Ns;i3++){
-			is=latmap(i1, i2, i3);
+			is=latmap(i1, i2, i3, opt);
 			if(incluster==true && lclusterdata.isincluster[is] != cluster){
 				incluster=false;
 				lobs.arealargestnonperccluster++;
@@ -305,11 +305,11 @@ void obsAreaAvgNonPercCluster(Observablestruct &lobs, Clusterstruct &lclusterdat
       for(i2=0;i2<opt.Ns;i2++)
       for(i3=0;i3<opt.Ns;i3++){
         i1=0;
-        is=latmap(i1, i2, i3);
+        is=latmap(i1, i2, i3, opt);
         if(lclusterdata.isincluster[is]==cluster)
           incluster=true;
         for(i1=1;i1<opt.Ns;i1++){
-          is=latmap(i1, i2, i3);
+          is=latmap(i1, i2, i3, opt);
           if(incluster==true && lclusterdata.isincluster[is] != cluster){
             incluster=false;
             lobs.areaavgnonperccluster++;
@@ -325,11 +325,11 @@ void obsAreaAvgNonPercCluster(Observablestruct &lobs, Clusterstruct &lclusterdat
       for(i1=0;i1<opt.Ns;i1++)
       for(i3=0;i3<opt.Ns;i3++){
         i2=0;
-        is=latmap(i1, i2, i3);
+        is=latmap(i1, i2, i3, opt);
         if(lclusterdata.isincluster[is]==cluster)
           incluster=true;
         for(i2=1;i2<opt.Ns;i2++){
-          is=latmap(i1, i2, i3);
+          is=latmap(i1, i2, i3, opt);
           if(incluster==true && lclusterdata.isincluster[is] != cluster){
             incluster=false;
             lobs.areaavgnonperccluster++;
@@ -345,11 +345,11 @@ void obsAreaAvgNonPercCluster(Observablestruct &lobs, Clusterstruct &lclusterdat
       for(i1=0;i1<opt.Ns;i1++)
       for(i2=0;i2<opt.Ns;i2++){
         i3=0;
-        is=latmap(i1, i2, i3);
+        is=latmap(i1, i2, i3, opt);
         if(lclusterdata.isincluster[is]==cluster)
           incluster=true;
         for(i3=1;i3<opt.Ns;i3++){
-          is=latmap(i1, i2, i3);
+          is=latmap(i1, i2, i3, opt);
           if(incluster==true && lclusterdata.isincluster[is] != cluster){
             incluster=false;
             lobs.areaavgnonperccluster++;
@@ -380,7 +380,7 @@ void obsPollAfterCut(Observablestruct &lobs, Clusterstruct &lclusterdata){
 	/* Calculation of Polyakov loop expectation value for points which 
 	 * survived the cut. For that loop over all points which are not in 
 	 * sector 2 and calculate the spatial average of |P(x)| */
-	complex<double> pollsum=0;
+  std::complex<double> pollsum=0;
 	int pollcnt=0;
 	for(int is=0;is<opt.Nspace;is++){
 		if(lclusterdata.isinsector[is] < 2){
@@ -388,7 +388,7 @@ void obsPollAfterCut(Observablestruct &lobs, Clusterstruct &lclusterdata){
 			pollcnt++;
 		}
 	}
-	lobs.poll = abs(pollsum)/(double)pollcnt;
+	lobs.poll = std::abs(pollsum)/(double)pollcnt;
 }
 
 void obsRootMeanSquareDistance(Observablestruct &lobs, Clusterstruct &lclusterdata){
@@ -397,9 +397,9 @@ void obsRootMeanSquareDistance(Observablestruct &lobs, Clusterstruct &lclusterda
 	// Stauffer pp.117 eq. 105
 	
 	// First calculate the number of clusters of size s per lattice site
-	vector<int> sizes;
-	vector<double> sizedist;
-	vector<double> radiusavg, radiuscnt;
+  std::vector<int> sizes;
+  std::vector<double> sizedist;
+  std::vector<double> radiusavg, radiuscnt;
 	double meansquaredistanceR=0;
 	int curcsize;
 	int knownsize=0;
@@ -443,7 +443,7 @@ void obsRootMeanSquareDistance(Observablestruct &lobs, Clusterstruct &lclusterda
 
 void calcObservables(Observablestruct &lobs, Clusterstruct &lclusterdata){
 	#ifdef DEBUG	
-	cout << "Calculating observables... " << flush;
+	cout << "Calculating observables... " << std::flush;
 	#endif
 
   if (! opt.fastmode) {
@@ -476,7 +476,7 @@ void calcObservables(Observablestruct &lobs, Clusterstruct &lclusterdata){
     // obsBoxes(lobs, lclusterdata, opt, boxsize, boxes);
     // lobs.numberofboxes
     if(opt.doboxes) {
-      cout << "b" << flush;
+      std::cout << "b" << std::flush;
       obsBoxesOnlyLargest(lobs, lclusterdata, opt, boxsize, boxes);
     }
     
@@ -774,7 +774,7 @@ void calcExp(){
 
 	if(opt.doboxes){
 		// Box counts for largest cluster which is not in sector 2
-		vector<double> avgboxcnt, avgboxcnterr;
+    std::vector<double> avgboxcnt, avgboxcnterr;
 		avgboxcnt.resize(boxsize.size());
 		avgboxcnterr.resize(boxsize.size());
 		

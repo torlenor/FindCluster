@@ -1,7 +1,12 @@
 #ifndef FINDCLUSTER_HELPER_HPP
 #define FINDCLUSTER_HELPER_HPP
 
-void fillNeib() {
+#include <iostream>
+#include <vector>
+
+#include "findcluster.h"
+
+void fillNeib(const Options &opt, std::vector<std::vector<int> > &neib) {
 	// Fills the neib array
   int i1p,i2p,i3p,i1m,i2m,i3m,is,isp1,isp2,isp3,ism1,ism2,ism3;
   for (int i1=0; i1<opt.leng1; i1++) {
@@ -47,31 +52,31 @@ void fillNeib() {
   }
 }
 
-int latmap(int i1, int i2, int i3) {
+int latmap(const int i1, const int i2, const int i3, const Options &opt) {
 	return i1 + i2*opt.leng1 + i3*opt.leng1*opt.leng2;
 }
 
-void printsettings() {
-	cout << "Settings:" << endl << endl;
-	cout << "Lattice size = " << opt.leng1 << "x" << opt.leng2 << "x" << opt.leng3 << "x" << opt.leng4 << endl;
+void Printsettings(const Options &opt) {
+	std::cout << "Settings:" << std::endl << std::endl;
+	std::cout << "Lattice size = " << opt.leng1 << "x" << opt.leng2 << "x" << opt.leng3 << "x" << opt.leng4 << std::endl;
 	if (opt.wupperdata)
-		cout << "Reading Wuppertal Polakov loop data format." <<  endl;
-	cout << "Number of configurations = " << opt.nmeas << endl;
+		std::cout << "Reading Wuppertal Polakov loop data format." <<  std::endl;
+	std::cout << "Number of configurations = " << opt.nmeas << std::endl;
 	if (! opt.usealternativesectors) {
-		cout << "Cut fraction = " << opt.fraction << endl;
+		std::cout << "Cut fraction = " << opt.fraction << std::endl;
 	} else {
-		cout << "Alternative cut prescription, radius r = " << opt.r << endl;
+		std::cout << "Alternative cut prescription, radius r = " << opt.r << std::endl;
 	}
 	if (opt.doboxes)
-		cout << "Calculating 'box' observables." << endl;
+		std::cout << "Calculating 'box' observables." << std::endl;
 	if (opt.detail)
-		cout << "Writing detailed results for every configuration." <<  endl;
+		std::cout << "Writing detailed results for every configuration." <<  std::endl;
 	if (opt.do3d)
-		cout << "Writing 3dcluster visualization data files." <<  endl;
+		std::cout << "Writing 3dcluster visualization data files." <<  std::endl;
 	if (opt.writemeas)
-		cout << "Writing all measurements to file." <<  endl;
+		std::cout << "Writing all measurements to file." <<  std::endl;
 	if (opt.fastmode)
-		cout << "FAST MODE: Fast mode activated! Calculating only largest cluster radius!" <<  endl;
+		std::cout << "FAST MODE: Fast mode activated! Calculating only largest cluster radius!" <<  std::endl;
 }
 
 void freeMem(Clusterstruct &lclusterdata) {
@@ -95,13 +100,13 @@ void freeMem(Clusterstruct &lclusterdata) {
 	lclusterdata.isinsortedcluster.resize(0);
 }
 
-void getCoords(int is, int &i1, int &i2, int &i3) {
+void getCoords(const Options &opt, const int is, int &i1, int &i2, int &i3) {
 	i1 = (is % (opt.leng1*opt.leng2) ) % opt.leng1;
 	i2 = (is % (opt.leng1*opt.leng2) ) / opt.leng1;
 	i3 = is / (opt.leng1*opt.leng2);
 
 	if (is != i1 + i2*opt.leng1 + i3*opt.leng1*opt.leng2)
-		cout << "ERROR: Problem in getCoords!" << endl;
+		std::cout << "ERROR: Problem in getCoords!" << std::endl;
 }
 
 #endif // FINDCLUSTER_HELPER_HPP

@@ -23,6 +23,7 @@
 #include <vector>
 
 #include "findcluster.h"
+#include "findcluster_helper.h"
 
 void obsBoxesOnlyLargest(Observablestruct &lobs, Clusterstruct &lclusterdata, Options opt, std::vector<int> &boxsize, std::vector<int> &boxes) {
 	lobs.numberofboxes.resize(lclusterdata.clustermembers.size());
@@ -55,7 +56,7 @@ void obsBoxesOnlyLargest(Observablestruct &lobs, Clusterstruct &lclusterdata, Op
 				i2 = b2 + box2*boxsize[size];
 				i3 = b3 + box3*boxsize[size];
 				
-				is = latmap(i1, i2, i3);
+				is = latmap(i1, i2, i3, opt);
 
 				if(lclusterdata.isincluster[is] == (int)c)
 					clusterinbox=true;
@@ -95,7 +96,7 @@ void obsBoxesOnlyLargest(Observablestruct &lobs, Clusterstruct &lclusterdata, Op
 				i2 = b2 + box2*boxsize[size];
 				i3 = b3 + box3*boxsize[size];
 				
-				is = latmap(i1, i2, i3);
+				is = latmap(i1, i2, i3, opt);
 
 				if(lclusterdata.isincluster[is] == (int)c)
 					clusterinbox=true;
@@ -143,7 +144,7 @@ void obsBoxes(Observablestruct &lobs, Clusterstruct &lclusterdata, Options opt, 
 					i2 = b2 + box2*boxsize[size];
 					i3 = b3 + box3*boxsize[size];
 					
-					is = latmap(i1, i2, i3);
+					is = latmap(i1, i2, i3, opt);
 
 					if(lclusterdata.isincluster[is] == (int)c)
 						clusterinbox=true;

@@ -25,8 +25,9 @@
 #include <vector>
 
 #include "findcluster.h"
+#include "findcluster_helper.h"
 
-void obsClusterMeanFreePathNew(Observablestruct &lobs, Clusterstruct &lclusterdata, Options opt){
+void obsClusterMeanFreePathNew(Observablestruct &lobs, Clusterstruct &lclusterdata, const Options opt){
   // Calculates the mean free path of all clusters using the new definition
 	lobs.meanfreepathnew.resize(lclusterdata.clustermembers.size());
 
@@ -56,7 +57,7 @@ void obsClusterMeanFreePathNew(Observablestruct &lobs, Clusterstruct &lclusterda
         for (i3=0; i3<opt.leng3; i3++) {
           // go through i3 until we hit a point in the cluster or i3=opt.leng3-1
 
-          if (lclusterdata.isincluster[latmap(i1, i2, i3)] == c && istagged[i3] == 0) {
+          if (lclusterdata.isincluster[latmap(i1, i2, i3, opt)] == c && istagged[i3] == 0) {
             paths++;
             segment=0;
 
@@ -74,7 +75,7 @@ void obsClusterMeanFreePathNew(Observablestruct &lobs, Clusterstruct &lclusterda
               ii++;
               if(ii == opt.leng3)
                 ii = ii - opt.leng3;
-            } while ( lclusterdata.isincluster[latmap(i1, i2, ii)] == c && ii != startpoint);
+            } while ( lclusterdata.isincluster[latmap(i1, i2, ii, opt)] == c && ii != startpoint);
           
             // Go in -3 direction
             ii = startpoint;
@@ -88,7 +89,7 @@ void obsClusterMeanFreePathNew(Observablestruct &lobs, Clusterstruct &lclusterda
               ii--;
               if(ii == -1)
                 ii = ii + opt.leng3;
-            } while ( lclusterdata.isincluster.at(latmap(i1, i2, ii)) == c && ii != startpoint);
+            } while ( lclusterdata.isincluster.at(latmap(i1, i2, ii, opt)) == c && ii != startpoint);
             path1 += segment*segment;
           } // new segment found if end
         }
@@ -113,7 +114,7 @@ void obsClusterMeanFreePathNew(Observablestruct &lobs, Clusterstruct &lclusterda
         for (i2=0; i2<opt.leng2; i2++) {
           // go through i2 until we hit a point in the cluster or i2=opt.leng2-1
 
-          if (lclusterdata.isincluster[latmap(i1, i2, i3)] == c && istagged[i2] == 0) {
+          if (lclusterdata.isincluster[latmap(i1, i2, i3, opt)] == c && istagged[i2] == 0) {
             paths++;
             segment=0;
 
@@ -131,7 +132,7 @@ void obsClusterMeanFreePathNew(Observablestruct &lobs, Clusterstruct &lclusterda
               ii++;
               if(ii == opt.leng2)
                 ii = ii - opt.leng2;
-            } while ( lclusterdata.isincluster[latmap(i1, ii, i3)] == c && ii != startpoint);
+            } while ( lclusterdata.isincluster[latmap(i1, ii, i3, opt)] == c && ii != startpoint);
           
             // Go in -2 direction
             ii = startpoint;
@@ -145,7 +146,7 @@ void obsClusterMeanFreePathNew(Observablestruct &lobs, Clusterstruct &lclusterda
               ii--;
               if(ii == -1)
                 ii = ii + opt.leng2;
-            } while ( lclusterdata.isincluster.at(latmap(i1, ii, i3)) == c && ii != startpoint);
+            } while ( lclusterdata.isincluster.at(latmap(i1, ii, i3, opt)) == c && ii != startpoint);
             path2 += segment*segment;
           } // new segment found if end
         }
@@ -169,7 +170,7 @@ void obsClusterMeanFreePathNew(Observablestruct &lobs, Clusterstruct &lclusterda
         for (i1=0; i1<opt.leng1; i1++) {
           // go through i1 until we hit a point in the cluster or i1=opt.leng1-1
 
-          if (lclusterdata.isincluster[latmap(i1, i2, i3)] == c && istagged[i1] == 0) {
+          if (lclusterdata.isincluster[latmap(i1, i2, i3, opt)] == c && istagged[i1] == 0) {
             paths++;
             segment=0;
 
@@ -187,7 +188,7 @@ void obsClusterMeanFreePathNew(Observablestruct &lobs, Clusterstruct &lclusterda
               ii++;
               if(ii == opt.leng1)
                 ii = ii - opt.leng1;
-            } while ( lclusterdata.isincluster[latmap(ii, i2, i3)] == c && ii != startpoint);
+            } while ( lclusterdata.isincluster[latmap(ii, i2, i3, opt)] == c && ii != startpoint);
           
             // Go in -1 direction
             ii = startpoint;
@@ -201,7 +202,7 @@ void obsClusterMeanFreePathNew(Observablestruct &lobs, Clusterstruct &lclusterda
               ii--;
               if(ii == -1)
                 ii = ii + opt.leng1;
-            } while ( lclusterdata.isincluster.at(latmap(ii, i2, i3)) == c && ii != startpoint);
+            } while ( lclusterdata.isincluster.at(latmap(ii, i2, i3, opt)) == c && ii != startpoint);
             path3 += segment*segment;
           } // new segment found if end
         }
@@ -222,7 +223,7 @@ void obsClusterMeanFreePathNew(Observablestruct &lobs, Clusterstruct &lclusterda
   lobs.largestnpclustermeanfreepathnew=lobs.meanfreepathnew[lobs.largestnonpercclusterid];
 }
 
-void obsAverageMeanfreepathNew(Observablestruct &lobs, Clusterstruct &lclusterdata, Options opt){
+void obsAverageMeanfreepathNew(Observablestruct &lobs, Clusterstruct &lclusterdata, const Options opt){
 
   // Naive averages
   // Calculate average over all clusters

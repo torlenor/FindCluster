@@ -29,43 +29,41 @@
 #include <vector>
 
 #include "findcluster_cluster.h"
+#include "findcluster_write.h"
 #include "findcluster_writemeasure.h"
 
 #include "include/jackknife.h"
 #include "include/readowndata.hpp"
 #include "include/readwupperdata.hpp"
-#include "version.h"
 
-using namespace std;
+#include "version.h"
 
 Options opt;
 
 // Vector for Polyakov loop eigenvalue data
-vector<vector<complex<double> > > pollev;
+std::vector<std::vector<std::complex<double> > > pollev;
 // Neib vector
-vector<vector<int> > neib;
+std::vector<std::vector<int> > neib;
 // Box size vector
-vector<int> boxsize;
-vector<int> boxes;
+std::vector<int> boxsize;
+std::vector<int> boxes;
 
-Observablestruct *obs;
+std::vector<Observablestruct> obs;
 Resultstruct results;
 
-#include "findcluster_helper.hpp"
 #include "findcluster_init.hpp"
 #include "findcluster_obs.hpp"
-#include "findcluster_write.hpp"
 
 int main(int argc, char *argv[]) {
 	// Handle command line information and initialize arrays and other stuff...
 	if (init(argc, argv) != 0) {
-		cout << "Error in init()!" << endl;
+		std::cout << "Error in init()!" << std::endl;
 		return 1;
 	}
 
-	cout << endl;
-	printsettings();
-	cout << endl;
+	std::cout << std::endl;
+	Printsettings(opt);
+	std::cout << std::endl;
 
   if(opt.writemeas) {
     prepwriteMeasure(opt);
@@ -73,7 +71,7 @@ int main(int argc, char *argv[]) {
 
 	// Main part
 	// Loop over all nmeas configurations
-	cout << "------------------------------------------------------------------------------" << endl;
+	std::cout << "------------------------------------------------------------------------------" << std::endl;
 	for (int n=0; n<opt.nmeas; n++) {
 		// Allocate memory for faster access
     Clusterstruct lclusterdata;
@@ -81,22 +79,22 @@ int main(int argc, char *argv[]) {
     lclusterdata.isincluster.resize(opt.Nspace);
 
 		if (opt.detail) {
-			cout << endl << "------------------------------------------------------------------------------" << endl;
-			cout << n+1 << " of "<< opt.nmeas << ": " << opt.fevname[n] << " ... " << endl;
+			std::cout << std::endl << "------------------------------------------------------------------------------" << std::endl;
+			std::cout << n+1 << " of "<< opt.nmeas << ": " << opt.fevname[n] << " ... " << std::endl;
 		} else {
-			cout << "\r" <<  "                                                                   " << flush;
-			cout << "\r" << n+1 << " of "<< opt.nmeas << ": " << opt.fevname[n] << " ... " << flush;
+			std::cout << "\r" <<  "                                                                   " << std::flush;
+			std::cout << "\r" << n+1 << " of "<< opt.nmeas << ": " << opt.fevname[n] << " ... " << std::flush;
 		}
 		// Read Polyakov loop eigenvalues file
-    cout << "r" << flush;
+    std::cout << "r" << std::flush;
 		if (opt.wupperdata) {
       if (readWupperPollBinary(opt.leng1, opt.leng2, opt.leng3, opt.leng4, opt.matrixdim, pollev, opt.fevname[n]) != 0) {
-        cout << "ERROR: Problems with readWupperPollBinary !" << endl;
+        std::cout << "ERROR: Problems with readWupperPollBinary !" << std::endl;
         return 1;
       }
     } else {
       if (readPollEvBinary(opt.leng1, opt.leng2, opt.leng3, opt.leng4, opt.matrixdim, pollev, opt.fevname[n]) != 0) {
-        cout << "ERROR: Problems with readPollEVBinary !" << endl;
+        std::cout << "ERROR: Problems with readPollEVBinary !" << std::endl;
         return 1;
       }
       // Check Polyakov loop eigenvalues
@@ -109,28 +107,28 @@ int main(int argc, char *argv[]) {
 			fillSectors(lclusterdata, pollev, opt, opt.delta); // Categorize lattice points by sectors
 		}
 	
-    cout << "c" << flush;
+    std::cout << "c" << std::flush;
 		findClusters(lclusterdata, neib, opt);	// Identify clusters
 		checkClusters(lclusterdata, opt); // Check clusters
-    cout << "p" << flush;
+    std::cout << "p" << std::flush;
 		findPercolatingCluster(lclusterdata, opt); // Find percolating clusters
 
-    cout << "s" << flush;
+    std::cout << "s" << std::flush;
 		sortClusterSize(lclusterdata, opt); // Sort clusters per number of members
 
-    cout << "o" << flush;
+    std::cout << "o" << std::flush;
 		calcObservables(obs[n], lclusterdata); // Calculate observables
 		
 		if (opt.detail) {
-			cout << endl << "Details for " << opt.fevname[n] << ":" << endl;
-			writeConfigResultsstdout(obs[n], lclusterdata);
+			std::cout << std::endl << "Details for " << opt.fevname[n] << ":" << std::endl;
+			writeConfigResultsstdout(boxsize, boxes, obs[n], lclusterdata, opt);
 		}
 		
 		if (opt.do3d) {
 			// Write data for 3dclusters program
-			stringstream f3dclustername;
-			f3dclustername << "3dcluster_" << opt.leng1 << "x" << opt.leng4 << "_m" << setprecision(0) << fixed << n << ".data";
-			cluster3doutput(lclusterdata, f3dclustername.str());
+      std::stringstream f3dclustername;
+			f3dclustername << "3dcluster_" << opt.leng1 << "x" << opt.leng4 << "_m" << std::setprecision(0) << std::fixed << n << ".data";
+			cluster3doutput(lclusterdata, f3dclustername.str(), opt);
 		}
 	
     if (opt.writemeas) {
@@ -140,30 +138,29 @@ int main(int argc, char *argv[]) {
 
 	if (opt.do3d) {
 		// Write clusterfilenamelist for 3dcluster program
-		ofstream f3dclusterlist;
+    std::ofstream f3dclusterlist;
 		f3dclusterlist.open("3dcluster.list");
 		for (int n=0; n<opt.nmeas; n++) {
-			stringstream f3dclustername;
-			f3dclustername << "3dcluster_" << opt.leng1 << "x" << opt.leng4 << "_m" << setprecision(0) << fixed << n << ".data";
-			f3dclusterlist << f3dclustername.str() << endl;
+      std::stringstream f3dclustername;
+			f3dclustername << "3dcluster_" << opt.leng1 << "x" << opt.leng4 << "_m" << std::setprecision(0) << std::fixed << n << ".data";
+			f3dclusterlist << f3dclustername.str() << std::endl;
 		}
 		f3dclusterlist.close();
 	}
 
-	cout << endl;
-	cout << "------------------------------------------------------------------------------" << endl;
+	std::cout << std::endl;
+	std::cout << "------------------------------------------------------------------------------" << std::endl;
 
 	// Calculate the expectation values and write the results to file and stdout
 	calcExp();
   if (opt.nmeas < 2) {
-	  writeresultsstdout_singleconf(obs[0]);
+	  writeresultsstdout_singleconf(obs[0], opt);
   } else {
-	  writeresultsstdout();
+	  writeresultsstdout(results, opt);
   }
-	writeresults();
+	writeresults(boxsize, boxes, results, opt);
 
-	// delete [] clusterdata; clusterdata=0;
-	delete [] obs; obs=0;
+	obs.resize(0);
 	
 	return 0;
 }

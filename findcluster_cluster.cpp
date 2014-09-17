@@ -22,14 +22,13 @@
 #include "findcluster_cluster.h"
 
 #include <algorithm>
+#include <cmath>
 #include <complex>
 #include <iostream>
 #include <vector>
 
 #include "findcluster.h"
-
-using std::abs;
-using std::arg;
+#include "findcluster_helper.h"
 
 void sortClusterSize(Clusterstruct &lclusterdata, Options opt) {
 	// Sorts clusters by their size and creates a sortedcluster vector
@@ -101,24 +100,24 @@ void fillSectorsAlt(Clusterstruct &lclusterdata, std::vector<std::vector<std::co
     for(int i=0;i<opt.matrixdim;i++) {
       trace+=pollev.at(is).at(i);
     }
-		tracephase = arg(trace);
-		radius = abs(trace);
+		tracephase = std::arg(trace);
+		radius = std::abs(trace);
 		
-		if (abs(tracephase - 2.0*M_PI/3.0) <= opt.delta) {
+		if (std::abs(tracephase - 2.0*M_PI/3.0) <= opt.delta) {
 			if (radius >= r) {
 				lclusterdata.isinsector[is]=1;
 				csectp1++;
 			}
 		}
 		
-		if (abs(tracephase) < opt.delta) {
+		if (std::abs(tracephase) < opt.delta) {
 			if (radius >= r) {
 				lclusterdata.isinsector[is]=0;
 				csect0++;
 			}
 		}
 		
-		if (abs(tracephase + 2.0*M_PI/3.0) <= opt.delta) {
+		if (std::abs(tracephase + 2.0*M_PI/3.0) <= opt.delta) {
 			if (radius >= r) {
 				lclusterdata.isinsector[is]=-1;
 				csectm1++;
@@ -160,19 +159,19 @@ void fillSectors(Clusterstruct &lclusterdata, std::vector<std::vector<std::compl
     for(int i=0;i<opt.matrixdim;i++) {
       trace+=pollev.at(is).at(i);
     }
-		tracephase = arg(trace);
+		tracephase = std::arg(trace);
 		
-		if (abs(tracephase - 2.0*M_PI/3.0) <= delta) {
+		if (std::abs(tracephase - 2.0*M_PI/3.0) <= delta) {
 			lclusterdata.isinsector[is]=1;
 			csectp1++;
 		}
 		
-		if (abs(tracephase) < delta) {
+		if (std::abs(tracephase) < delta) {
 			lclusterdata.isinsector[is]=0;
 			csect0++;
 		}
 		
-		if (abs(tracephase + 2.0*M_PI/3.0) <= delta) {
+		if (std::abs(tracephase + 2.0*M_PI/3.0) <= delta) {
 			lclusterdata.isinsector[is]=-1;
 			csectm1++;
 		}
@@ -219,7 +218,7 @@ void findPercolatingCluster(Clusterstruct &lclusterdata, Options opt) {
 	for (int i1=0; i1<opt.leng1; i1++)
 	for (int i2=0; i2<opt.leng2; i2++)
 	for (int i3=0; i3<opt.leng3; i3++) {
-		is = latmap(i1, i2, i3);
+		is = latmap(i1, i2, i3, opt);
 		cluster = lclusterdata.isincluster[is];
 		if (lclusterdata.clustersector[cluster] < 2) {
 			members[cluster][0][i1] = 1;
@@ -322,7 +321,7 @@ void findClusters(Clusterstruct &lclusterdata, std::vector<std::vector<int> > &n
 						isfiled[isneib] = true;
 
 						// Check if over periodic boundaries
-						getCoords(memberis, ci1, ci2, ci3);
+						getCoords(opt, memberis, ci1, ci2, ci3);
 						switch (mu) {
 							case 0: if(ci1 + 1 == opt.leng1)
 									lclusterdata.clusterisperiodic[cluster][0]=1;

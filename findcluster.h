@@ -162,11 +162,6 @@ void calcExp();
 void sortClusterSize(Clusterstruct &lclusterdata);
 void cluster3doutput(Clusterstruct &clusterdata, std::string f3dname);
 
-int latmap(int i1, int i2, int i3);
-void getCoords(int is, int &i1, int &i2, int &i3);
-
 void freeMem(Clusterstruct &lclusterdata);
-
-void fillNeib();
 
 #endif // FINDCLUSTER_H

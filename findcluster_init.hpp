@@ -2,10 +2,11 @@
 #define FINDCLUSTER_INIT_HPP
 
 #include <cstdio>
+#include <cstring>
 #include <getopt.h>
-#include <string.h>
 
 #include "findcluster.h"
+#include "findcluster_helper.h"
 
 char texthelp[]="Usage: findcluster.x [OPTION] ... [POLLEVCONFIG/POLLEVCONFIGLIST]\n"
 		"Finds cluster and performs calculations with it.\n" 
@@ -46,17 +47,16 @@ char texthelp[]="Usage: findcluster.x [OPTION] ... [POLLEVCONFIG/POLLEVCONFIGLIS
 
 int init(int &argc, char *argv[]){
 
-cout << endl;
-cout << "findcluster.x " << MAJOR_VERSION << "." << MINOR_VERSION << "." << REVISION_VERSION << " ~ " << __DATE__ << " " << __TIME__ << endl 
-  << endl 
-  << "Finds cluster and performs calculations with it." << endl 
-  << "Uses Polyakov loop eigenvalues as input." << endl 
-  << endl;
-
-	cout << "Initializing... " << endl;
+  std::cout << std::endl;
+  std::cout << "findcluster.x " << MAJOR_VERSION << "." << MINOR_VERSION << "." << REVISION_VERSION << " ~ " << __DATE__ << " " << __TIME__ << std::endl 
+  << std::endl 
+  << "Finds cluster and performs calculations with it.\n"
+  << "Uses Polyakov loop eigenvalues as input.\n\n"
+	<< "Initializing...\n"
+  << std::endl;
 
 	if (argc<2) {
-		cout << endl << texthelp << endl;
+    std::cout << std::endl << texthelp << std::endl;
 		return 2;
 	}
 
@@ -172,52 +172,52 @@ cout << "findcluster.x " << MAJOR_VERSION << "." << MINOR_VERSION << "." << REVI
 				break;
 			
 			case 'v':
-				cout << endl << "findcluster.x version " << MAJOR_VERSION << "." << MINOR_VERSION << "." << REVISION_VERSION << endl;
+        std::cout << std::endl << "findcluster.x version " << MAJOR_VERSION << "." << MINOR_VERSION << "." << REVISION_VERSION << std::endl;
 				abort();
 
 			case 'h':
-				cout << endl << texthelp << endl;
+        std::cout << std::endl << texthelp << std::endl;
 				abort();
 
 			default:
-				cout << endl << texthelp << endl;
+        std::cout << std::endl << texthelp << std::endl;
 				abort();
 		}
 	}
 
-	string finname;
+  std::string finname;
 	/* Print any remaining command line arguments (not options). */
 	if (optind < argc)
 	{
 		finname = argv[optind];
 	}else{
-		cout << "ERROR: No configuration file specified!" << endl;
+    std::cout << "ERROR: No configuration file specified!" << std::endl;
 	}
 	
 	opt.delta = delta0*(1.0 - opt.fraction);
 
 	// Prepare for nmeas measurements
-	obs = new Observablestruct[opt.nmeas];
+	obs.resize(opt.nmeas);
 
 	opt.fevname.resize(opt.nmeas);
 
 	if (opt.nmeas>1) {
 		// Read finname file and fill fevname
-		ifstream fin;
+    std::ifstream fin;
 		fin.open(finname.c_str());
 		if(fin.is_open()!=true) {
-      cout  << "ERROR: File " << finname <<  " to read configuration filename list could not be opened!" << endl;
+      std::cout  << "ERROR: File " << finname <<  " to read configuration filename list could not be opened!" << std::endl;
       throw 1;
     }
 
-    string strtmp;
+    std::string strtmp;
     int n=0;
     while (n<opt.nmeas && getline(fin, opt.fevname.at(n))) {
       n++;
 		}
 
 		if (n<opt.nmeas) {
-			cout << "ERROR: Only found " << n << " names in " << finname << " !" << endl;
+      std::cout << "ERROR: Only found " << n << " names in " << finname << " !" << std::endl;
 			return 1;
 		}
 	} else {
@@ -232,16 +232,16 @@ cout << "findcluster.x " << MAJOR_VERSION << "." << MINOR_VERSION << "." << REVI
 	for (int is=0; is<opt.Nspace; is++)
 		neib[is].resize(6);
 
-	fillNeib();
+	fillNeib(opt, neib);
 
 	#ifdef DEBUG
-	  cout << "Allocating 3d (Ns^3 * 3) lattice for Polyakov loop evs... " << flush;
+  std::cout << "Allocating 3d (Ns^3 * 3) lattice for Polyakov loop evs... " << std::flush;
 	#endif
 	pollev.resize(opt.Nspace);
 	for (int is=0; is<opt.Nspace; is++)
 		pollev[is].resize(opt.matrixdim);
 	#ifdef DEBUG
-	  cout << "done!" << endl;
+  std::cout << "done!" << std::endl;
 	#endif
 
 	if (opt.doboxes) {
@@ -257,11 +257,11 @@ cout << "findcluster.x " << MAJOR_VERSION << "." << MINOR_VERSION << "." << REVI
 	
 		#ifdef DEBUG
 		for (unsigned int i=0; i<boxsize.size(); i++)
-			cout << "Size = " << boxsize[i] << " Nr. of boxes = " << boxes[i] << endl;
+			std::cout << "Size = " << boxsize[i] << " Nr. of boxes = " << boxes[i] << std::endl;
 		#endif
 	}
 	#ifdef DEBUG
-	cout << "done!" << endl;
+  std::cout << "done!" << std::endl;
 	#endif
 	
 	return 0;
