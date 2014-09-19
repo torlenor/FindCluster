@@ -1,0 +1,2 @@
+# 1_Nt 2_area 3_areaerr 4_arealargestnonpercc 5_arealargestnonperccerr 6_largestclusterweight 7_largestclusterweighterr 8_largestnonpercclusterweight 9_largestnonpercclusterweighterr 10_areaavgnonpercc 11_areaavgnonperccerr 12_avgclusersizeFnp 13_avgclusersizeFnperr
+9 3.2374999999999998e-01 0.0000000000000000e+00 3.2374999999999998e-01 0.0000000000000000e+00 1.3156250000000000e-02 0.0000000000000000e+00 1.3156250000000000e-02 0.0000000000000000e+00 1.5717785035629453e-03 0.0000000000000000e+00 8.8960453935113506e+01 0.0000000000000000e+00 

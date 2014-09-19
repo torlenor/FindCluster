@@ -1,0 +1,7 @@
+Building the code is as easy as
+  mkdir build
+  cd build
+  cmake ..
+  make
+
+The binary is called findcluster.x .

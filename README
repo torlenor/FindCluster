@@ -1,0 +1,51 @@
+findcluster - (c) Hans-Peter Schadler <hps@abyle.org>
+-----------------------------------------------------------------------------
+This little tool is used to define clusters on SU(3) gauge configurations
+based on the local Polyakov loops
+L(x) = \prod_t U_4(x,t) = \theta(x) \phi(x)
+using the prescription:
+We define a sector number n(x) with 
+        -1 for \theta(x) \in [-Pi + \delta,-\pi/3 - \delta]
+n(x) =   0 for \theta(x) \in [-Pi/3 + \delta,\pi/3 - \delta]
+        +1 for \theta(x) \in [Pi/3 + \delta,-\pi - \delta]
+where \delta = f pi/3 and f \in [0,1), the cut parameter.
+A cluster is now build out of spatial neighbors with the same sector
+number.
+
+The program takes following command line parameters:
+  -s, --Ns SSIZE             spatial lattice extent (default = 4)
+  -t, --Nt TSIZE             temporal lattice extent (default = 4)
+  -f, --fraction FRACTION    fraction (default = 0.0)
+  -n, --nmeas NMEAS          number of configurations (default = 1)
+  -d, --detail               write detailed output for every calculated 
+                             configuration
+  -b, --boxes                performs the box counting calculation 
+                             (expensive)
+  -a, --distance             performs the distance traveled calculation 
+                             (expensive)
+  -o, --olddata              read old Polyakov loop ev data instead of 
+                             wuppertal data
+  -w, --writemeas            writes all measurements to file
+  -F, --fastmode             Fast Mode: Calculates only radius of largest 
+                             cluster
+  --3d                       write 3dcluster data files
+  -h  --help                 display this help and exit
+  -v  --version              output version information and exit
+
+And has the following status outputs to mark what is calculated at the moment:
+  Status output:
+   r ... reading Polyakov loop data
+   c ... identifying center cluster
+   p ... identifying percolating cluster
+   s ... sorting center cluster
+   o ... calculating observables
+   b ... calculating box counting observables
+
+The program calculates many observables interesting from percolation theory.
+It writes it to *.res files in the end after performing a Jackknife step.
+
+If you have any questions, please write <hps@abyle.org>. The program is 
+distributed under the GPLv2. The following publications have been made 
+using this code (or one of its predecessors):
+arXiv:1310.8521 [hep-lat] http://arxiv.org/abs/1310.8521
+arXiv:1401.7228 [hep-lat] http://arxiv.org/abs/1401.7228
