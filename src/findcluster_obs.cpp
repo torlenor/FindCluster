@@ -1,3 +1,24 @@
+/*
+ * findcluster_obs.cpp - observables calculations
+ *
+ * Copyright © 2014 H.-P. Schadler  <hanspeter.schadler@uni-graz.at>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ *
+ */
+
 #include "findcluster_obs.h"
 
 #include <iostream>
@@ -431,8 +452,10 @@ void CalcObservables(Observablestruct &lobs, Clusterstruct &lclusterdata, std::v
     }
     
     if(opt.doradius){
-      lobs.largestclusterradius = ObsClusterRadius(lclusterdata, opt, lobs.maxclusterid);
-      lobs.largestnpclusterradius  = ObsClusterRadius(lclusterdata, opt, lobs.largestnonpercclusterid);
+      /*lobs.largestclusterradius = ObsClusterRadius(lclusterdata, opt, lobs.maxclusterid);
+      lobs.largestnpclusterradius  = ObsClusterRadius(lclusterdata, opt, lobs.largestnonpercclusterid); */
+      // We perform radius calculations for all clusters so that we get the averaged values too
+      ObsClusterRadiusAll(lobs, lclusterdata, opt);
     }
 
     if(opt.domean){
@@ -441,6 +464,8 @@ void CalcObservables(Observablestruct &lobs, Clusterstruct &lclusterdata, std::v
     }
     
   } else { // Fast Mode
+    // In this mode, we only calculate the largest cluster and nothing else. This is mainly used in the
+    // f(a) determination.
     ObsLargestCluster(lobs, lclusterdata);
     lobs.largestclusterid = lclusterdata.sortedrealcluster[0];
     lobs.largestclusterradius = ObsClusterRadius(lclusterdata, opt, lobs.maxclusterid);

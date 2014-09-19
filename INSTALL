@@ -4,4 +4,4 @@ Building the code is as easy as
   cmake ..
   make
 
-The binary is called findcluster.x .
+The binary is called findcluster.x and you find it in build/bin .

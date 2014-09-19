@@ -1,5 +1,5 @@
 /*
- * findcluster_radius.h - Cluster radius calculations
+ * findcluster_radius.cpp - Cluster radius calculations
  *
  * Copyright © 2014 H.-P. Schadler  <hanspeter.schadler@uni-graz.at>
  *
@@ -20,6 +20,8 @@
  */
 
 #include "findcluster_radius.h"
+
+#include "findcluster.h"
 
 void getCoordsShift(int is, int &i1, int &i2, int &i3, int *shift, const Options &opt){
 	i1 = (is % (opt.leng1*opt.leng2) ) % opt.leng1;
