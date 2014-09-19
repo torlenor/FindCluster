@@ -1,10 +1,11 @@
 
-findcluster.x 1.9.7 ~ Sep 19 2014 14:52:23
+findcluster.x 1.9.12 ~ Sep 19 2014 15:11:03
 
 Finds cluster and performs calculations with it.
 Uses Polyakov loop eigenvalues as input.
 
-Initializing... 
+Initializing...
+
 
 Settings:
 
@@ -23,8 +24,7 @@ Average cluster size = 26.532793522267, Maximum cluster size / V = 0.34381103515
 Average cluster err  = 0, Maximum cluster / V err  = 0
 Average cluster size Fortunato (1.7) = 9548.9297485352, Error  = 0
 Radius of largest cluster = 15.907476716188, Error = 0
-Root mean distance traveled R = 15.304815204239, Error = 0
 Cut = 0 Cut err = 0
-Laserdim = 5.0753580729167 Laserdim err = 0
+Surface = 5.0753580729167 Surface err = 0
 Polyakov loop = 0.015443029397815 Polyakov loop err = 0
 
