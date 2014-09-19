@@ -24,7 +24,7 @@ The program takes following command line parameters:
   -a, --distance             performs the distance traveled calculation 
                              (expensive)
   -o, --olddata              read old Polyakov loop ev data instead of 
-                             wuppertal data
+                             Wuppertal data
   -w, --writemeas            writes all measurements to file
   -F, --fastmode             Fast Mode: Calculates only radius of largest 
                              cluster
