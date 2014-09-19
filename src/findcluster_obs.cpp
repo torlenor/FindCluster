@@ -8,7 +8,7 @@
 #include "findcluster_path.h"
 #include "findcluster_radius.h"
 
-#include "include/jackknife.h"
+#include "jackknife.h"
 
 void ObsLargestCluster(Observablestruct &lobs, Clusterstruct &lclusterdata) {
 	// Find largest cluster

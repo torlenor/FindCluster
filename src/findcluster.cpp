@@ -33,8 +33,8 @@
 #include "findcluster_write.h"
 #include "findcluster_writemeasure.h"
 
-#include "include/readowndata.hpp"
-#include "include/readwupperdata.hpp"
+#include "readowndata.hpp"
+#include "readwupperdata.hpp"
 
 #include "version.h"
 
