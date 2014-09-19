@@ -33,93 +33,13 @@ void getCoordsShift(int is, int &i1, int &i2, int &i3, int *shift, const Options
 	if(i3>shift[2])
 	i3=i3-opt.leng3;
 
-	// if(is != i1 + i2*opt.leng1 + i3*opt.leng1*opt.leng2)
-	// 	cout << "ERROR: Problem in getCoords!" << endl;
+#ifdef DEBUG
+	if (is != i1 + i2*opt.leng1 + i3*opt.leng1*opt.leng2)
+		std::cout << "ERROR: Problem in getCoords!" << std::endl;
+#endif
 }
 
-void ObsClusterRadius(Observablestruct &lobs, Clusterstruct &lclusterdata, const Options &opt){
-	// Calculation of the cluster radius. We save the largest cluster (in terms
-	// of the cluster radius).
-	double centerofmass[3], radiussquare, radiussquaremin;
-
-	int i1, i2, i3;
-
-	int shift[3];
-
-	// lobs.centerofmass.resize(lclusterdata.clustermembers.size());
-	lobs.clusterradius.resize(lclusterdata.clustermembers.size());
-
-	for(unsigned int c=0;c<lclusterdata.clustermembers.size();c++){
-		if(lclusterdata.clustermembers[c].size()>1 && lclusterdata.clustersector[c] < 2){
-			// Do it only for clusters with size > 1 in sectors < 2
-
-			radiussquare=0;
-			radiussquaremin=1E30;
-
-			// Calculate center of mass
-			for(int s1=0;s1<opt.leng1/2;s1++)
-			for(int s2=0;s2<opt.leng2/2;s2++)
-			for(int s3=0;s3<opt.leng3/2;s3++){
-				shift[0]=s1 + 0.5;
-				shift[1]=s2 + 0.5;
-				shift[2]=s3 + 0.5;
-
-				radiussquare=0;
-
-				centerofmass[0]=0;
-				centerofmass[1]=0;
-				centerofmass[2]=0;
-				for(unsigned int member=0; member<lclusterdata.clustermembers[c].size();member++){
-					getCoordsShift(lclusterdata.clustermembers[c][member], i1, i2, i3, shift, opt);
-					centerofmass[0] += i1;
-					centerofmass[1] += i2; 
-					centerofmass[2] += i3; 
-				}
-
-				centerofmass[0] = centerofmass[0]/(double)lclusterdata.clustermembers[c].size();
-				centerofmass[1] = centerofmass[1]/(double)lclusterdata.clustermembers[c].size();
-				centerofmass[2] = centerofmass[2]/(double)lclusterdata.clustermembers[c].size();
-
-				for(unsigned int member=0; member<lclusterdata.clustermembers[c].size();member++){
-					getCoordsShift(lclusterdata.clustermembers[c][member], i1, i2, i3, shift, opt);
-					radiussquare += (pow(centerofmass[0] - i1, 2)
-							+ pow(centerofmass[1] - i2, 2)
-							+ pow(centerofmass[2] - i3, 2));
-				}
-				radiussquare = sqrt(radiussquare/(double)lclusterdata.clustermembers[c].size());
-				if(radiussquare<radiussquaremin){
-					radiussquaremin=radiussquare;
-				}
-			}
-
-			lobs.clusterradius[c]=radiussquaremin;
-		}
-	}
-	lobs.largestclusterradius=lobs.clusterradius[lobs.maxclusterid];
-
-	// Additional radius observables
-	// Radius largest non-percolating cluster
-	lobs.largestnpclusterradius=lobs.clusterradius[lobs.largestnonpercclusterid];
-
-	int cnt=0, cntnp=0;
-	lobs.avgclusterradius=0;
-	lobs.avgnpclusterradius=0;
-	for(unsigned int c=0;c<lclusterdata.clustermembers.size();c++){
-		if(lclusterdata.clustersector[c]<2){
-			lobs.avgclusterradius += lobs.clusterradius[c];
-			cnt++;
-			if(lclusterdata.clusterispercolating[c] == 0){
-				lobs.avgnpclusterradius += lobs.clusterradius[c];
-				cntnp++;
-			}
-		}
-	}
-
-	lobs.avgclusterradius = lobs.avgclusterradius/(double)cnt;
-	lobs.avgnpclusterradius = lobs.avgnpclusterradius/(double)cntnp;
-}
-
-void ObsClusterRadiusOnlyLargest(Observablestruct &lobs, Clusterstruct &lclusterdata, const Options &opt){
+double ObsClusterRadius(const Clusterstruct &lclusterdata, const Options &opt, const int clusterid){
 	// Calculation of the cluster radius for the cluster with the largest weight.
 	
 	double centerofmass[3], radiussquare, radiussquaremin;
@@ -127,9 +47,7 @@ void ObsClusterRadiusOnlyLargest(Observablestruct &lobs, Clusterstruct &lcluster
 
 	int shift[3];
 
-	lobs.clusterradius.resize(lclusterdata.clustermembers.size());
-
-	int c = lobs.maxclusterid;
+	int c = clusterid;
 
 	radiussquare=0;
 	radiussquaremin=1E30;
@@ -169,61 +87,42 @@ void ObsClusterRadiusOnlyLargest(Observablestruct &lobs, Clusterstruct &lcluster
 			radiussquaremin=radiussquare;
 		}
 	}
-			
-	lobs.largestclusterradius=radiussquaremin;
+	
+	return radiussquaremin;
 }
 
-void ObsClusterRadiusOnlyLargestNP(Observablestruct &lobs, Clusterstruct &lclusterdata, const Options &opt){
+void ObsClusterRadiusAll(Observablestruct &lobs, Clusterstruct &lclusterdata, const Options &opt){
 	// Calculation of the cluster radius. We save the largest cluster (in terms
-	// of the cluster weight).
-	double centerofmass[3], radiussquare, radiussquaremin;
+	// of the cluster radius).
+	
+	lobs.clusterradius.resize(lclusterdata.clustermembers.size());
 
-	int i1, i2, i3;
+	for(unsigned int c=0;c<lclusterdata.clustermembers.size();c++){
+		if(lclusterdata.clustermembers[c].size()>1 && lclusterdata.clustersector[c] < 2){
+			lobs.clusterradius[c] = ObsClusterRadius(lclusterdata, opt, c);
+		}
+	}
+	lobs.largestclusterradius=lobs.clusterradius[lobs.maxclusterid];
 
-	int shift[3];
+	// Additional radius observables
+	// Radius largest non-percolating cluster
+	lobs.largestnpclusterradius=lobs.clusterradius[lobs.largestnonpercclusterid];
 
-	int c = lobs.largestnonpercclusterid;
+	// Average over all and over non-percolating clusters
+	int cnt=0, cntnp=0;
+	lobs.avgclusterradius=0;
+	lobs.avgnpclusterradius=0;
+	for(unsigned int c=0;c<lclusterdata.clustermembers.size();c++){
+		if(lclusterdata.clustersector[c]<2){
+			lobs.avgclusterradius += lobs.clusterradius[c];
+			cnt++;
+			if(lclusterdata.clusterispercolating[c] == 0){
+				lobs.avgnpclusterradius += lobs.clusterradius[c];
+				cntnp++;
+			}
+		}
+	}
 
-  radiussquare=0;
-  radiussquaremin=1E30;
-
-  // Calculate center of mass
-  for(int s1=0;s1<opt.leng1/2;s1++)
-  for(int s2=0;s2<opt.leng2/2;s2++)
-  for(int s3=0;s3<opt.leng3/2;s3++){
-    shift[0]=s1 + 0.5;
-    shift[1]=s2 + 0.5;
-    shift[2]=s3 + 0.5;
-
-    radiussquare=0;
-
-    centerofmass[0]=0;
-    centerofmass[1]=0;
-    centerofmass[2]=0;
-    for(unsigned int member=0; member<lclusterdata.clustermembers[c].size();member++){
-      getCoordsShift(lclusterdata.clustermembers[c][member], i1, i2, i3, shift, opt);
-      centerofmass[0] += i1;
-      centerofmass[1] += i2; 
-      centerofmass[2] += i3; 
-    }
-
-    centerofmass[0] = centerofmass[0]/(double)lclusterdata.clustermembers[c].size();
-    centerofmass[1] = centerofmass[1]/(double)lclusterdata.clustermembers[c].size();
-    centerofmass[2] = centerofmass[2]/(double)lclusterdata.clustermembers[c].size();
-
-    for(unsigned int member=0; member<lclusterdata.clustermembers[c].size();member++){
-      getCoordsShift(lclusterdata.clustermembers[c][member], i1, i2, i3, shift, opt);
-      radiussquare += (pow(centerofmass[0] - i1, 2)
-          + pow(centerofmass[1] - i2, 2)
-          + pow(centerofmass[2] - i3, 2));
-    }
-
-    radiussquare = sqrt(radiussquare/(double)lclusterdata.clustermembers[c].size());
-
-    if(radiussquare<radiussquaremin){
-      radiussquaremin=radiussquare;
-    }
-  }
-
-  lobs.largestnpclusterradius=radiussquaremin;
+	lobs.avgclusterradius = lobs.avgclusterradius/(double)cnt;
+	lobs.avgnpclusterradius = lobs.avgnpclusterradius/(double)cntnp;
 }

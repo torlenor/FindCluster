@@ -425,19 +425,14 @@ void CalcObservables(Observablestruct &lobs, Clusterstruct &lclusterdata, std::v
     // lobs.poll
     ObsPollAfterCut(lobs, lclusterdata);
 
-    
-    // lobs.numberofboxes
-    // if(doboxes)
-    // obsBoxes(lobs, lclusterdata, opt, boxsize, boxes);
-    // lobs.numberofboxes
     if(opt.doboxes) {
       std::cout << "b" << std::flush;
       ObsBoxesOnlyLargest(lobs, lclusterdata, opt, boxsize, boxes);
     }
     
     if(opt.doradius){
-      ObsClusterRadiusOnlyLargest(lobs, lclusterdata, opt);
-      ObsClusterRadiusOnlyLargestNP(lobs, lclusterdata, opt);
+      lobs.largestclusterradius = ObsClusterRadius(lclusterdata, opt, lobs.maxclusterid);
+      lobs.largestnpclusterradius  = ObsClusterRadius(lclusterdata, opt, lobs.largestnonpercclusterid);
     }
 
     if(opt.domean){
@@ -447,8 +442,8 @@ void CalcObservables(Observablestruct &lobs, Clusterstruct &lclusterdata, std::v
     
   } else { // Fast Mode
     ObsLargestCluster(lobs, lclusterdata);
-    lobs.largestclusterid=lclusterdata.sortedrealcluster[0];
-    ObsClusterRadiusOnlyLargest(lobs, lclusterdata, opt);
+    lobs.largestclusterid = lclusterdata.sortedrealcluster[0];
+    lobs.largestclusterradius = ObsClusterRadius(lclusterdata, opt, lobs.maxclusterid);
   }
 
 	#ifdef DEBUG

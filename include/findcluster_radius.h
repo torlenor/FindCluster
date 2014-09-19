@@ -26,8 +26,10 @@
 
 void getCoordsShift(int is, int &i1, int &i2, int &i3, int *shift, const Options &opt);
 
-void ObsClusterRadius(Observablestruct &lobs, Clusterstruct &lclusterdata, const Options &opt);
-void ObsClusterRadiusOnlyLargest(Observablestruct &lobs, Clusterstruct &lclusterdata, const Options &opt);
-void ObsClusterRadiusOnlyLargestNP(Observablestruct &lobs, Clusterstruct &lclusterdata, const Options &opt);
+// Do it for the cluster with id clusterid
+double ObsClusterRadius(const Clusterstruct &lclusterdata, const Options &opt, const int clusterid);
+
+// Do it for all clusters
+void ObsClusterRadiusAll(Observablestruct &lobs, Clusterstruct &lclusterdata, const Options &opt);
 
 #endif // FINDCLUSTER_RADIUS_H
