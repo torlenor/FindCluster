@@ -30,7 +30,7 @@
 #include "findcluster.h"
 #include "findcluster_helper.h"
 
-void sortClusterSize(Clusterstruct &lclusterdata, Options opt) {
+void sortClusterSize(Clusterstruct &lclusterdata, const Options &opt) {
 	// Sorts clusters by their size and creates a sortedcluster vector
 	// which contains the sorted cluster id's
 	lclusterdata.sortedcluster.resize(lclusterdata.clustermembers.size());
@@ -68,71 +68,7 @@ void sortClusterSize(Clusterstruct &lclusterdata, Options opt) {
 	}
 }
 
-void fillSectorsAlt(Clusterstruct &lclusterdata, std::vector<std::vector<std::complex<double> > > &pollev, Options opt, double r) {
-	// Categorizes the lattice points by sector using the alternative
-	// prescription with the radius
-	#ifdef DEBUG
-		std::cout << "Categorizing lattice points by sector ( radius = " << r << " )... " << std::flush;
-	#endif
-
-	int csectp1=0;
-	int csectm1=0;
-	int csect0=0;
-
-	opt.delta = M_PI/3.0;
-	
-  std::complex<double> trace=0;
-	double tracephase=0;
-	double radius=0;
-	
-	#ifdef DEBUG
-		std::cout << "Delta = " << opt.delta << std::endl;
-		std::cout << "r = " << r << std::endl;
-	#endif
-
-	lclusterdata.poll.resize(opt.Nspace);
-	
-	for (int is=0; is<opt.Nspace; is++)
-		lclusterdata.isinsector[is] = 2;
-	
-	for (int is=0; is<opt.Nspace; is++) {
-    trace=0;
-    for(int i=0;i<opt.matrixdim;i++) {
-      trace+=pollev.at(is).at(i);
-    }
-		tracephase = std::arg(trace);
-		radius = std::abs(trace);
-		
-		if (std::abs(tracephase - 2.0*M_PI/3.0) <= opt.delta) {
-			if (radius >= r) {
-				lclusterdata.isinsector[is]=1;
-				csectp1++;
-			}
-		}
-		
-		if (std::abs(tracephase) < opt.delta) {
-			if (radius >= r) {
-				lclusterdata.isinsector[is]=0;
-				csect0++;
-			}
-		}
-		
-		if (std::abs(tracephase + 2.0*M_PI/3.0) <= opt.delta) {
-			if (radius >= r) {
-				lclusterdata.isinsector[is]=-1;
-				csectm1++;
-			}
-		}
-		lclusterdata.poll[is]=trace;
-	}
-	
-	lclusterdata.nsectm1=csectm1; lclusterdata.nsect0=csect0; lclusterdata.nsectp1=csectp1;
-	#ifdef DEBUG
-		std::cout << "done!" << std::endl;
-	#endif
-}
-
-void fillSectors(Clusterstruct &lclusterdata, std::vector<std::vector<std::complex<double> > > &pollev, Options opt, double delta) {
+void fillSectors(Clusterstruct &lclusterdata, std::vector<std::vector<std::complex<double> > > &pollev, const Options &opt, const double delta) {
 	// Categorizes the lattice points by sector
 	#ifdef DEBUG
 		std::cout << "Categorizing lattice points by sector (delta = " << delta << " )... " << std::flush;
@@ -185,7 +121,7 @@ void fillSectors(Clusterstruct &lclusterdata, std::vector<std::vector<std::compl
 	#endif
 }
 
-void findPercolatingCluster(Clusterstruct &lclusterdata, Options opt) {
+void findPercolatingCluster(Clusterstruct &lclusterdata, const Options &opt) {
 	// Finds the percolating clusters
 	#ifdef DBEUG
 		std::cout << "Searching for percolating clusters... " << flush;
@@ -272,7 +208,7 @@ void findPercolatingCluster(Clusterstruct &lclusterdata, Options opt) {
 	#endif
 }
 
-void findClusters(Clusterstruct &lclusterdata, std::vector<std::vector<int> > &neib, Options opt) {
+void findClusters(Clusterstruct &lclusterdata, const std::vector<std::vector<int> > &neib, const Options &opt) {
 	// Find clusters
 	#ifdef DEBUG
 		std::cout << "Finding clusters... " << std::flush;
@@ -375,7 +311,7 @@ void findClusters(Clusterstruct &lclusterdata, std::vector<std::vector<int> > &n
 	#endif
 }
 
-void checkClusters(Clusterstruct &lclusterdata, Options opt) {
+void checkClusters(Clusterstruct &lclusterdata, const Options &opt) {
 	// Checks the clusters
 	#ifdef DEBUG	
 		std::cout << "Checking clusters... " << flush;

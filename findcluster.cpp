@@ -29,16 +29,16 @@
 #include <vector>
 
 #include "findcluster_cluster.h"
+#include "findcluster_obs.h"
 #include "findcluster_write.h"
 #include "findcluster_writemeasure.h"
 
-#include "include/jackknife.h"
 #include "include/readowndata.hpp"
 #include "include/readwupperdata.hpp"
 
 #include "version.h"
 
-Options opt;
+Options opt; // Global variable declared extern in findcluster.h
 
 // Vector for Polyakov loop eigenvalue data
 std::vector<std::vector<std::complex<double> > > pollev;
@@ -48,15 +48,14 @@ std::vector<std::vector<int> > neib;
 std::vector<int> boxsize;
 std::vector<int> boxes;
 
-std::vector<Observablestruct> obs;
-Resultstruct results;
-
 #include "findcluster_init.hpp"
-#include "findcluster_obs.hpp"
 
 int main(int argc, char *argv[]) {
+  std::vector<Observablestruct> obs;
+  Resultstruct results;
+
 	// Handle command line information and initialize arrays and other stuff...
-	if (init(argc, argv) != 0) {
+	if (init(argc, argv, obs, results) != 0) {
 		std::cout << "Error in init()!" << std::endl;
 		return 1;
 	}
@@ -101,11 +100,7 @@ int main(int argc, char *argv[]) {
       checkPollEv(opt.leng1, opt.leng2, opt.leng3, opt.leng4, opt.matrixdim, pollev);
     }
 		
-		if (opt.usealternativesectors==true) {
-			fillSectorsAlt(lclusterdata, pollev, opt, opt.r); // Categorize lattice points by sectors using alternative prescription
-		} else {
-			fillSectors(lclusterdata, pollev, opt, opt.delta); // Categorize lattice points by sectors
-		}
+    fillSectors(lclusterdata, pollev, opt, opt.delta); // Categorize lattice points by sectors
 	
     std::cout << "c" << std::flush;
 		findClusters(lclusterdata, neib, opt);	// Identify clusters
@@ -117,7 +112,7 @@ int main(int argc, char *argv[]) {
 		sortClusterSize(lclusterdata, opt); // Sort clusters per number of members
 
     std::cout << "o" << std::flush;
-		calcObservables(obs[n], lclusterdata); // Calculate observables
+		CalcObservables(obs[n], lclusterdata, boxsize, boxes); // Calculate observables
 		
 		if (opt.detail) {
 			std::cout << std::endl << "Details for " << opt.fevname[n] << ":" << std::endl;
@@ -152,7 +147,7 @@ int main(int argc, char *argv[]) {
 	std::cout << "------------------------------------------------------------------------------" << std::endl;
 
 	// Calculate the expectation values and write the results to file and stdout
-	calcExp();
+	CalcExp(obs, results, opt, boxsize, boxes);
   if (opt.nmeas < 2) {
 	  writeresultsstdout_singleconf(obs[0], opt);
   } else {

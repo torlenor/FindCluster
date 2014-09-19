@@ -62,11 +62,7 @@ void Printsettings(const Options &opt) {
 	if (opt.wupperdata)
 		std::cout << "Reading Wuppertal Polakov loop data format." <<  std::endl;
 	std::cout << "Number of configurations = " << opt.nmeas << std::endl;
-	if (! opt.usealternativesectors) {
-		std::cout << "Cut fraction = " << opt.fraction << std::endl;
-	} else {
-		std::cout << "Alternative cut prescription, radius r = " << opt.r << std::endl;
-	}
+	std::cout << "Cut fraction = " << opt.fraction << std::endl;
 	if (opt.doboxes)
 		std::cout << "Calculating 'box' observables." << std::endl;
 	if (opt.detail)

@@ -27,14 +27,13 @@
 
 #include "findcluster.h"
 
-void fillSectorsAlt(Clusterstruct &lclusterdata, std::vector<std::vector<std::complex<double> > > &pollev, Options opt, double r);
-void fillSectors(Clusterstruct &lclusterdata, std::vector<std::vector<std::complex<double> > > &pollev, Options opt, double delta);
+void fillSectors(Clusterstruct &lclusterdata, std::vector<std::vector<std::complex<double> > > &pollev, const Options &opt, const double delta);
 
-void findClusters(Clusterstruct &lclusterdata, std::vector<std::vector<int> > &neib, Options opt);
-void checkClusters(Clusterstruct &lclusterdata, Options opt);
+void findClusters(Clusterstruct &lclusterdata, const std::vector<std::vector<int> > &neib, const Options &opt);
+void checkClusters(Clusterstruct &lclusterdata, const Options &opt);
 
-void findPercolatingCluster(Clusterstruct &lclusterdata, Options opt);
+void findPercolatingCluster(Clusterstruct &lclusterdata, const Options &opt);
 
-void sortClusterSize(Clusterstruct &lclusterdata, Options opt);
+void sortClusterSize(Clusterstruct &lclusterdata, const Options &opt);
 
 #endif // FINDCLUSTER_CLUSTER_H

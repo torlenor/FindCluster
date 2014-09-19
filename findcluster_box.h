@@ -26,7 +26,7 @@
 
 #include "findcluster.h"
 
-void obsBoxesOnlyLargest(Observablestruct &lobs, Clusterstruct &lclusterdata, Options opt, std::vector<int> &boxsize, std::vector<int> &boxes);
-void obsBoxes(Observablestruct &lobs, Clusterstruct &lclusterdata, Options opt, std::vector<int> &boxsize, std::vector<int> &boxes);
+void ObsBoxesOnlyLargest(Observablestruct &lobs, Clusterstruct &lclusterdata, const Options &opt, std::vector<int> &boxsize, std::vector<int> &boxes);
+void ObsBoxes(Observablestruct &lobs, Clusterstruct &lclusterdata, const Options &opt, std::vector<int> &boxsize, std::vector<int> &boxes);
 
 #endif // FINDCLUSTER_BOX_H

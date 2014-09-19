@@ -1,11 +1,16 @@
-#ifndef FINDCLUSTER_OBS_HPP
-#define FINDCLUSTER_OBS_HPP
+#include "findcluster_obs.h"
 
+#include <iostream>
+
+#include "findcluster.h"
 #include "findcluster_box.h"
+#include "findcluster_helper.h"
 #include "findcluster_path.h"
 #include "findcluster_radius.h"
 
-void obsLargestCluster(Observablestruct &lobs, Clusterstruct &lclusterdata){
+#include "include/jackknife.h"
+
+void ObsLargestCluster(Observablestruct &lobs, Clusterstruct &lclusterdata) {
 	// Find largest cluster
 	int size = -1, largestcluster = -1;
 	for(unsigned int c=0; c<lclusterdata.clustermembers.size(); c++){
@@ -35,7 +40,7 @@ void obsLargestCluster(Observablestruct &lobs, Clusterstruct &lclusterdata){
 	lobs.largetsnonpercclustersector = lclusterdata.clustersector[largestcluster];
 }
 
-void obsAverageClusterSize(Observablestruct &lobs, Clusterstruct &lclusterdata){
+void ObsAverageClusterSize(Observablestruct &lobs, Clusterstruct &lclusterdata) {
 	// Calculate average cluster size
 	double avgclustersize=0;
 	int cnt=0;
@@ -59,7 +64,7 @@ void obsAverageClusterSize(Observablestruct &lobs, Clusterstruct &lclusterdata){
 	lobs.avgclustersizenp = avgclustersize/(double)cnt;
 }
 
-void obsAverageClusterSizeFortunato(Observablestruct &lobs, Clusterstruct &lclusterdata){
+void ObsAverageClusterSizeFortunato(Observablestruct &lobs, Clusterstruct &lclusterdata){
 	// Calculate average cluster size from Fortunato (1.7)
 	// We consider only non-percolating clusters.
 	// First calculate the number of clusters of size s per lattice site
@@ -99,8 +104,8 @@ void obsAverageClusterSizeFortunato(Observablestruct &lobs, Clusterstruct &lclus
 	lobs.avgclustersizeF = avgclustersizeF;
 }
 
-void obsAverageClusterSizeNoPercc(Observablestruct &lobs, Clusterstruct &lclusterdata){
-	// Calculate average cluster size without percolating clusters
+void ObsAverageClusterSizeNoPercc(Observablestruct &lobs, Clusterstruct &lclusterdata){
+	// Oalculate average cluster size without percolating clusters
 	// First calculate the number of clusters of size s per lattice site
   std::vector<int> sizes;
   std::vector<double> sizedist;
@@ -138,7 +143,7 @@ void obsAverageClusterSizeNoPercc(Observablestruct &lobs, Clusterstruct &lcluste
 	lobs.avgclustersizeFnp = avgclustersizenopercc;
 }
 
-void obsCutPercentage(Observablestruct &lobs, Clusterstruct &lclusterdata){
+void ObsCutPercentage(Observablestruct &lobs, Clusterstruct &lclusterdata){
 	// Calculate cut
 	double cut=0;
 	for(unsigned int is=0; is<lclusterdata.isinsector.size(); is++){
@@ -149,7 +154,7 @@ void obsCutPercentage(Observablestruct &lobs, Clusterstruct &lclusterdata){
 	lobs.cut = cut/(double)opt.Nspace;
 }
 
-void obsArea(Observablestruct &lobs, Clusterstruct &lclusterdata){
+void ObsArea(Observablestruct &lobs, Clusterstruct &lclusterdata){
 	lobs.area=0;
 	int i1=0, i2=0, i3=0, is=0;
 	bool incluster=false;
@@ -214,7 +219,7 @@ void obsArea(Observablestruct &lobs, Clusterstruct &lclusterdata){
 	lobs.area = lobs.area/(double)(6*opt.Ns*opt.Ns); // Mean over all 3 directions
 }
 
-void obsAreaLargestNonPercCluster(Observablestruct &lobs, Clusterstruct &lclusterdata){
+void ObsAreaLargestNonPercCluster(Observablestruct &lobs, Clusterstruct &lclusterdata){
 	lobs.arealargestnonperccluster=0;
 	int i1=0, i2=0, i3=0, is=0;
 	bool incluster=false;
@@ -289,7 +294,7 @@ void obsAreaLargestNonPercCluster(Observablestruct &lobs, Clusterstruct &lcluste
 	lobs.arealargestnonperccluster = lobs.arealargestnonperccluster/(double)(6*opt.Ns*opt.Ns); // Mean over all 3 directions
 }
 
-void obsAreaAvgNonPercCluster(Observablestruct &lobs, Clusterstruct &lclusterdata){
+void ObsAreaAvgNonPercCluster(Observablestruct &lobs, Clusterstruct &lclusterdata){
 	lobs.areaavgnonperccluster=0;
 	int i1=0, i2=0, i3=0, is=0;
 	bool incluster=false;
@@ -365,7 +370,7 @@ void obsAreaAvgNonPercCluster(Observablestruct &lobs, Clusterstruct &lclusterdat
   lobs.areaavgnonperccluster = lobs.areaavgnonperccluster/(double)(6*opt.Ns*opt.Ns*clusters); // Mean over all 3 directions
 }
 
-void obsNumberOfPercClusters(Observablestruct &lobs, Clusterstruct &lclusterdata){
+void ObsNumberOfPercClusters(Observablestruct &lobs, Clusterstruct &lclusterdata){
 	// Number of percolating clusters
 	int pcount=0;
 	for(unsigned int p=0; p<lclusterdata.percolatingclusters.size(); p++){
@@ -376,7 +381,7 @@ void obsNumberOfPercClusters(Observablestruct &lobs, Clusterstruct &lclusterdata
 	lobs.percc=pcount;
 }
 
-void obsPollAfterCut(Observablestruct &lobs, Clusterstruct &lclusterdata){
+void ObsPollAfterCut(Observablestruct &lobs, Clusterstruct &lclusterdata){
 	/* Calculation of Polyakov loop expectation value for points which 
 	 * survived the cut. For that loop over all points which are not in 
 	 * sector 2 and calculate the spatial average of |P(x)| */
@@ -391,84 +396,34 @@ void obsPollAfterCut(Observablestruct &lobs, Clusterstruct &lclusterdata){
 	lobs.poll = std::abs(pollsum)/(double)pollcnt;
 }
 
-void obsRootMeanSquareDistance(Observablestruct &lobs, Clusterstruct &lclusterdata){
-	// THIS NEEDS THE CLUSTER RADIUS OF ALL CLUSTERS!!!
-	// Calculate root mean square distance traveled R
-	// Stauffer pp.117 eq. 105
-	
-	// First calculate the number of clusters of size s per lattice site
-  std::vector<int> sizes;
-  std::vector<double> sizedist;
-  std::vector<double> radiusavg, radiuscnt;
-	double meansquaredistanceR=0;
-	int curcsize;
-	int knownsize=0;
-
-	for(unsigned int c=0; c<lclusterdata.clustermembers.size(); c++){
-		if(lclusterdata.clustersector[c] < 2 && lclusterdata.clustermembers[c].size() > 1){
-			curcsize = lclusterdata.clustermembers[c].size();
-			knownsize=0;
-			for(unsigned int s=0; s<sizes.size(); s++){
-				if(sizes[s] == curcsize){
-					knownsize = s;
-					break;
-				}
-			}
-			if(knownsize>0){
-				sizedist[knownsize] += 1.0/(double)opt.Nspace;
-
-				radiusavg[knownsize] += lobs.clusterradius.at(c);
-				radiuscnt[knownsize]++;
-			}else{
-				sizes.push_back(curcsize);
-				sizedist.push_back(1.0/(double)opt.Nspace);
-				
-				radiusavg.push_back(lobs.clusterradius.at(c));
-				radiuscnt.push_back(1);
-			}
-		}
-	}
-
-	// Norm of raidusavg
-	for(unsigned int size=0; size<sizedist.size(); size++){
-		radiusavg[size]=radiusavg[size]/(double)radiuscnt[size];
-	}
-
-	for(unsigned int size=0; size<sizedist.size(); size++){
-		meansquaredistanceR += sizedist[size]*sizes[size]*pow(radiusavg.at(size),2.0);
-	}
-
-	lobs.rootmeansquaredistanceR = sqrt(meansquaredistanceR);
-}
-
-void calcObservables(Observablestruct &lobs, Clusterstruct &lclusterdata){
+void CalcObservables(Observablestruct &lobs, Clusterstruct &lclusterdata, std::vector<int> &boxsize, std::vector<int> &boxes) {
 	#ifdef DEBUG	
 	cout << "Calculating observables... " << std::flush;
 	#endif
 
   if (! opt.fastmode) {
     // lobs.maxclustersize, lobs.maxclusterid, lobs.maxclustersector
-    obsLargestCluster(lobs, lclusterdata);
+    ObsLargestCluster(lobs, lclusterdata);
     // lobs.avgclustersize
-    obsAverageClusterSize(lobs, lclusterdata);
+    ObsAverageClusterSize(lobs, lclusterdata);
     // lobs.avgclustersizeF
-    obsAverageClusterSizeFortunato(lobs, lclusterdata);
+    ObsAverageClusterSizeFortunato(lobs, lclusterdata);
     // lobs.avgclustersizenopercc
-    obsAverageClusterSizeNoPercc(lobs, lclusterdata);
+    ObsAverageClusterSizeNoPercc(lobs, lclusterdata);
     // lobs.cut
-    obsCutPercentage(lobs, lclusterdata);
+    ObsCutPercentage(lobs, lclusterdata);
     // lobs.largestclusterid
     lobs.largestclusterid=lclusterdata.sortedrealcluster[0];
     // lobs.percc
-    obsNumberOfPercClusters(lobs, lclusterdata);
+    ObsNumberOfPercClusters(lobs, lclusterdata);
     // lobs.area
-    obsArea(lobs, lclusterdata);
+    ObsArea(lobs, lclusterdata);
     // lobs.arealargestnonperccluster
-    obsAreaLargestNonPercCluster(lobs, lclusterdata);
+    ObsAreaLargestNonPercCluster(lobs, lclusterdata);
     // lobs.areaavgnonperccluster
-    obsAreaAvgNonPercCluster(lobs, lclusterdata);
+    ObsAreaAvgNonPercCluster(lobs, lclusterdata);
     // lobs.poll
-    obsPollAfterCut(lobs, lclusterdata);
+    ObsPollAfterCut(lobs, lclusterdata);
 
     
     // lobs.numberofboxes
@@ -477,31 +432,23 @@ void calcObservables(Observablestruct &lobs, Clusterstruct &lclusterdata){
     // lobs.numberofboxes
     if(opt.doboxes) {
       std::cout << "b" << std::flush;
-      obsBoxesOnlyLargest(lobs, lclusterdata, opt, boxsize, boxes);
+      ObsBoxesOnlyLargest(lobs, lclusterdata, opt, boxsize, boxes);
     }
     
     if(opt.doradius){
-      if(opt.dodistance){
-        obsClusterRadius(lobs, lclusterdata, opt);
-      }else{
-        obsClusterRadiusOnlyLargest(lobs, lclusterdata, opt);
-        obsClusterRadiusOnlyLargestNP(lobs, lclusterdata, opt);
-      }
+      ObsClusterRadiusOnlyLargest(lobs, lclusterdata, opt);
+      ObsClusterRadiusOnlyLargestNP(lobs, lclusterdata, opt);
     }
 
     if(opt.domean){
-      obsClusterMeanFreePathNew(lobs, lclusterdata, opt);
-      obsAverageMeanfreepathNew(lobs, lclusterdata, opt);
+      ObsClusterMeanFreePathNew(lobs, lclusterdata, opt);
+      ObsAverageMeanfreepathNew(lobs, lclusterdata, opt);
     }
     
-    // lobs.rootmeansquaredistanceR
-    if(opt.dodistance){
-      obsRootMeanSquareDistance(lobs, lclusterdata);
-    }
   } else { // Fast Mode
-    obsLargestCluster(lobs, lclusterdata);
+    ObsLargestCluster(lobs, lclusterdata);
     lobs.largestclusterid=lclusterdata.sortedrealcluster[0];
-    obsClusterRadiusOnlyLargest(lobs, lclusterdata, opt);
+    ObsClusterRadiusOnlyLargest(lobs, lclusterdata, opt);
   }
 
 	#ifdef DEBUG
@@ -509,7 +456,7 @@ void calcObservables(Observablestruct &lobs, Clusterstruct &lclusterdata){
 	#endif
 }
 
-void calcExp(){
+void CalcExp(const std::vector<Observablestruct> &obs, Resultstruct &results, Options &opt, std::vector<int> &boxsize, std::vector<int> &boxes) {
 	double ddata[opt.nmeas];
 
 	// Start of Jackknife
@@ -578,19 +525,6 @@ void calcExp(){
 		ddata[n] = ddata[n]/(double)(opt.nmeas-1);
 	}
 	Jackknife(ddata, results.avgclustersizenp, results.avgclustersizenperr, opt.nmeas);
-	
-	if(opt.dodistance){
-		// Average root mean square distance traveled R
-		for(int n=0;n<opt.nmeas;n++){
-			ddata[n]=0;
-			for(int j=0;j<opt.nmeas;j++){
-				if(n!=j)
-					ddata[n] += (&obs[j])->rootmeansquaredistanceR;
-			}
-			ddata[n] = ddata[n]/(double)(opt.nmeas-1);
-		}
-		Jackknife(ddata, results.avgrootmeansquaredistance, results.avgrootmeansquaredistanceerr, opt.nmeas);
-	}
 	
 	// Cut expectation value
 	for(int n=0;n<opt.nmeas;n++){
@@ -818,5 +752,3 @@ void calcExp(){
 		}
 	}
 }
-
-#endif // FINDCLUSTER_OBS_HPP

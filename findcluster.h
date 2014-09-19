@@ -38,14 +38,10 @@ struct Options{
   double fraction; // fraction to cut
   double delta; // delta = pi/3 *(1 - fraction), will be set in init
 
-  bool usealternativesectors; // Controlls if we want the alternative sector identification
-  double r; // radius for alternative sector identification
-
   bool do3d; // Controlls if we want to write out data for 3d visualization
 
   bool detail; // Controlls if we want detailed information for every configuration
   bool doboxes; // Controlls if we want box counting calculations
-  bool dodistance; // Controlls if we want box counting calculations
   bool doradius; // Controlls if we want radius calculation
   bool domean; // Controlls if we want mean distance traveled calculations
 
@@ -64,8 +60,8 @@ struct Clusterstruct{
 	std::vector<std::vector<int> > clustermembers; // lclusterdata.clustermembers[c][i] stores the members/lattice points of the cluster c (0 < i < N_c)
 
 	std::vector<int> percolatingclusters; // Percolating clusters
-	std::vector<std::vector<int> > percolatingdirections;
-	std::vector<int> clusterispercolating;
+	std::vector<std::vector<int> > percolatingdirections; // Cluster percolating in direction ...
+	std::vector<int> clusterispercolating; // Cluster is percolating
 	
 	std::vector<int> sortedcluster;
 	std::vector<int> sortedrealcluster;
@@ -90,8 +86,6 @@ struct Observablestruct{
 	double avgclustersize;
 	double avgclustersizeF;
 
-	double rootmeansquaredistanceR;
-	
 	double avgclustersizenp;
 	double avgclustersizeFnp;
 
@@ -99,7 +93,6 @@ struct Observablestruct{
 
 	std::vector<std::vector<int> > numberofboxes;
 	
-	// std::vector<std::vector<double> > centerofmass;
 	std::vector<double> clusterradius;
 	double largestclusterradius;
 	double largestnpclusterradius;
@@ -126,23 +119,28 @@ struct Observablestruct{
 };
 
 struct Resultstruct{
+  double avgperccluster, avgpercclustererr;
+
 	double maxclustersize, maxclustersizeerr;
 	double maxnonpercclustersize, maxnonpercclustersizeerr;
 	double avgclustersize, avgclustersizeerr;
 	double avgclusersizeFortunato, avgclusersizeFortunatoerr;
 	double avgclustersizenp, avgclustersizenperr;
 	double avgclustersizeFnp, avgclustersizeFnperr;
-	double avgrootmeansquaredistance, avgrootmeansquaredistanceerr;
+
 	double cut, cuterr;
+	
 	double totalperimeter, totalperimetererr;
 	double largestnonpercperimeter, largestnonpercperimetererr;
 	double avgnonpercperimeter, avgnonpercperimetererr;
+
 	double largestclusterradius, largestclusterradiuserr;
 	double largestnpclusterradius, largestnpclusterradiuserr;
 	double avgclusterradius, avgclusterradiuserr;
 	double avgnpclusterradius, avgnpclusterradiuserr;
+
 	double polyakovloopaftercut, polyakovloopaftercuterr;
-	double avgperccluster, avgpercclustererr;
+
 	std::vector<double> largestclusterboxcount, largestclusterboxcounterr;
 	std::vector<double> largestnonpercboxcount, largestnonpercboxcounterr;
   
@@ -154,14 +152,6 @@ struct Resultstruct{
   double avgFnpclustermeanfreepathnew, avgFnpclustermeanfreepathnewerr;
 };
 
-void writeConfigResultsstdout(Observablestruct &lobs, Clusterstruct &lclusterdata);
-void writeClusterList(Clusterstruct &lclusterdata);
-
-void calcExp();
-
-void sortClusterSize(Clusterstruct &lclusterdata);
-void cluster3doutput(Clusterstruct &clusterdata, std::string f3dname);
-
-void freeMem(Clusterstruct &lclusterdata);
+extern Options opt; // initialized in findcluster.cpp
 
 #endif // FINDCLUSTER_H

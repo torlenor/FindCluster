@@ -32,7 +32,7 @@ void prepwriteMeasure(Options &opt) {
 	fclustersizename << "meas_cluster_" << opt.Ns << "x" << opt.Nt << "_f" << opt.fraction << ".res";
   std::ofstream fclustersize;
 	fclustersize.open(fclustersizename.str().c_str());
-	fclustersize << "# 0_meas opt.maxclustersize opt.largestnonpercclustersize opt.largestnonpercclusterid opt.largetsnonpercclustersector opt.avgclustersize opt.avgclustersizeF opt.rootmeansquaredistanceR opt.avgclustersizenp opt.avgclustersizeFnp opt.cut opt.largestclusterradius opt.largestnpclusterradius opt.avgclusterradius opt.avgnpclusterradius opt.percc opt.area opt.arealargestnonperccluster opt.areaavgnonperccluster opt.poll opt.largestclustermeanfreepathnew opt.largestnpclustermeanfreepathnew opt.avgclustermeanfreepathnew opt.avgnpclustermeanfreepathnew opt.avgFclustermeanfreepathnew opt.avgFnpclustermeanfreepathnew" << std::endl;
+	fclustersize << "# 0_meas opt.maxclustersize opt.largestnonpercclustersize opt.largestnonpercclusterid opt.largetsnonpercclustersector opt.avgclustersize opt.avgclustersizeF opt.avgclustersizenp opt.avgclustersizeFnp opt.cut opt.largestclusterradius opt.largestnpclusterradius opt.avgclusterradius opt.avgnpclusterradius opt.percc opt.area opt.arealargestnonperccluster opt.areaavgnonperccluster opt.poll opt.largestclustermeanfreepathnew opt.largestnpclustermeanfreepathnew opt.avgclustermeanfreepathnew opt.avgnpclustermeanfreepathnew opt.avgFclustermeanfreepathnew opt.avgFnpclustermeanfreepathnew" << std::endl;
 	fclustersize.close();
 }
 
@@ -53,7 +53,6 @@ void writemeascluster(Observablestruct &lobs, Options &opt, int m) {
     lobs.largetsnonpercclustersector << " " << 
     lobs.avgclustersize << " " << 
     lobs.avgclustersizeF << " " << 
-    lobs.rootmeansquaredistanceR << " " << 
     lobs.avgclustersizenp << " " << 
     lobs.avgclustersizeFnp << " " << 
     lobs.cut << " " << 

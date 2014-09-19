@@ -21,7 +21,7 @@
 
 #include "findcluster_radius.h"
 
-void getCoordsShift(int is, int &i1, int &i2, int &i3, int *shift, Options &opt){
+void getCoordsShift(int is, int &i1, int &i2, int &i3, int *shift, const Options &opt){
 	i1 = (is % (opt.leng1*opt.leng2) ) % opt.leng1;
 	i2 = (is % (opt.leng1*opt.leng2) ) / opt.leng1;
 	i3 = is / (opt.leng1*opt.leng2);
@@ -37,7 +37,7 @@ void getCoordsShift(int is, int &i1, int &i2, int &i3, int *shift, Options &opt)
 	// 	cout << "ERROR: Problem in getCoords!" << endl;
 }
 
-void obsClusterRadius(Observablestruct &lobs, Clusterstruct &lclusterdata, Options opt){
+void ObsClusterRadius(Observablestruct &lobs, Clusterstruct &lclusterdata, const Options &opt){
 	// Calculation of the cluster radius. We save the largest cluster (in terms
 	// of the cluster radius).
 	double centerofmass[3], radiussquare, radiussquaremin;
@@ -119,7 +119,7 @@ void obsClusterRadius(Observablestruct &lobs, Clusterstruct &lclusterdata, Optio
 	lobs.avgnpclusterradius = lobs.avgnpclusterradius/(double)cntnp;
 }
 
-void obsClusterRadiusOnlyLargest(Observablestruct &lobs, Clusterstruct &lclusterdata, Options opt){
+void ObsClusterRadiusOnlyLargest(Observablestruct &lobs, Clusterstruct &lclusterdata, const Options &opt){
 	// Calculation of the cluster radius for the cluster with the largest weight.
 	
 	double centerofmass[3], radiussquare, radiussquaremin;
@@ -173,7 +173,7 @@ void obsClusterRadiusOnlyLargest(Observablestruct &lobs, Clusterstruct &lcluster
 	lobs.largestclusterradius=radiussquaremin;
 }
 
-void obsClusterRadiusOnlyLargestNP(Observablestruct &lobs, Clusterstruct &lclusterdata, Options opt){
+void ObsClusterRadiusOnlyLargestNP(Observablestruct &lobs, Clusterstruct &lclusterdata, const Options &opt){
 	// Calculation of the cluster radius. We save the largest cluster (in terms
 	// of the cluster weight).
 	double centerofmass[3], radiussquare, radiussquaremin;

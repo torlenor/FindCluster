@@ -21,7 +21,6 @@ char texthelp[]="Usage: findcluster.x [OPTION] ... [POLLEVCONFIG/POLLEVCONFIGLIS
 		"  -d, --detail               write detailed output for every calculated configuration\n"
 		"  -b, --boxes                performes the box counting calculation (expensive)\n"
 		"  -a, --distance             performes the distance traveled calculation (expensive)\n"
-		"  -r, --rsector RADIUS       use alternative sector classification with r = RADIUS\n"
 		"  -o, --olddata              read old Polyakov loop ev data instead of wuppertal data (NOT ENTIRELY TESTED!!!)\n"
 		"  -w, --writemeas            writes all measurements to file\n"
 		"  -F, --fastmode             Fast Mode: Calculates only radius of largest cluster\n"
@@ -45,7 +44,7 @@ char texthelp[]="Usage: findcluster.x [OPTION] ... [POLLEVCONFIG/POLLEVCONFIGLIS
 		"\n"
 		"Report bugs to hps@abyle.org\n";
 
-int init(int &argc, char *argv[]){
+int init(int &argc, char *argv[], std::vector<Observablestruct> &obs, Resultstruct &results){
 
   std::cout << std::endl;
   std::cout << "findcluster.x " << MAJOR_VERSION << "." << MINOR_VERSION << "." << REVISION_VERSION << " ~ " << __DATE__ << " " << __TIME__ << std::endl 
@@ -68,19 +67,15 @@ int init(int &argc, char *argv[]){
 
   opt.wupperdata=true; // Controlls if we want to read wuppertal data, default true
 
-  opt.usealternativesectors=false;
-  opt.r=0;
+  opt.do3d = false;
 
-  opt.do3d=false;
+  opt.detail = false; // Controlls if we want detailed information for every configuration
+  opt.doboxes = false; // Controlls if we want box counting calculations
+  opt.doradius = true; // Controlls if we want radius calculation
+  opt.domean = false; // Controlls if we want mean distance traveled calculations
+  opt.writemeas = false; // Controlls if we want to writeout all measurements
 
-  opt.detail=false; // Controlls if we want detailed information for every configuration
-  opt.doboxes=false; // Controlls if we want box counting calculations
-  opt.dodistance=false; // Controlls if we want box counting calculations
-  opt.doradius=true; // Controlls if we want radius calculation
-  opt.domean=false; // Controlls if we want mean distance traveled calculations
-  opt.writemeas=false; // Controlls if we want to writeout all measurements
-
-  opt.fastmode=false; // Fast Mode: Only calc. the radius of largest cluster for f determination
+  opt.fastmode = false; // Fast Mode: Only calc. the radius of largest cluster for f determination
 
   opt.fraction = 0.0;
 
@@ -96,7 +91,6 @@ int init(int &argc, char *argv[]){
       {"Nt", required_argument, 0, 't'},
       {"fraction", required_argument, 0, 'f'},
       {"nmeas", required_argument, 0, 'n'},
-      {"rsector", required_argument, 0, 'r'},
       {"detail", no_argument, 0, 'd'},
       {"boxes", no_argument, 0, 'b'},
       {"distance", no_argument, 0, 'a'},
@@ -112,7 +106,7 @@ int init(int &argc, char *argv[]){
 		/* getopt_long stores the option index here. */
 		int option_index = 0;
 
-		c = getopt_long(argc, argv, "s:t:f:n:r:hvdboawF",
+		c = getopt_long(argc, argv, "s:t:f:n:hvdboawF",
 		long_options, &option_index);
 
 		/* Detect the end of the options. */
@@ -150,7 +144,7 @@ int init(int &argc, char *argv[]){
 				break;
 			
 			case 'a':
-				opt.dodistance = true;
+        opt.domean = true; // Controlls if we want mean distance traveled calculations
 				break;
 			
       case 'o':
@@ -164,11 +158,6 @@ int init(int &argc, char *argv[]){
       
       case 'F':
 				opt.fastmode = true;
-				break;
-			
-			case 'r':
-				opt.usealternativesectors = true;
-				opt.r = atof(optarg);
 				break;
 			
 			case 'v':

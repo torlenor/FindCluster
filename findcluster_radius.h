@@ -24,10 +24,10 @@
 
 #include "findcluster.h"
 
-void getCoordsShift(int is, int &i1, int &i2, int &i3, int *shift, Options &opt);
+void getCoordsShift(int is, int &i1, int &i2, int &i3, int *shift, const Options &opt);
 
-void obsClusterRadius(Observablestruct &lobs, Clusterstruct &lclusterdata, Options opt);
-void obsClusterRadiusOnlyLargest(Observablestruct &lobs, Clusterstruct &lclusterdata, Options opt);
-void obsClusterRadiusOnlyLargestNP(Observablestruct &lobs, Clusterstruct &lclusterdata, Options opt);
+void ObsClusterRadius(Observablestruct &lobs, Clusterstruct &lclusterdata, const Options &opt);
+void ObsClusterRadiusOnlyLargest(Observablestruct &lobs, Clusterstruct &lclusterdata, const Options &opt);
+void ObsClusterRadiusOnlyLargestNP(Observablestruct &lobs, Clusterstruct &lclusterdata, const Options &opt);
 
 #endif // FINDCLUSTER_RADIUS_H

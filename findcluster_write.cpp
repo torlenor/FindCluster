@@ -15,7 +15,7 @@ void writeclustersize(const Resultstruct &results, const Options &opt) {
   std::ofstream fclustersize;
 	fclustersize.open(fclustersizename.str().c_str());
 
-	fclustersize << "# 1_Nt 2_largestclusterweight 3_largestclusterweighterr 4_avgclusterweight 5_avgclusterweighterr 6_avgfortunatoclustersize 7_avgfortunatoclustersizeerr 8_largestnonpercclusterweight 9_largestnonpercclusterweighterr 10_largestclusterradius 11_largestclusterradiuserr 12_rootmeansquaredistanceR 13_rootmeansquaredistanceR" << std::endl;
+	fclustersize << "# 1_Nt 2_largestclusterweight 3_largestclusterweighterr 4_avgclusterweight 5_avgclusterweighterr 6_avgfortunatoclustersize 7_avgfortunatoclustersizeerr 8_largestnonpercclusterweight 9_largestnonpercclusterweighterr 10_largestclusterradius 11_largestclusterradiuserr " << std::endl;
 	fclustersize.flags (std::ios::scientific);
 	fclustersize.precision(std::numeric_limits<double>::digits10 + 1);
 	fclustersize << opt.Nt << " " 
@@ -24,7 +24,6 @@ void writeclustersize(const Resultstruct &results, const Options &opt) {
 	  << results.avgclusersizeFortunato << " " << results.avgclusersizeFortunatoerr << " " 
 	  << results.maxnonpercclustersize << " " << results.maxnonpercclustersizeerr << " " 
 	  << results.largestclusterradius << " " << results.largestclusterradiuserr << " " 
-	  << results.avgrootmeansquaredistance << " " << results.avgrootmeansquaredistanceerr 
 	<< std::endl;
 
 	fclustersize.close();
@@ -59,14 +58,13 @@ void writeclusterradius(const Resultstruct &results, const Options &opt) {
   std::ofstream fclusterradius;
 	fclusterradius.open(fclusterradiusname.str().c_str());
 
-	fclusterradius << "# 1_Nt 2_largestclusterradius 3_largestclusterradiuserr 4_largestnpclusterradius 5_largestnpclusterradiuserr 6_avgclusterradius 7_avgclusterradiuserr 8_avgnpcluterradius 9_avgnpclusterradiuserr 10_rootmeansquaredistanceR 11_rootmeansquaredistanceRerr 12_maxclustersize 13_maxclustersizeerr 14_maxnonpercclustersize 15_maxnonpercclustersizeerr 16_avgclustersize 17_avgclustersizeerr 18_avgclusersizeFortunato 19_avgclusersizeFortunatoerr 20_avgclustersizeFnp 21_avgclustersizeFnperr" << std::endl;
+	fclusterradius << "# 1_Nt 2_largestclusterradius 3_largestclusterradiuserr 4_largestnpclusterradius 5_largestnpclusterradiuserr 6_avgclusterradius 7_avgclusterradiuserr 8_avgnpcluterradius 9_avgnpclusterradiuserr 10_maxclustersize 11_maxclustersizeerr 12_maxnonpercclustersize 13_maxnonpercclustersizeerr 14_avgclustersize 15_avgclustersizeerr 16_avgclusersizeFortunato 17_avgclusersizeFortunatoerr 18_avgclustersizeFnp 19_avgclustersizeFnperr" << std::endl;
 	fclusterradius.flags (std::ios::scientific);
 	fclusterradius.precision(std::numeric_limits<double>::digits10 + 1);
 	fclusterradius << opt.Nt << " " << results.largestclusterradius << " " << results.largestclusterradiuserr << " "
     << results.largestnpclusterradius << " " << results.largestnpclusterradiuserr << " "
     << results.avgclusterradius << " " << results.avgclusterradiuserr << " " 
     << results.avgnpclusterradius << " " << results.avgnpclusterradiuserr << " "
-    << results.avgrootmeansquaredistance << " " << results.avgrootmeansquaredistanceerr << " "
     << results.maxclustersize << " " << results.maxclustersizeerr << " "
     << results.maxnonpercclustersize << " " << results.maxnonpercclustersizeerr << " "
     << results.avgclustersize << " " << results.avgclustersizeerr << " "
@@ -195,9 +193,6 @@ void writeresultsstdout(const Resultstruct &results, const Options &opt) {
 	std::cout << "Average cluster err  = " << results.avgclustersizeerr << ", Maximum cluster / V err  = " << results.maxclustersizeerr << std::endl;
   std::cout << "Average cluster size Fortunato (1.7) = " << results.avgclusersizeFortunato << ", Error  = " << results.avgclusersizeFortunatoerr << std::endl;
   std::cout << "Radius of largest cluster = " << results.largestclusterradius << ", Error = " << results.largestclusterradiuserr << std::endl;
-	if(opt.dodistance){
-    std::cout << "Root mean distance traveled R = " << results.avgrootmeansquaredistance << ", Error = " << results.avgrootmeansquaredistanceerr << std::endl;
-	}
   std::cout << "Cut = " << results.cut << " Cut err = " << results.cuterr << std::endl;
   std::cout << "Surface = " << results.totalperimeter << " Surface err = " << results.totalperimetererr << std::endl;
   std::cout << "Polyakov loop = " << results.polyakovloopaftercut << " Polyakov loop err = " << results.polyakovloopaftercuterr << std::endl << std::endl;
@@ -209,9 +204,6 @@ void writeresultsstdout_singleconf(Observablestruct &lobs, const Options &opt) {
 	std::cout << "Average cluster err  = " << " - " << ", Maximum cluster / V err  = " << " - " << std::endl;
   std::cout << "Average cluster size Fortunato (1.7) = " << lobs.avgclustersizeF << ", Error  = " << " - " << std::endl;
   std::cout << "Radius of largest cluster = " << lobs.largestclusterradius << ", Error = " << " - " << std::endl;
-	if(opt.dodistance){
-    std::cout << "Root mean distance traveled R = " << " - " << ", Error = " << " - " << std::endl;
-	}
   std::cout << "Cut = " << lobs.cut << " Cut err = " << " - " << std::endl;
   std::cout << "Surface = " << lobs.area << " Surface err = " << " - " << std::endl;
   std::cout << "Polyakov loop = " << lobs.poll << " Polyakov loop err = " << " - " << std::endl << std::endl;

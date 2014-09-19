@@ -27,7 +27,7 @@
 #include "findcluster.h"
 #include "findcluster_helper.h"
 
-void obsClusterMeanFreePathNew(Observablestruct &lobs, Clusterstruct &lclusterdata, const Options opt){
+void ObsClusterMeanFreePathNew(Observablestruct &lobs, Clusterstruct &lclusterdata, const Options &opt){
   // Calculates the mean free path of all clusters using the new definition
 	lobs.meanfreepathnew.resize(lclusterdata.clustermembers.size());
 
@@ -223,8 +223,7 @@ void obsClusterMeanFreePathNew(Observablestruct &lobs, Clusterstruct &lclusterda
   lobs.largestnpclustermeanfreepathnew=lobs.meanfreepathnew[lobs.largestnonpercclusterid];
 }
 
-void obsAverageMeanfreepathNew(Observablestruct &lobs, Clusterstruct &lclusterdata, const Options opt){
-
+void ObsAverageMeanfreepathNew(Observablestruct &lobs, Clusterstruct &lclusterdata, const Options &opt){
   // Naive averages
   // Calculate average over all clusters
   double avgclustermeanfreepathnew=0;
