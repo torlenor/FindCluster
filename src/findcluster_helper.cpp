@@ -79,10 +79,20 @@ int latmap(const int i1, const int i2, const int i3, const Options &opt) {
 void Printsettings(const Options &opt) {
 	std::cout << "Settings:" << std::endl << std::endl;
 	std::cout << "Lattice size = " << opt.leng1 << "x" << opt.leng2 << "x" << opt.leng3 << "x" << opt.leng4 << std::endl;
-	if (opt.wupperdata)
+	if (opt.wupperdata) {
 		std::cout << "Reading Wuppertal Polakov loop data format." <<  std::endl;
+  } else {
+		std::cout << "Reading old Polakov loop eigenvalue data format." <<  std::endl;
+  }
 	std::cout << "Number of configurations = " << opt.nmeas << std::endl;
 	std::cout << "Cut fraction = " << opt.fraction << std::endl;
+	if (opt.domean)
+		std::cout << "Calculating 'mean distance traveled' observables" << std::endl;
+	if (opt.doradius) {
+		std::cout << "Calculating 'radius' observables" << std::endl;
+  } else if(opt.dolargestradius) {
+		std::cout << "Calculating 'radius' observables (largest cluster only)" << std::endl;
+  }
 	if (opt.doboxes)
 		std::cout << "Calculating 'box' observables." << std::endl;
 	if (opt.detail)

@@ -43,6 +43,7 @@ struct Options{
   bool detail; // Controlls if we want detailed information for every configuration
   bool doboxes; // Controlls if we want box counting calculations
   bool doradius; // Controlls if we want radius calculation
+  bool dolargestradius; // Controlls if we want radius calculation (only largest cluster)
   bool domean; // Controlls if we want mean distance traveled calculations
 
   bool fastmode; // Fast mode: Only largest radius calc for f determination

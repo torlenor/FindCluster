@@ -452,10 +452,12 @@ void CalcObservables(Observablestruct &lobs, Clusterstruct &lclusterdata, std::v
     }
     
     if(opt.doradius){
-      /*lobs.largestclusterradius = ObsClusterRadius(lclusterdata, opt, lobs.maxclusterid);
-      lobs.largestnpclusterradius  = ObsClusterRadius(lclusterdata, opt, lobs.largestnonpercclusterid); */
       // We perform radius calculations for all clusters so that we get the averaged values too
       ObsClusterRadiusAll(lobs, lclusterdata, opt);
+    } else if(opt.dolargestradius) {
+      // Only largest cluster radius
+      lobs.largestclusterradius = ObsClusterRadius(lclusterdata, opt, lobs.maxclusterid);
+      lobs.largestnpclusterradius  = ObsClusterRadius(lclusterdata, opt, lobs.largestnonpercclusterid);
     }
 
     if(opt.domean){

@@ -20,8 +20,10 @@ char texthelp[]="Usage: findcluster.x [OPTION] ... [POLLEVCONFIG/POLLEVCONFIGLIS
 		"  -n, --nmeas NMEAS          number of configurations (default = 1)\n"
 		"  -d, --detail               write detailed output for every calculated configuration\n"
 		"  -b, --boxes                performs the box counting calculation (expensive)\n"
-		"  -a, --distance             performs the distance traveled calculation (expensive)\n"
-		"  -o, --olddata              read old Polyakov loop ev data instead of wuppertal data (NOT ENTIRELY TESTED!!!)\n"
+		"  -r, --radius               performs radius calculation (expensive)\n"
+		"  -l, --largestradius        performs radius calculation (only largest cluster)\n"
+		"  -a, --distance             performs the mean distance traveled calculation (expensive)\n"
+		"  -o, --olddata              read old Polyakov loop ev data instead of wuppertal data\n"
 		"  -w, --writemeas            writes all measurements to file\n"
 		"  -F, --fastmode             Fast Mode: Calculates only radius of largest cluster\n"
 		"  --3d                       write 3dcluster data files\n"
@@ -51,7 +53,7 @@ int init(int &argc, char *argv[], std::vector<Observablestruct> &obs, Resultstru
   << std::endl 
   << "Finds cluster and performs calculations with it.\n"
   << "Uses Polyakov loop eigenvalues as input.\n\n"
-	<< "Initializing...\n"
+	<< "Initializing..."
   << std::endl;
 
 	if (argc<2) {
@@ -71,7 +73,8 @@ int init(int &argc, char *argv[], std::vector<Observablestruct> &obs, Resultstru
 
   opt.detail = false; // Controlls if we want detailed information for every configuration
   opt.doboxes = false; // Controlls if we want box counting calculations
-  opt.doradius = true; // Controlls if we want radius calculation
+  opt.doradius = false; // Controlls if we want radius calculation
+  opt.dolargestradius = false; // Controlls if we want radius calculation (largest cluster only)
   opt.domean = false; // Controlls if we want mean distance traveled calculations
   opt.writemeas = false; // Controlls if we want to writeout all measurements
 
@@ -93,6 +96,8 @@ int init(int &argc, char *argv[], std::vector<Observablestruct> &obs, Resultstru
       {"nmeas", required_argument, 0, 'n'},
       {"detail", no_argument, 0, 'd'},
       {"boxes", no_argument, 0, 'b'},
+      {"radius", no_argument, 0, 'r'},
+      {"largestradius", no_argument, 0, 'l'},
       {"distance", no_argument, 0, 'a'},
       {"olddata", no_argument, 0, 'o'},
       {"writemeas", no_argument, 0, 'w'},
@@ -106,72 +111,80 @@ int init(int &argc, char *argv[], std::vector<Observablestruct> &obs, Resultstru
 		/* getopt_long stores the option index here. */
 		int option_index = 0;
 
-		c = getopt_long(argc, argv, "s:t:f:n:hvdboawF",
+		c = getopt_long(argc, argv, "s:t:f:n:hvdbrloawF",
 		long_options, &option_index);
 
 		/* Detect the end of the options. */
 		if (c == -1)
 			break;
 
-		switch (c) {
-			case 0:
+    switch (c) {
+      case 0:
         if (strcmp( "3d", long_options[option_index].name ) == 0)
           opt.do3d = true;
-				break;
+        break;
 
-			case 's':
-				opt.Ns = atoi(optarg);
-				break;
+      case 's':
+        opt.Ns = atoi(optarg);
+        break;
 
-			case 't':
-				opt.Nt = atoi(optarg);
-				break;
+      case 't':
+        opt.Nt = atoi(optarg);
+        break;
 
-			case 'f':
-				opt.fraction = atof(optarg);
-				break;
+      case 'f':
+        opt.fraction = atof(optarg);
+        break;
 
-			case 'n':
-				opt.nmeas = atoi(optarg);
-				break;
+      case 'n':
+        opt.nmeas = atoi(optarg);
+        break;
 
-			case 'd':
-				opt.detail = true;
-				break;
-			
-			case 'b':
-				opt.doboxes = true;
-				break;
-			
-			case 'a':
+      case 'd':
+        opt.detail = true;
+        break;
+
+      case 'b':
+        opt.doboxes = true;
+        break;
+
+      case 'r':
+        opt.doradius = true;
+        break;
+
+      case 'l':
+        opt.dolargestradius = true;
+        break;
+
+      case 'a':
         opt.domean = true; // Controlls if we want mean distance traveled calculations
-				break;
-			
+        break;
+
       case 'o':
-				opt.wupperdata = false;
+        opt.wupperdata = false;
         opt.matrixdim = 3;
-				break;
-      
+        break;
+
       case 'w':
-				opt.writemeas = true;
-				break;
-      
+        opt.writemeas = true;
+        break;
+
       case 'F':
-				opt.fastmode = true;
-				break;
-			
-			case 'v':
+        opt.fastmode = true;
+        break;
+
+      case 'v':
         std::cout << std::endl << "findcluster.x version " << MAJOR_VERSION << "." << MINOR_VERSION << "." << REVISION_VERSION << std::endl;
-				abort();
+        abort();
 
-			case 'h':
+      case 'h':
         std::cout << std::endl << texthelp << std::endl;
-				abort();
+        abort();
 
-			default:
+      default:
         std::cout << std::endl << texthelp << std::endl;
-				abort();
-		}
+        abort();
+    }
 	}
 
   std::string finname;
