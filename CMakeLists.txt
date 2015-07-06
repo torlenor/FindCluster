@@ -3,7 +3,7 @@ project (FINDCLUSTER)
 
 
 set(CMAKE_BUILD_TYPE Release)
-SET(CXX_ADDITIONAL_COMPILE_FLAGS  "-O3 -Wall -fno-strict-aliasing -DNDEBUG")
+SET(CXX_ADDITIONAL_COMPILE_FLAGS  "-O3 -march=native -Wall -pipe -fno-strict-aliasing -DNDEBUG")
 SET(CXX_ADDITIONAL_LINK_FLAGS     "")
 SET(CXX_ADDITIONAL_LIBRARIES      "")
 
