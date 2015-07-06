@@ -1,0 +1,29 @@
+
+findcluster.x 1.9.12 ~ Sep 19 2014 15:11:03
+
+Finds cluster and performs calculations with it.
+Uses Polyakov loop eigenvalues as input.
+
+Initializing...
+
+
+Settings:
+
+Lattice size = 40x40x40x9
+Number of configurations = 5
+Cut fraction = 0.45
+Calculating 'box' observables.
+Writing all measurements to file.
+
+------------------------------------------------------------------------------
+                                                                   1 of 5: puregauge_oldformat_40x9_b6.20.bin ... rcpsob                                                                   2 of 5: puregauge_oldformat_40x9_b6.20.bin ... rcpsob                                                                   3 of 5: puregauge_oldformat_40x9_b6.20.bin ... rcpsob                                                                   4 of 5: puregauge_oldformat_40x9_b6.20.bin ... rcpsob                                                                   5 of 5: puregauge_oldformat_40x9_b6.20.bin ... rcpsob
+------------------------------------------------------------------------------
+Expectation values (single eliminitation jackknife): 
+Average cluster size = 3.4274049881235, Maximum cluster size / V = 0.01315625
+Average cluster err  = 0, Maximum cluster / V err  = 0
+Average cluster size Fortunato (1.7) = 88.960453935114, Error  = 0
+Radius of largest cluster = 10.450997215249, Error = 0
+Cut = 0.27853125 Cut err = 0
+Surface = 0.32375 Surface err = 0
+Polyakov loop = 0.12230310766331 Polyakov loop err = 2.7755575615629e-17
+

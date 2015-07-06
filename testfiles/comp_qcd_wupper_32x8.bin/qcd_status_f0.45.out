@@ -1,0 +1,30 @@
+
+findcluster.x 1.9.12 ~ Sep 19 2014 15:11:03
+
+Finds cluster and performs calculations with it.
+Uses Polyakov loop eigenvalues as input.
+
+Initializing...
+
+
+Settings:
+
+Lattice size = 32x32x32x8
+Reading Wuppertal Polakov loop data format.
+Number of configurations = 5
+Cut fraction = 0.45
+Calculating 'box' observables.
+Writing all measurements to file.
+
+------------------------------------------------------------------------------
+                                                                   1 of 5: qcd_wupper_32x8.bin ... rcpsob                                                                   2 of 5: qcd_wupper_32x8.bin ... rcpsob                                                                   3 of 5: qcd_wupper_32x8.bin ... rcpsob                                                                   4 of 5: qcd_wupper_32x8.bin ... rcpsob                                                                   5 of 5: qcd_wupper_32x8.bin ... rcpsob
+------------------------------------------------------------------------------
+Expectation values (single eliminitation jackknife): 
+Average cluster size = 10.014388489209, Maximum cluster size / V = 0.2069091796875
+Average cluster err  = 0, Maximum cluster / V err  = 0
+Average cluster size Fortunato (1.7) = 3245.289469236, Error  = 0
+Radius of largest cluster = 15.797155257534, Error = 0
+Cut = 0.27783203125 Cut err = 0
+Surface = 3.4708658854167 Surface err = 0
+Polyakov loop = 0.019049619427751 Polyakov loop err = 0
+

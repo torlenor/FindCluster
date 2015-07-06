@@ -1,0 +1,4 @@
+- 2.0.0
+  * Transition to header/source code seperated file structure
+  * Make it possible to write out all measurements and not just expectation
+    values - do this for box counting

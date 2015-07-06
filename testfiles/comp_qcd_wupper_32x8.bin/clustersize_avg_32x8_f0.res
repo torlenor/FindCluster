@@ -1,0 +1,2 @@
+# 1_Nt 2_avgclusterweight 3_avgclusterweighterr 4_avgfortunatoclustersize 5_avgfortunatoclustersizeerr 6_avgclusterweightFnp 7_avgclusterweightFnperr 8_avgclusterweightnp 9_avgclusterweightnperr 10_avgnpclusterradius 11_avgnpclusterradiuserr 12_avgnpclusterarea 13_avgnpclusterareaerr
+8 2.6532793522267205e+01 0.0000000000000000e+00 9.5489297485351562e+03 0.0000000000000000e+00 1.7995129870129873e+00 4.4408920985006262e-16 3.8958051420839235e+00 8.8817841970012523e-16 2.1275861847908289e-01 5.5511151231257827e-17 1.4537464488636363e-03 0.0000000000000000e+00 
